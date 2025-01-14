@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class RoomManager : MonoBehaviour
 {
-    [SerializeField] private int roomAmount = 10;    // 생성할 방의 개수
+    [SerializeField] private int roomAmount;    // 생성할 방의 개수
     [SerializeField] private GameObject roomPrefab;  // 방 프리팹
-    [SerializeField] private int mapWidth = 20;      // 맵의 가로 크기
-    [SerializeField] private int mapHeight = 20;     // 맵의 세로 크기
+    [SerializeField] private int mapWidth;      // 맵의 가로 크기
+    [SerializeField] private int mapHeight;     // 맵의 세로 크기
 
     private GameObject[,] roomArray;                 // 방들을 저장할 배열
     // roomDoors의 키 : 방의 좌표값, 밸류 : 옆 방 방향 설정
@@ -14,6 +14,7 @@ public class RoomManager : MonoBehaviour
     private Dictionary<Vector2Int, List<Vector2Int>> roomDoors = new(); // 각 방의 문 정보
     private List<Vector2Int> createdRooms = new();   // 생성된 방들의 리스트
     private HashSet<Vector2Int> blockedPositions = new(); // 금지된 방 위치
+    private List<Vector2Int> endRooms = new(); // 끝방 위치
 
     void Start()
     {
@@ -157,6 +158,21 @@ public class RoomManager : MonoBehaviour
                 roomDoors[room].Remove(door);
             }
         }
+    }
+
+    // 끝방 찾기
+    List<Vector2Int> FindEndRooms()
+    {
+        List<Vector2Int> endRooms = new();
+        foreach(var room in createdRooms)
+        {
+            if(roomDoors[room].Count == 1)
+            {
+                endRooms.Add(room);
+            }
+        }
+
+        return endRooms;
     }
 
     private void ResetMap()
