@@ -8,132 +8,169 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private int mapWidth = 20;      // 맵의 가로 크기
     [SerializeField] private int mapHeight = 20;     // 맵의 세로 크기
 
-    private GameObject[,] roomArray; // 방들을 저장할 배열
-    private List<Vector2Int> createdRooms = new();  // 생성된 방들의 리스트
+    private GameObject[,] roomArray;                 // 방들을 저장할 배열
+    // roomDoors의 키 : 방의 좌표값, 밸류 : 옆 방 방향 설정
+    // 연결된 방 좌표 구하는 법 : 키(방의 좌표 값) + 밸류(옆 방 방향)
+    private Dictionary<Vector2Int, List<Vector2Int>> roomDoors = new(); // 각 방의 문 정보
+    private List<Vector2Int> createdRooms = new();   // 생성된 방들의 리스트
+    private HashSet<Vector2Int> blockedPositions = new(); // 금지된 방 위치
 
     void Start()
     {
         roomArray = new GameObject[mapWidth, mapHeight];
-        GenerateMap();
+        while (createdRooms.Count < roomAmount)
+        {
+            ResetMap();
+            GenerateMap();
+            Debug.Log($"Successfully generated {createdRooms.Count} room!");
+            //return;
+
+            // 실패 시 맵 초기화 및 재시작
+            //Debug.LogWarning($"Failed to generate enough rooms. Retrying ...");
+        }
+
+        // 생성된 문 파악 후 연결된 방이 없는 문 파기
+        
+        ValidateDoors();
+
     }
+
+
 
     void GenerateMap()
     {
-        // 방을 생성할 초기 위치(중앙) 설정
         Vector2Int startPosition = new Vector2Int(mapWidth / 2, mapHeight / 2);
-        createdRooms.Add(startPosition);
-        roomArray[startPosition.x, startPosition.y] = CreateRoom(startPosition);
+        CreateRoom(startPosition);
 
-        // 방 생성 과정
-        while (createdRooms.Count < roomAmount)
+        int maxAttempts = roomAmount * 10; // 안전 장치: 시도 횟수 제한
+        int attempts = 0;
+
+        while (createdRooms.Count < roomAmount && attempts < maxAttempts)
         {
             Vector2Int newRoomPos = GetRandomConnectedRoomPosition();
+            attempts++;
+
             if (newRoomPos != Vector2Int.zero)
             {
-                createdRooms.Add(newRoomPos);
-                roomArray[newRoomPos.x, newRoomPos.y] = CreateRoom(newRoomPos);
-
-                // 방과 방을 연결할 때, 문을 추가
-                ConnectRooms(newRoomPos);
+                CreateRoom(newRoomPos);
             }
+        }
+
+        if (attempts >= maxAttempts)
+        {
+            Debug.LogError($"Failed to generate the required number of rooms ({roomAmount}). Generated {createdRooms.Count} rooms.");
         }
     }
 
-    // 방을 생성하는 함수
-    GameObject CreateRoom(Vector2Int position)
+    void CreateRoom(Vector2Int position)
     {
         GameObject room = Instantiate(roomPrefab, new Vector3(position.x, position.y, 0), Quaternion.identity);
         room.name = $"Room ({position.x}, {position.y})";
-        return room;
-    }
+        roomArray[position.x, position.y] = room;
 
-    // 생성된 방들과 연결된 새로운 방을 랜덤으로 선택하는 함수
-    Vector2Int GetRandomConnectedRoomPosition()
-    {
-        // 이미 생성된 방 중 하나를 랜덤으로 선택
-        Vector2Int selectedRoom = createdRooms[UnityEngine.Random.Range(0, createdRooms.Count)];
-
-        // 상하좌우로 연결할 수 있는 후보 좌표
-        List<Vector2Int> candidates = new List<Vector2Int>();
-
-        // 상하좌우로 방을 생성할 수 있는지 체크
+        List<Vector2Int> doors = new List<Vector2Int>();
         Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
 
         foreach (var direction in directions)
+        {
+            Vector2Int adjacentPos = position + direction;
+
+            if (!blockedPositions.Contains(adjacentPos) && Random.Range(0f, 1f) < 0.5f)
+            {
+                doors.Add(direction);
+
+                // 양방향 문 연결 보장
+                if (IsValidRoomPosition(adjacentPos) && roomArray[adjacentPos.x, adjacentPos.y] != null)
+                {
+                    if (!roomDoors[adjacentPos].Contains(-direction))
+                    {
+                        roomDoors[adjacentPos].Add(-direction);
+                    }
+                }
+            }
+            else
+            {
+                blockedPositions.Add(adjacentPos);
+            }
+        }
+
+        roomDoors[position] = doors;
+        createdRooms.Add(position);
+    }
+
+    Vector2Int GetRandomConnectedRoomPosition()
+    {
+        Vector2Int selectedRoom = createdRooms[Random.Range(0, createdRooms.Count)];
+        List<Vector2Int> doors = roomDoors[selectedRoom];
+
+        List<Vector2Int> candidates = new List<Vector2Int>();
+        foreach (var direction in doors)
         {
             Vector2Int newRoomPos = selectedRoom + direction;
 
-            // 문을 생성할 확률을 부여
-            if (IsValidRoomPosition(newRoomPos) && roomArray[newRoomPos.x, newRoomPos.y] == null)
+            if (IsValidRoomPosition(newRoomPos) && roomArray[newRoomPos.x, newRoomPos.y] == null && !blockedPositions.Contains(newRoomPos))
             {
-                // 문을 열 확률 25%
-                if (Random.Range(0f, 1f) < 0.25f)
-                {
-                    candidates.Add(newRoomPos);
-                }
+                candidates.Add(newRoomPos);
             }
         }
 
-        // 후보가 없으면 문이 없는 곳이라도 방을 만들어야 하므로 그때는 모든 방향에서 방을 만들 수 있게 한다.
-        if (candidates.Count == 0 && createdRooms.Count < roomAmount)
-        {
-            foreach (var direction in directions)
-            {
-                Vector2Int newRoomPos = selectedRoom + direction;
-                if (IsValidRoomPosition(newRoomPos) && roomArray[newRoomPos.x, newRoomPos.y] == null)
-                {
-                    candidates.Add(newRoomPos);
-                }
-            }
-        }
-
-        // 후보가 있으면 랜덤으로 하나 선택하여 반환
         if (candidates.Count > 0)
         {
-            return candidates[UnityEngine.Random.Range(0, candidates.Count)];
+            return candidates[Random.Range(0, candidates.Count)];
         }
 
-        return Vector2Int.zero; // 더 이상 연결할 수 없으면 zero 반환
+        Debug.LogWarning($"No valid position found for new room connected to {selectedRoom}");
+        return Vector2Int.zero;
     }
 
-    // 주어진 좌표가 맵 내에 존재하는지 확인하는 함수
     bool IsValidRoomPosition(Vector2Int position)
     {
-        return position.x >= 0 && position.x < mapWidth && position.y >= 0 && position.y < mapHeight;
+        if (position.x < 0 || position.x >= mapWidth || position.y < 0 || position.y >= mapHeight)
+        {
+            Debug.LogWarning($"Position {position} is out of bounds.");
+            return false;
+        }
+
+        return true;
     }
 
-    // 새로 생성된 방과 기존 방을 연결하는 함수
-    void ConnectRooms(Vector2Int newRoomPos)
+    void ValidateDoors()
     {
-        // 방 간 문이 연결되는 방향을 지정
-        Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-        List<Vector2Int> connectedDirections = new();
-
-        foreach (var direction in directions)
+        foreach (var room in createdRooms)
         {
-            Vector2Int adjacentPos = newRoomPos + direction;
-
-            if (IsValidRoomPosition(adjacentPos) && roomArray[adjacentPos.x, adjacentPos.y] != null)
+            List<Vector2Int> doorsToRemove = new List<Vector2Int>();
+            foreach (var doorDirection in roomDoors[room])
             {
-                // 문을 연결할 방향을 추가
-                connectedDirections.Add(direction);
+                Vector2Int adjacentPosition = room + doorDirection;
 
-                // 문 위치를 디버그로 표시
-                Vector3 roomCenter = new Vector3(newRoomPos.x, newRoomPos.y, 0);
-                Vector3 doorPosition = roomCenter + new Vector3(direction.x, direction.y, 0);
+                // 연결된 방이 없거나 유효하지 않은 경우
+                if (!IsValidRoomPosition(adjacentPosition) || roomArray[adjacentPosition.x, adjacentPosition.y] == null)
+                {
+                    doorsToRemove.Add(doorDirection);
+                }
+            }
 
-                // 해당 방향으로 선을 그려서 문 위치를 표시
-                Debug.DrawLine(roomCenter, doorPosition, Color.red, 5f); // 5초 동안 빨간 선으로 문 표시
+            // 잘못된 문 제거
+            foreach (var door in doorsToRemove)
+            {
+                Debug.Log($"Destroy{room}/{door}");
+                roomDoors[room].Remove(door);
             }
         }
+    }
 
-        // 연결된 방향 중 하나를 선택하여 문을 추가하도록 할 수 있음
-        if (connectedDirections.Count > 0)
+    private void ResetMap()
+    {
+        foreach (var roomPos in createdRooms)
         {
-            // 문을 연결할 방향을 확률적으로 선택
-            Vector2Int directionWithDoor = connectedDirections[UnityEngine.Random.Range(0, connectedDirections.Count)];
-            // 예시: roomArray[newRoomPos.x, newRoomPos.y].GetComponent<Room>().AddDoor(directionWithDoor);
-            Debug.Log($"Door opened at {newRoomPos} in direction {directionWithDoor}");
+            Destroy(roomArray[roomPos.x, roomPos.y]);
         }
+
+        // 데이터 초기화
+        createdRooms.Clear();
+        roomDoors.Clear();
+        blockedPositions.Clear();
+        roomArray = new GameObject[mapWidth, mapHeight];
+
     }
 }
