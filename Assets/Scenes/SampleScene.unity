@@ -384,7 +384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa4e621b4c21ed147b1c0716a28d237e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomAmount: 10
+  roomAmount: 6
   roomPrefab: {fileID: 3890470569323477192, guid: 6928a467704a91349ae4d233f678c70b, type: 3}
   mapWidth: 20
   mapHeight: 20

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class RoomManager : MonoBehaviour
 {
@@ -33,6 +35,40 @@ public class RoomManager : MonoBehaviour
         // 생성된 문 파악 후 연결된 방이 없는 문 파기
         
         ValidateDoors();
+
+        endRooms = FindEndRooms();
+        Debug.Log("endRooms Cnt" + endRooms.Count);
+        foreach (var room in endRooms)
+        {
+            Debug.Log(room);
+        }
+        if(endRooms.Count < 3)
+        {
+            List<Vector2Int> tempCreatedRooms = createdRooms.ToList();
+
+            foreach (var room in tempCreatedRooms)
+            {
+                if (!endRooms.Contains(room))
+                {
+                    if (AddEndRoom(room))
+                    {
+                        endRooms = FindEndRooms();
+                        Debug.Log("endRooms Cnt" + endRooms.Count);
+                        foreach (var room1 in endRooms)
+                        {
+                            Debug.Log(room1);
+                        }
+                        if (endRooms.Count >= 3)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
 
     }
 
@@ -75,8 +111,19 @@ public class RoomManager : MonoBehaviour
         foreach (var direction in directions)
         {
             Vector2Int adjacentPos = position + direction;
-
-            if (!blockedPositions.Contains(adjacentPos) && Random.Range(0f, 1f) < 0.5f)
+            if (createdRooms.Contains(adjacentPos))
+            {
+                doors.Add(direction);
+                // 양방향 문 연결 보장
+                if (IsValidRoomPosition(adjacentPos) && roomArray[adjacentPos.x, adjacentPos.y] != null)
+                {
+                    if (!roomDoors[adjacentPos].Contains(-direction))
+                    {
+                        roomDoors[adjacentPos].Add(-direction);
+                    }
+                }
+            }
+            else if (!blockedPositions.Contains(adjacentPos) && Random.Range(0f, 1f) < 0.5f) // 방이 막혔는지 확인, 50%의 확률로 생성
             {
                 doors.Add(direction);
 
@@ -99,6 +146,7 @@ public class RoomManager : MonoBehaviour
         createdRooms.Add(position);
     }
 
+    // 퍼뜨릴수 있는 문 기준으로 방을 생성
     Vector2Int GetRandomConnectedRoomPosition()
     {
         Vector2Int selectedRoom = createdRooms[Random.Range(0, createdRooms.Count)];
@@ -124,6 +172,7 @@ public class RoomManager : MonoBehaviour
         return Vector2Int.zero;
     }
 
+    // 방이 크기를 벗어났는지 확인
     bool IsValidRoomPosition(Vector2Int position)
     {
         if (position.x < 0 || position.x >= mapWidth || position.y < 0 || position.y >= mapHeight)
@@ -173,6 +222,49 @@ public class RoomManager : MonoBehaviour
         }
 
         return endRooms;
+    }
+
+    bool AddEndRoom(Vector2Int baseRoom)
+    {
+        Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+
+        foreach (var direction in directions)
+        {
+            Vector2Int adjacentPosition = baseRoom + direction;
+            // 막힌 방에 강제로 방생성, 근처에 방이 하나여야함.
+            if (blockedPositions.Contains(adjacentPosition)&& ClosedRoomCnt(adjacentPosition)==1)
+            {
+                CreateRoom(adjacentPosition);
+                Debug.Log($"강제 생성 끝방 : {adjacentPosition}");
+                ValidateDoors();
+                foreach (var door in roomDoors[adjacentPosition])
+                {
+                    Debug.Log(door);
+                }
+
+                return true;
+
+            }
+        }
+
+        return false;
+    }
+
+    int ClosedRoomCnt(Vector2Int baseRoom)
+    {
+        int cnt = 0;
+        Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+
+        foreach (var direction in directions)
+        {
+            Vector2Int adjacentPosition = baseRoom + direction;
+            if (createdRooms.Contains(adjacentPosition))
+            {
+                cnt++;
+            }
+        }
+
+        return cnt;
     }
 
     private void ResetMap()
