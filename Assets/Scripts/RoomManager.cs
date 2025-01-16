@@ -67,12 +67,8 @@ public class RoomManager : MonoBehaviour
             }
         }
 
-
-
-
+        PlaceSpeacialRoom();
     }
-
-
 
     void GenerateMap()
     {
@@ -101,7 +97,7 @@ public class RoomManager : MonoBehaviour
 
     void CreateRoom(Vector2Int position)
     {
-        GameObject room = Instantiate(roomPrefab, new Vector3(position.x, position.y, 0), Quaternion.identity);
+        GameObject room = Instantiate(roomPrefab, new Vector3(position.x-mapWidth/2, position.y-mapHeight/2, 0), Quaternion.identity);
         room.name = $"Room ({position.x}, {position.y})";
         roomArray[position.x, position.y] = room;
 
@@ -221,6 +217,13 @@ public class RoomManager : MonoBehaviour
             }
         }
 
+        Vector2Int originRoom = new Vector2Int(mapWidth/2, mapHeight/2);
+
+        if (endRooms.Contains(originRoom))
+        {
+            endRooms.Remove(originRoom);
+        }
+
         return endRooms;
     }
 
@@ -248,6 +251,33 @@ public class RoomManager : MonoBehaviour
         }
 
         return false;
+    }
+
+    void PlaceSpeacialRoom()
+    {
+        // 가장 먼 방 보스방, 나머지 방들 랜덤으로 보물방, 상점
+
+        List<Vector2Int> tempEndRooms = endRooms.ToList();
+
+        Dictionary<Vector2Int, int> endRoomDistance = new Dictionary<Vector2Int, int>();
+        foreach (var room in tempEndRooms)
+        {
+            int distance = Mathf.Abs(room.x - mapWidth / 2) + Mathf.Abs(room.y - mapHeight / 2);
+
+            endRoomDistance.Add(room, distance);
+        }
+
+        var furthestRoom = endRoomDistance.Aggregate((maxRoom, nextRoom) => nextRoom.Value > maxRoom.Value ? nextRoom : maxRoom).Key;
+        Debug.Log(furthestRoom);
+        tempEndRooms.Remove(furthestRoom);
+
+        int random = Random.Range(0, tempEndRooms.Count);
+        Debug.Log($"보물방 : {tempEndRooms[random]}");
+        tempEndRooms.Remove(tempEndRooms[random]);
+
+        random = Random.Range(0, tempEndRooms.Count);
+        Debug.Log($"상점 : {tempEndRooms[random]}");
+        tempEndRooms.Remove(tempEndRooms[random]);
     }
 
     int ClosedRoomCnt(Vector2Int baseRoom)
