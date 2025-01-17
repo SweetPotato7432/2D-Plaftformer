@@ -5,6 +5,16 @@ using UnityEngine.UIElements;
 
 public class RoomManager : MonoBehaviour
 {
+    enum RoomType
+    {
+        NONE,
+        START,
+        NORMAL,
+        TREASURE,
+        SHOP,
+        BOSS
+    }
+
     [SerializeField] private int roomAmount;    // 생성할 방의 개수
     [SerializeField] private GameObject roomPrefab;  // 방 프리팹
     [SerializeField] private int mapWidth;      // 맵의 가로 크기
@@ -14,9 +24,13 @@ public class RoomManager : MonoBehaviour
     // roomDoors의 키 : 방의 좌표값, 밸류 : 옆 방 방향 설정
     // 연결된 방 좌표 구하는 법 : 키(방의 좌표 값) + 밸류(옆 방 방향)
     private Dictionary<Vector2Int, List<Vector2Int>> roomDoors = new(); // 각 방의 문 정보
+    private Dictionary<Vector2Int, RoomType> roomTypes = new();
     private List<Vector2Int> createdRooms = new();   // 생성된 방들의 리스트
     private HashSet<Vector2Int> blockedPositions = new(); // 금지된 방 위치
     private List<Vector2Int> endRooms = new(); // 끝방 위치
+
+    [SerializeField]
+    private GameObject[] roomPrefaps;
 
     void Start()
     {
@@ -68,12 +82,20 @@ public class RoomManager : MonoBehaviour
         }
 
         PlaceSpeacialRoom();
+
+        foreach (var room in roomTypes)
+        {
+            Debug.Log($"키 : {room.Key}, 밸류 : {room.Value}");
+        }
+
+        GeneratePlayableRoom();
     }
 
     void GenerateMap()
     {
         Vector2Int startPosition = new Vector2Int(mapWidth / 2, mapHeight / 2);
         CreateRoom(startPosition);
+        roomTypes[startPosition] = RoomType.START;
 
         int maxAttempts = roomAmount * 10; // 안전 장치: 시도 횟수 제한
         int attempts = 0;
@@ -86,6 +108,7 @@ public class RoomManager : MonoBehaviour
             if (newRoomPos != Vector2Int.zero)
             {
                 CreateRoom(newRoomPos);
+                
             }
         }
 
@@ -97,7 +120,9 @@ public class RoomManager : MonoBehaviour
 
     void CreateRoom(Vector2Int position)
     {
+        // Instantiate 부분은 추후에 삭제(디버깅용)
         GameObject room = Instantiate(roomPrefab, new Vector3(position.x-mapWidth/2, position.y-mapHeight/2, 0), Quaternion.identity);
+        roomTypes.Add(position, RoomType.NORMAL);
         room.name = $"Room ({position.x}, {position.y})";
         roomArray[position.x, position.y] = room;
 
@@ -268,14 +293,17 @@ public class RoomManager : MonoBehaviour
         }
 
         var furthestRoom = endRoomDistance.Aggregate((maxRoom, nextRoom) => nextRoom.Value > maxRoom.Value ? nextRoom : maxRoom).Key;
-        Debug.Log(furthestRoom);
+        roomTypes[furthestRoom] = RoomType.BOSS;
+        Debug.Log($"보스 : {furthestRoom}");
         tempEndRooms.Remove(furthestRoom);
 
         int random = Random.Range(0, tempEndRooms.Count);
+        roomTypes[tempEndRooms[random]] = RoomType.TREASURE;
         Debug.Log($"보물방 : {tempEndRooms[random]}");
         tempEndRooms.Remove(tempEndRooms[random]);
 
         random = Random.Range(0, tempEndRooms.Count);
+        roomTypes[tempEndRooms[random]] = RoomType.SHOP;
         Debug.Log($"상점 : {tempEndRooms[random]}");
         tempEndRooms.Remove(tempEndRooms[random]);
     }
@@ -308,7 +336,41 @@ public class RoomManager : MonoBehaviour
         createdRooms.Clear();
         roomDoors.Clear();
         blockedPositions.Clear();
+        roomTypes.Clear();
         roomArray = new GameObject[mapWidth, mapHeight];
 
+    }
+
+    private void GeneratePlayableRoom()
+    {
+        GameObject prefab = null;
+        //실제 플레이 가능 한 방을 생성
+        foreach (var room in roomTypes)
+        {
+            // 임시로 방 타입으로 만 나눔, 추후엔 일반방 여러개 두고 랜덤으로 뽑을 예정
+            switch (room.Value)
+            {
+                case RoomType.START:
+                    prefab = roomPrefaps[0];
+                    break;
+                case RoomType.NORMAL:
+                    prefab = roomPrefaps[1];
+                    break;
+                case RoomType.TREASURE:
+                    prefab = roomPrefaps[2];
+                    break;
+                case RoomType.SHOP:
+                    prefab = roomPrefaps[3];
+                    break;
+                case RoomType.BOSS:
+                    prefab = roomPrefaps[4];
+                    break;
+            }
+            GameObject tempRoom = Instantiate(prefab);
+            Vector2Int pos = room.Key;
+            tempRoom.GetComponent<Room>().IntializeRoomData(pos, roomDoors[pos]);
+            tempRoom.name = $"Room ({room.Key.x}, {room.Key.y})";
+            tempRoom.transform.position = new Vector3((room.Key.x - mapWidth / 2) * 30, (room.Key.y - mapHeight/2) * 30, 0);
+        }
     }
 }

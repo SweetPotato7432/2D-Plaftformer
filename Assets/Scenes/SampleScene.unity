@@ -388,6 +388,12 @@ MonoBehaviour:
   roomPrefab: {fileID: 3890470569323477192, guid: 6928a467704a91349ae4d233f678c70b, type: 3}
   mapWidth: 20
   mapHeight: 20
+  roomPrefaps:
+  - {fileID: 1257641521911862345, guid: 3ddaccf75e4ef5548b4940ad1f93240d, type: 3}
+  - {fileID: 1257641521911862345, guid: efdafc6097b897644b9241a2970557ba, type: 3}
+  - {fileID: 545696991532507695, guid: 0928a41ceef441d47809123886d12c55, type: 3}
+  - {fileID: 6031170642940584524, guid: 9c8e31da8a215824c90122dd8a8803d5, type: 3}
+  - {fileID: 545696991532507695, guid: 0dcbdcf7293688f4db986ebbe97d265d, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
