@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class RoomManager : MonoBehaviour
 {
@@ -20,11 +19,12 @@ public class RoomManager : MonoBehaviour
     [SerializeField] private int mapWidth;      // 맵의 가로 크기
     [SerializeField] private int mapHeight;     // 맵의 세로 크기
 
-    private GameObject[,] roomArray;                 // 방들을 저장할 배열
+    //private GameObject[,] roomArray;                 // 방Prefap들을 저장할 배열(디버그용)
     // roomDoors의 키 : 방의 좌표값, 밸류 : 옆 방 방향 설정
     // 연결된 방 좌표 구하는 법 : 키(방의 좌표 값) + 밸류(옆 방 방향)
     private Dictionary<Vector2Int, List<Vector2Int>> roomDoors = new(); // 각 방의 문 정보
     private Dictionary<Vector2Int, RoomType> roomTypes = new();
+    private Dictionary<Vector2Int, int> roomDistances = new(); // 각 방들이 시작 방으로부터 얼마나 떨어져 있는지
     private List<Vector2Int> createdRooms = new();   // 생성된 방들의 리스트
     private HashSet<Vector2Int> blockedPositions = new(); // 금지된 방 위치
     private List<Vector2Int> endRooms = new(); // 끝방 위치
@@ -34,7 +34,8 @@ public class RoomManager : MonoBehaviour
 
     void Start()
     {
-        roomArray = new GameObject[mapWidth, mapHeight];
+        //roomArray = new GameObject[mapWidth, mapHeight];
+
         while (createdRooms.Count < roomAmount)
         {
             ResetMap();
@@ -83,7 +84,7 @@ public class RoomManager : MonoBehaviour
 
         PlaceSpeacialRoom();
 
-        foreach (var room in roomTypes)
+        foreach (var room in roomDistances)
         {
             Debug.Log($"키 : {room.Key}, 밸류 : {room.Value}");
         }
@@ -121,41 +122,46 @@ public class RoomManager : MonoBehaviour
     void CreateRoom(Vector2Int position)
     {
         // Instantiate 부분은 추후에 삭제(디버깅용)
-        GameObject room = Instantiate(roomPrefab, new Vector3(position.x-mapWidth/2, position.y-mapHeight/2, 0), Quaternion.identity);
+        //GameObject room = Instantiate(roomPrefab, new Vector3(position.x - mapWidth / 2, position.y - mapHeight / 2, 0), Quaternion.identity);
+        //room.name = $"Room ({position.x}, {position.y})";
+        //roomArray[position.x, position.y] = room;
+
+        int distance = 0;
+
         roomTypes.Add(position, RoomType.NORMAL);
-        room.name = $"Room ({position.x}, {position.y})";
-        roomArray[position.x, position.y] = room;
+        createdRooms.Add(position);
+
 
         List<Vector2Int> doors = new List<Vector2Int>();
         Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-
+        
+        // 각 
         foreach (var direction in directions)
         {
             Vector2Int adjacentPos = position + direction;
-            if (createdRooms.Contains(adjacentPos))
+            if (createdRooms.Contains(adjacentPos)) // 방향에 방이 존재한다면
             {
+                
                 doors.Add(direction);
                 // 양방향 문 연결 보장
-                if (IsValidRoomPosition(adjacentPos) && roomArray[adjacentPos.x, adjacentPos.y] != null)
+                if (IsValidRoomPosition(adjacentPos))
                 {
                     if (!roomDoors[adjacentPos].Contains(-direction))
                     {
                         roomDoors[adjacentPos].Add(-direction);
                     }
+                }
+                // 시작방 에서 부터의 거리 저장
+                if (roomDistances[adjacentPos] >= distance)
+                {
+                    distance = roomDistances[adjacentPos]+1;
                 }
             }
             else if (!blockedPositions.Contains(adjacentPos) && Random.Range(0f, 1f) < 0.5f) // 방이 막혔는지 확인, 50%의 확률로 생성
             {
                 doors.Add(direction);
 
-                // 양방향 문 연결 보장
-                if (IsValidRoomPosition(adjacentPos) && roomArray[adjacentPos.x, adjacentPos.y] != null)
-                {
-                    if (!roomDoors[adjacentPos].Contains(-direction))
-                    {
-                        roomDoors[adjacentPos].Add(-direction);
-                    }
-                }
+                // 양방향 문 연결은 새롭게 생긴 방에서만 시도한다. 상대 방에도 연결을 해주니 문제 없음, 내 방에만 문 생성
             }
             else
             {
@@ -164,7 +170,8 @@ public class RoomManager : MonoBehaviour
         }
 
         roomDoors[position] = doors;
-        createdRooms.Add(position);
+        roomDistances[position] = distance;
+        
     }
 
     // 퍼뜨릴수 있는 문 기준으로 방을 생성
@@ -178,7 +185,7 @@ public class RoomManager : MonoBehaviour
         {
             Vector2Int newRoomPos = selectedRoom + direction;
 
-            if (IsValidRoomPosition(newRoomPos) && roomArray[newRoomPos.x, newRoomPos.y] == null && !blockedPositions.Contains(newRoomPos))
+            if (IsValidRoomPosition(newRoomPos) && !createdRooms.Contains(newRoomPos)/*roomArray[newRoomPos.x, newRoomPos.y] == null*/ && !blockedPositions.Contains(newRoomPos))
             {
                 candidates.Add(newRoomPos);
             }
@@ -215,7 +222,7 @@ public class RoomManager : MonoBehaviour
                 Vector2Int adjacentPosition = room + doorDirection;
 
                 // 연결된 방이 없거나 유효하지 않은 경우
-                if (!IsValidRoomPosition(adjacentPosition) || roomArray[adjacentPosition.x, adjacentPosition.y] == null)
+                if (!IsValidRoomPosition(adjacentPosition) || !createdRooms.Contains(adjacentPosition)/*roomArray[adjacentPosition.x, adjacentPosition.y] == null*/)
                 {
                     doorsToRemove.Add(doorDirection);
                 }
@@ -287,7 +294,7 @@ public class RoomManager : MonoBehaviour
         Dictionary<Vector2Int, int> endRoomDistance = new Dictionary<Vector2Int, int>();
         foreach (var room in tempEndRooms)
         {
-            int distance = Mathf.Abs(room.x - mapWidth / 2) + Mathf.Abs(room.y - mapHeight / 2);
+            int distance = roomDistances[room];
 
             endRoomDistance.Add(room, distance);
         }
@@ -327,17 +334,18 @@ public class RoomManager : MonoBehaviour
 
     private void ResetMap()
     {
-        foreach (var roomPos in createdRooms)
-        {
-            Destroy(roomArray[roomPos.x, roomPos.y]);
-        }
+        //foreach (var roomPos in createdRooms)
+        //{
+        //    Destroy(roomArray[roomPos.x, roomPos.y]);
+        //}
+        //roomArray = new GameObject[mapWidth, mapHeight];
 
         // 데이터 초기화
         createdRooms.Clear();
         roomDoors.Clear();
         blockedPositions.Clear();
         roomTypes.Clear();
-        roomArray = new GameObject[mapWidth, mapHeight];
+
 
     }
 
@@ -370,7 +378,7 @@ public class RoomManager : MonoBehaviour
             Vector2Int pos = room.Key;
             tempRoom.GetComponent<Room>().IntializeRoomData(pos, roomDoors[pos]);
             tempRoom.name = $"Room ({room.Key.x}, {room.Key.y})";
-            tempRoom.transform.position = new Vector3((room.Key.x - mapWidth / 2) * 30, (room.Key.y - mapHeight/2) * 30, 0);
+            tempRoom.transform.position = new Vector3((room.Key.x - mapWidth / 2) * 90, (room.Key.y - mapHeight/2) * 90, 0);
         }
     }
 }
