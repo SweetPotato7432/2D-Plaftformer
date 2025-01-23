@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class CSVLoading
 {
@@ -7,10 +8,10 @@ public class CSVLoading
     // string 리스트를 리스트로
     private List<List<string>> csvData = new List<List<string>>();
 
+    InputField InputField;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
 
         //// TextAsset : 
         //// csv파일을 불러오고 있을시

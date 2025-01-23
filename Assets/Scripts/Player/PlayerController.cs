@@ -18,10 +18,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     bool isGround;
 
-    
-
     private void Awake()
     {
+
         body = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
