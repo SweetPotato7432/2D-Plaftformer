@@ -1,3 +1,4 @@
+using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,9 +15,21 @@ public class PlayerController : MonoBehaviour
 
     [Header("Jump")]
     [SerializeField]
-    private float jumpPower;
+    private float jumpForce;
+    
     [SerializeField]
     bool isGround;
+    [SerializeField]
+    bool islongJump;
+    [SerializeField]
+    bool isJumping;
+    [SerializeField]
+    int maxJumpCount = 2;
+    int currentJumpCount = 0;
+
+
+    [SerializeField]
+    float currentJumpForce = 0f;
 
     private void Awake()
     {
@@ -25,9 +38,43 @@ public class PlayerController : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    private void Update()
+    {
+        ////점프 중단 체크
+        //if (!isGround && isJumping)
+        //{
+        //    StopJump();
+        //}
+    }
+
     private void FixedUpdate()
     {
-        body.linearVelocityX = inputValue * speed;
+        // 이동
+        //body.linearVelocityX = inputValue * speed * Time.fixedDeltaTime;
+        // 이동 처리 (AddForce로 벽에서의 이동 개선)
+        if (!isJumping) // 땅에 있을 때만 기본 이동 처리
+        {
+            //body.linearVelocityX = inputValue * speed * Time.fixedDeltaTime;
+            body.AddForce(new Vector2(inputValue * speed * Time.fixedDeltaTime, 0), ForceMode2D.Force);
+
+        }
+        else // 점프 중에는 다른 이동 처리
+        {
+            body.AddForce(new Vector2(inputValue * speed * Time.fixedDeltaTime, 0), ForceMode2D.Force);
+        }
+
+
+        // 중력 체크
+        // 점프 높낮이 체크 용
+        if (islongJump && body.linearVelocityY > 0)
+        {
+            body.gravityScale = 5f;
+        }
+        else
+        {
+            body.gravityScale = 9.8f;
+        }
+
     }
 
     private void LateUpdate()
@@ -45,17 +92,51 @@ public class PlayerController : MonoBehaviour
 
     private void OnJump(InputValue value)
     {
-        if (isGround)
+        if (value.isPressed)
         {
-            body.AddForceY(jumpPower, ForceMode2D.Impulse);
+            if (currentJumpCount > 0)
+            {
+                if (!isJumping && isGround)
+                {
+                    // 점프 시작
+                    body.linearVelocityY = jumpForce;
+                    //body.AddForceY(jumpForce, ForceMode2D.Impulse);
+                    isJumping = true;
+                    islongJump = true;
+                    currentJumpCount--;
+                }
+                else
+                {
+                    // 점프 시작
+                    body.linearVelocityY = jumpForce;
+                    //body.AddForceY(jumpForce, ForceMode2D.Impulse);
+                    islongJump = true;
+                    currentJumpCount--;
+
+                }
+            }
+            
+        }
+        else
+        {
+            Debug.Log("t");
+
+            islongJump = false;
+            isJumping = false;
         }
     }
+
+
+
+
 
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Ground"))
         {
+            
             isGround = true;
+            currentJumpCount = maxJumpCount;
         }
     }
 
@@ -64,6 +145,7 @@ public class PlayerController : MonoBehaviour
         if (collision.CompareTag("Ground"))
         {
             isGround = false;
+            
         }
     }
 
