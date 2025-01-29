@@ -8827,7 +8827,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81ee468f5c525a340a1f299842f3244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 1000
+  speed: 10
   jumpForce: 35
   isGround: 0
   islongJump: 0
@@ -8917,7 +8917,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
+  m_LinearDamping: 1
   m_AngularDamping: 0.05
   m_GravityScale: 9.8
   m_Material: {fileID: 0}
@@ -8929,7 +8929,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!61 &1440400704
 BoxCollider2D:
@@ -9042,7 +9042,7 @@ CapsuleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: -1.16}
-  m_Size: {x: 1.5, y: 1.7}
+  m_Size: {x: 1.5, y: 1.68}
   m_Direction: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

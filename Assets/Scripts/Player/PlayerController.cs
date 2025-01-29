@@ -1,4 +1,3 @@
-using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -50,19 +49,16 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         // 이동
-        //body.linearVelocityX = inputValue * speed * Time.fixedDeltaTime;
+        if (inputValue != 0f)
+        {
+            body.linearVelocityX = inputValue * speed * 100 * Time.fixedDeltaTime;
+        }
+        else
+        {
+            body.linearVelocityX = 0f;
+        }
         // 이동 처리 (AddForce로 벽에서의 이동 개선)
-        if (!isJumping) // 땅에 있을 때만 기본 이동 처리
-        {
-            //body.linearVelocityX = inputValue * speed * Time.fixedDeltaTime;
-            body.AddForce(new Vector2(inputValue * speed * Time.fixedDeltaTime, 0), ForceMode2D.Force);
-
-        }
-        else // 점프 중에는 다른 이동 처리
-        {
-            body.AddForce(new Vector2(inputValue * speed * Time.fixedDeltaTime, 0), ForceMode2D.Force);
-        }
-
+        //body.AddForce(new Vector2(inputValue * speed * Time.fixedDeltaTime * 100, 0), ForceMode2D.Force);
 
         // 중력 체크
         // 점프 높낮이 체크 용
@@ -88,6 +84,8 @@ public class PlayerController : MonoBehaviour
     private void OnMove(InputValue value)
     {
         inputValue = value.Get<Vector2>().x;
+
+
     }
 
     private void OnJump(InputValue value)
