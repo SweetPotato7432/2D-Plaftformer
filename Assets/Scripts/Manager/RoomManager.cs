@@ -378,7 +378,7 @@ public class RoomManager : MonoBehaviour
             Vector2Int pos = room.Key;
             tempRoom.GetComponent<Room>().IntializeRoomData(pos, roomDoors[pos]);
             tempRoom.name = $"Room ({room.Key.x}, {room.Key.y})";
-            tempRoom.transform.position = new Vector3((room.Key.x - mapWidth / 2) * 90, (room.Key.y - mapHeight/2) * 90, 0);
+            tempRoom.transform.position = new Vector3((room.Key.x - mapWidth / 2) * 180, (room.Key.y - mapHeight/2) * 180, 0);
         }
     }
 }
