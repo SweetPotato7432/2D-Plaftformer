@@ -1,8 +1,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Controller2D))]
 public class PlayerController : MonoBehaviour
 {
+    Controller2D controller;
+    private void Start()
+    {
+        controller = GetComponent<Controller2D>();
+
+    }
+
+    /*
     Rigidbody2D body;
     //Animator anim;
     SpriteRenderer spriteRenderer;
@@ -146,5 +155,5 @@ public class PlayerController : MonoBehaviour
             
         }
     }
-
+    */
 }
