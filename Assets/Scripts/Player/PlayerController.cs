@@ -5,10 +5,35 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     Controller2D controller;
+
+    float moveSpeed = 6;
+    float gravity = -20;
+    Vector3 velocity;
+
+    Vector2 moveInput;
+    
+
     private void Start()
     {
         controller = GetComponent<Controller2D>();
 
+    }
+
+    private void FixedUpdate()
+    {
+        Vector2 input = new Vector2(moveInput.x, moveInput.y);
+
+        velocity.x = input.x*moveSpeed;
+
+        velocity.y += gravity * Time.fixedDeltaTime;
+        controller.Move(velocity * Time.fixedDeltaTime);
+
+
+    }
+
+    private void OnMove(InputValue value)
+    {
+        moveInput = value.Get<Vector2>();
     }
 
     /*
