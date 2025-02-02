@@ -15,6 +15,7 @@ public class Controller2D : MonoBehaviour
     BoxCollider2D collider;
     RaycastOrigins raycastOrigins;
 
+    public CollisionInfo collisions;
 
 
     private void Start()
@@ -27,6 +28,7 @@ public class Controller2D : MonoBehaviour
     public void Move(Vector3 velocity)
     {
         UpdateRaycastOrigins();
+        collisions.Reset();// 충돌 확인 리셋
 
         if(velocity.x != 0)
         {
@@ -38,6 +40,34 @@ public class Controller2D : MonoBehaviour
         }
 
         transform.Translate(velocity);
+    }
+
+    // 수평 Collsion체크
+    void HorizontalCollision(ref Vector3 velocity)
+    {
+        float directionX = Mathf.Sign(velocity.x);
+        float rayLength = Mathf.Abs(velocity.x) + skinWidth;
+
+
+        for (int i = 0; i < horizontalRayCount; i++)
+        {
+            // 캐릭터가 점프 or 낙하 중일때 raycast가 시작될 부분 설정
+            Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
+            rayOrigin += Vector2.up * (horizontalRaySpacing * i);
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, collisionMask);
+
+            Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength, Color.red);
+
+            //무언가 충돌
+            if (hit)
+            {
+                velocity.x = (hit.distance - skinWidth) * directionX;
+                rayLength = hit.distance;
+
+                collisions.left = directionX == -1;
+                collisions.right = directionX == 1;
+            }
+        }
     }
 
     // 수직 Collsion체크
@@ -56,38 +86,18 @@ public class Controller2D : MonoBehaviour
 
             Debug.DrawRay(rayOrigin, Vector2.up*directionY*rayLength, Color.red);
 
+            // 무언가 충돌
             if (hit)
             {
                 velocity.y = (hit.distance-skinWidth)*directionY;
                 rayLength = hit.distance;
 
+                collisions.below = directionY == -1;
+                collisions.above = directionY == 1;
             }
         }
     }
-    // 수평 Collsion체크
-    void HorizontalCollision(ref Vector3 velocity)
-    {
-        float directionX = Mathf.Sign(velocity.x);
-        float rayLength = Mathf.Abs(velocity.x) + skinWidth;
-
-
-        for (int i = 0; i < horizontalRayCount; i++)
-        {
-            // 캐릭터가 점프 or 낙하 중일때 raycast가 시작될 부분 설정
-            Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
-            rayOrigin += Vector2.up * (horizontalRaySpacing * i);
-            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, collisionMask);
-
-            Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength, Color.red);
-
-            if (hit)
-            {
-                velocity.x = (hit.distance - skinWidth) * directionX;
-                rayLength = hit.distance;
-
-            }
-        }
-    }
+    
 
     //Raycast추가를 위한 기준점 설정(상하좌우 꼭짓점)
     void UpdateRaycastOrigins()
@@ -119,5 +129,18 @@ public class Controller2D : MonoBehaviour
     {
         public Vector2 topLeft, topRight;
         public Vector2 bottomLeft, bottomRight;
+    }
+
+    // 충돌 위치 정보
+    public struct CollisionInfo
+    {
+        public bool above, below;
+        public bool left, right;
+
+        public void Reset()
+        {
+            above = below = false;
+            left = right = false;
+        }
     }
 }
