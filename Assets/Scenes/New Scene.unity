@@ -808,7 +808,7 @@ Transform:
   m_GameObject: {fileID: 1159692470}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.72, y: -5.16, z: 0}
+  m_LocalPosition: {x: 11.02, y: -3.24, z: 0}
   m_LocalScale: {x: 5.3967896, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -981,6 +981,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81ee468f5c525a340a1f299842f3244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  jumpHeight: 4
+  timeToJumpApex: 0.4
 --- !u!212 &1440400701
 SpriteRenderer:
   m_ObjectHideFlags: 0
