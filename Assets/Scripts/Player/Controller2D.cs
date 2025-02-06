@@ -16,7 +16,7 @@ public class Controller2D : RaycastController
 
     }
     //이동
-    public void Move(Vector3 velocity)
+    public void Move(Vector3 velocity, bool standingOnPlatform = false)
     {
         UpdateRaycastOrigins();
         collisions.Reset();// 충돌 확인 리셋
@@ -35,8 +35,14 @@ public class Controller2D : RaycastController
         {
             VerticalCollisions(ref velocity);
         }
+        
 
         transform.Translate(velocity);
+
+        if (standingOnPlatform)
+        {
+            collisions.below = true;
+        }
     }
 
     // 수평 Collsion체크
@@ -58,6 +64,13 @@ public class Controller2D : RaycastController
             //무언가 충돌
             if (hit)
             {
+                // 플레이어가 모종의 이유로 발판과의 거리가 0 일때(발판을 관통해 지나갈때)
+                // 발판을 통과하지 못하고 비정상적으로 이동하는것을 방지 하기위해 체크를 넘어감
+                if(hit.distance == 0)
+                {
+                    continue;
+                }
+
                 // 바닥과 충돌했을때, 경사로라면 경사로의 각도를 확인해야함
                 float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
                 if (i == 0 && slopeAngle <= maxClimbAngle) 

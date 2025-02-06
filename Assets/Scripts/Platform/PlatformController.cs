@@ -6,6 +6,9 @@ public class PlatformController : RaycastController
     public LayerMask passengerMask;
     public Vector3 move;
 
+    List<PassengerMovement> passengerMovement;
+    Dictionary<Transform, Controller2D> passengerDictionary = new Dictionary<Transform, Controller2D>();
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void Start()
     {
@@ -14,6 +17,8 @@ public class PlatformController : RaycastController
         // 플랫폼 크기에 비례해 레이 개수가 적다면 캐릭터가 밑으로 빠지거나 비정상적으로 행동하는 경우가 발생한다.
         // 따라서 플랫폼 크기에 비례해 레이개수를 동적으로 조절하여 이상현상을 최소화 시킨다.(최소 4개, 최대 15개)
         // 플랫폼 크기에 따라 레이 개수 동적으로 조절
+
+        // *중요!) 15개도 모자라는 경우가 생길수도 있으므로, 발판의 크기에 따라 최대치를 없애는 방향도 생각해볼것
         verticalRayCount = Mathf.Clamp((int)(collider.bounds.size.x * 5), 4, 15);
         horizontalRayCount = Mathf.Clamp((int)(collider.bounds.size.y * 5), 4, 15);
     }
@@ -25,14 +30,35 @@ public class PlatformController : RaycastController
 
         Vector3 velocity = move * Time.fixedDeltaTime;
 
-        MovePassengers(velocity);
+        CalculatePassengersMovement(velocity);
+
+        MovePassengers(true);
         transform.Translate(velocity);
+        MovePassengers(false);
     }
 
+    void MovePassengers(bool beforeMovePlatform)
+    {
+        foreach (PassengerMovement passenger in passengerMovement)
+        {
+            if (!passengerDictionary.ContainsKey(passenger.transform))    
+            {
+                passengerDictionary.Add(passenger.transform, passenger.transform.GetComponent<Controller2D>());
+            }
+            if(passenger.moveBeforePlatform == beforeMovePlatform)
+            {
+                Vector3 passengerVelocity = passenger.velocity;
+                passengerVelocity.y += (passenger.standingOnPlatform ? -skinWidth * 2 : 0); // 추가 보정
+                passengerDictionary[passenger.transform].Move(passenger.velocity, passenger.standingOnPlatform);
+            }
+        }
+    }
 
-    void MovePassengers(Vector3 velocity)
+    // 플랫폼에 타있는 승객 이동정보 계산
+    void CalculatePassengersMovement(Vector3 velocity)
     {
         HashSet<Transform> movedPassengers = new HashSet<Transform>();
+        passengerMovement = new List<PassengerMovement>();
 
         float directionX = Mathf.Sign(velocity.x);
         float directionY = Mathf.Sign(velocity.y);
@@ -59,7 +85,9 @@ public class PlatformController : RaycastController
                         float pushX = (directionY == 1) ? velocity.x : 0;
                         float pushY = velocity.y - (hit.distance - skinWidth) * directionY;
 
-                        hit.transform.Translate(new Vector3(pushX, pushY));
+                        //hit.transform.Translate(new Vector3(pushX, pushY));
+                        passengerMovement.Add(new PassengerMovement(hit.transform, new Vector3(pushX, pushY), directionY==1, true));
+
                     }
 
                 }
@@ -87,9 +115,11 @@ public class PlatformController : RaycastController
                         movedPassengers.Add(hit.transform);
 
                         float pushX = velocity.x - (hit.distance - skinWidth) * directionX;
-                        float pushY = 0;
+                        float pushY = -skinWidth;
 
-                        hit.transform.Translate(new Vector3(pushX, pushY));
+                        //hit.transform.Translate(new Vector3(pushX, pushY));
+
+                        passengerMovement.Add(new PassengerMovement(hit.transform, new Vector3(pushX, pushY), false, true));
                     }
 
                 }
@@ -114,11 +144,33 @@ public class PlatformController : RaycastController
                         float pushX = velocity.x;
                         float pushY = velocity.y;
 
-                        hit.transform.Translate(new Vector3(pushX, pushY));
+                        pushY -= (hit.distance - skinWidth);
+
+
+                        //hit.transform.Translate(new Vector3(pushX, pushY));
+
+                        passengerMovement.Add(new PassengerMovement(hit.transform, new Vector3(pushX, pushY), true, false));
+
                     }
                 }
             }
         }
 
+    }
+
+    struct PassengerMovement
+    {
+        public Transform transform;
+        public Vector3 velocity;
+        public bool standingOnPlatform;
+        public bool moveBeforePlatform;
+
+        public PassengerMovement(Transform _transform,Vector3 _velocity, bool _standingOnPlatform, bool _moveBeforePlatform)
+        {
+            transform = _transform;
+            velocity = _velocity;
+            standingOnPlatform = _standingOnPlatform;
+            moveBeforePlatform = _moveBeforePlatform;
+        }
     }
 }
