@@ -4,7 +4,25 @@ using UnityEngine;
 public class PlatformController : RaycastController
 {
     public LayerMask passengerMask;
-    public Vector3 move;
+    ////단순 이동
+    //public Vector3 move;
+
+    public Vector3[] localWaypoints;
+    Vector3[] globalWaypoints;
+
+    public float speed;
+    // 플랫폼 움직임 순환 여부
+    public bool cyclic;
+    // 플랫폼 정지 후 대기
+    public float waitTime;
+    [Range(0,2)]
+    public float easeAmount;
+
+    
+
+    int fromWaypointIndex;
+    float percentBetweenWaypoints; // 0~1
+    float nextMoveTime;
 
     List<PassengerMovement> passengerMovement;
     Dictionary<Transform, Controller2D> passengerDictionary = new Dictionary<Transform, Controller2D>();
@@ -12,15 +30,25 @@ public class PlatformController : RaycastController
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public override void Start()
     {
+        
+
         base.Start();
 
-        // 플랫폼 크기에 비례해 레이 개수가 적다면 캐릭터가 밑으로 빠지거나 비정상적으로 행동하는 경우가 발생한다.
-        // 따라서 플랫폼 크기에 비례해 레이개수를 동적으로 조절하여 이상현상을 최소화 시킨다.(최소 4개, 최대 15개)
-        // 플랫폼 크기에 따라 레이 개수 동적으로 조절
+        //// 플랫폼 크기에 비례해 레이 개수가 적다면 캐릭터가 밑으로 빠지거나 비정상적으로 행동하는 경우가 발생한다.
+        //// 따라서 플랫폼 크기에 비례해 레이개수를 동적으로 조절하여 이상현상을 최소화 시킨다.(최소 4개, 최대 15개)
+        //// 플랫폼 크기에 따라 레이 개수 동적으로 조절
 
-        // *중요!) 15개도 모자라는 경우가 생길수도 있으므로, 발판의 크기에 따라 최대치를 없애는 방향도 생각해볼것
-        verticalRayCount = Mathf.Clamp((int)(collider.bounds.size.x * 5), 4, 15);
-        horizontalRayCount = Mathf.Clamp((int)(collider.bounds.size.y * 5), 4, 15);
+        //// *중요!) 15개도 모자라는 경우가 생길수도 있으므로, 발판의 크기에 따라 최대치를 없애는 방향도 생각해볼것
+        //verticalRayCount = Mathf.Clamp((int)(collider.bounds.size.x * 5), 4, 15);
+        //horizontalRayCount = Mathf.Clamp((int)(collider.bounds.size.y * 5), 4, 15);
+        //// 레이의 개수를 다시 지정했으니 다시 한번 레이의 간격 설정
+        //CalculateRaySpacing();
+
+        globalWaypoints = new Vector3[localWaypoints.Length];
+        for(int i = 0; i<localWaypoints.Length; i++)
+        {
+            globalWaypoints[i] = localWaypoints[i] + transform.position;
+        }
     }
 
     // Update is called once per frame
@@ -28,13 +56,58 @@ public class PlatformController : RaycastController
     {
         UpdateRaycastOrigins();
 
-        Vector3 velocity = move * Time.fixedDeltaTime;
+        //Vector3 velocity = move * Time.fixedDeltaTime;
+        Vector3 velocity = CalculatePlatformMovement();
 
         CalculatePassengersMovement(velocity);
 
         MovePassengers(true);
         transform.Translate(velocity);
         MovePassengers(false);
+    }
+
+    float Ease(float x)
+    {
+        float a = easeAmount + 1;
+        return Mathf.Pow(x, a) / (Mathf.Pow(x, a) + Mathf.Pow(1 - x, a));
+    }
+
+    Vector3 CalculatePlatformMovement()
+    {
+        if (Time.time < nextMoveTime)
+        {
+            return Vector3.zero;
+        }
+
+        fromWaypointIndex %= globalWaypoints.Length;
+
+        int toWaypointIndex = (fromWaypointIndex + 1) % globalWaypoints.Length;
+        float distanceBetweenWaypoints = Vector3.Distance(globalWaypoints[fromWaypointIndex], globalWaypoints[toWaypointIndex]);
+        percentBetweenWaypoints += Time.fixedDeltaTime * speed/distanceBetweenWaypoints;
+        percentBetweenWaypoints = Mathf.Clamp01(percentBetweenWaypoints);
+        float easedPercentBetweenWayPoints = Ease(percentBetweenWaypoints);
+
+        Vector3 newPos = Vector3.Lerp(globalWaypoints[fromWaypointIndex],globalWaypoints[toWaypointIndex], easedPercentBetweenWayPoints);
+
+        if(percentBetweenWaypoints >= 1)
+        {
+            percentBetweenWaypoints = 0;
+            fromWaypointIndex++;
+
+            if (!cyclic)
+            {
+                if (fromWaypointIndex >= globalWaypoints.Length - 1)
+                {
+                    fromWaypointIndex = 0;
+                    // 배열을 모두 돌았으면 배열을 뒤집어서 다시 순환
+                    System.Array.Reverse(globalWaypoints);
+                }
+            }
+            nextMoveTime = Time.time+waitTime;
+            
+        }
+
+        return newPos-transform.position;
     }
 
     void MovePassengers(bool beforeMovePlatform)
@@ -76,6 +149,9 @@ public class PlatformController : RaycastController
                 rayOrigin += Vector2.right * (verticalRaySpacing * i);
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up * directionY, rayLength, passengerMask);
 
+                Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength, Color.red);
+
+
                 if (hit)
                 {
                     if (!movedPassengers.Contains(hit.transform))
@@ -108,6 +184,9 @@ public class PlatformController : RaycastController
                 rayOrigin += Vector2.up * (horizontalRaySpacing * i);
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, passengerMask);
 
+                Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength, Color.red);
+
+
                 if (hit)
                 {
                     if (!movedPassengers.Contains(hit.transform))
@@ -135,6 +214,9 @@ public class PlatformController : RaycastController
             {
                 Vector2 rayOrigin = raycastOrigins.topLeft + Vector2.right * (verticalRaySpacing * i);
                 RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.up, rayLength, passengerMask);
+
+                Debug.DrawRay(rayOrigin, Vector2.up * rayLength, Color.red);
+
 
                 if (hit)
                 {
@@ -171,6 +253,23 @@ public class PlatformController : RaycastController
             velocity = _velocity;
             standingOnPlatform = _standingOnPlatform;
             moveBeforePlatform = _moveBeforePlatform;
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if(localWaypoints != null)
+        {
+            Gizmos.color = Color.red;
+            float size = .3f;
+
+            for(int i = 0; i < localWaypoints.Length; i++)
+            {
+                Vector3 globalWaypointPos = (Application.isPlaying) ? globalWaypoints[i] : localWaypoints[i] + transform.position;
+                Gizmos.DrawLine(globalWaypointPos-Vector3.up*size, globalWaypointPos+Vector3.up*size);
+                Gizmos.DrawLine(globalWaypointPos - Vector3.left * size, globalWaypointPos + Vector3.left * size);
+
+            }
         }
     }
 }

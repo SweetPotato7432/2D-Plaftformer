@@ -1575,7 +1575,13 @@ MonoBehaviour:
   passengerMask:
     serializedVersion: 2
     m_Bits: 256
-  move: {x: 0, y: 0, z: 0}
+  localWaypoints:
+  - {x: 0, y: -8, z: 0}
+  - {x: 9.86, y: -8, z: 0}
+  - {x: 9.86, y: -2.2, z: 0}
+  speed: 7.76
+  cyclic: 0
+  waitTime: 1
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

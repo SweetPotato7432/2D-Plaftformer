@@ -20,7 +20,18 @@ public class RaycastController : MonoBehaviour
 
     public virtual void Start()
     {
+
+
         collider = GetComponent<BoxCollider2D>();
+
+        // 플랫폼 크기에 비례해 레이 개수가 적다면 캐릭터가 밑으로 빠지거나 비정상적으로 행동하는 경우가 발생한다.
+        // 따라서 플랫폼 크기에 비례해 레이개수를 동적으로 조절하여 이상현상을 최소화 시킨다.(최소 4개, 최대 15개)
+        // 플랫폼 크기에 따라 레이 개수 동적으로 조절
+
+        // *중요!) 15개도 모자라는 경우가 생길수도 있으므로, 발판의 크기에 따라 최대치를 없애는 방향도 생각해볼것
+        verticalRayCount = Mathf.Clamp((int)(collider.bounds.size.x * 5), 4, 15);
+        horizontalRayCount = Mathf.Clamp((int)(collider.bounds.size.y * 5), 4, 15);
+
         CalculateRaySpacing();
     }
 
