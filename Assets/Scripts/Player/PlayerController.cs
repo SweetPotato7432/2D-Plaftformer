@@ -7,14 +7,16 @@ public class PlayerController : MonoBehaviour
     Controller2D controller;
 
 
-    public float jumpHeight = 4;
+    public float maxJumpHeight = 4;
+    public float minJumpHeight = 1;
     public float timeToJumpApex = .4f;
     float accelarationTimeAirborne = .2f;
     float accelarationTimeGrounded = .1f;
     float moveSpeed = 12;
 
     float gravity;
-    float jumpVelocity;
+    float maxJumpVelocity;
+    float minJumpVelocity;
     Vector3 velocity;
     float velocityXSmoothing;
 
@@ -27,25 +29,29 @@ public class PlayerController : MonoBehaviour
     {
         controller = GetComponent<Controller2D>();
 
-        gravity = -(2*jumpHeight)/Mathf.Pow(timeToJumpApex, 2);
-        jumpVelocity = Mathf.Abs(gravity)*timeToJumpApex;
-        Debug.Log($"Gravity :{gravity}, JumpVelocity : {jumpVelocity}");
+        gravity = -(2*maxJumpHeight)/Mathf.Pow(timeToJumpApex, 2);
+        maxJumpVelocity = Mathf.Abs(gravity)*timeToJumpApex;
+        minJumpVelocity = Mathf.Sqrt(2*Mathf.Abs(gravity)*minJumpHeight);
+        Debug.Log($"Gravity :{gravity}, JumpVelocity : {maxJumpVelocity}");
 
     }
 
     private void FixedUpdate()
     {
-        // 중력 초기화
-        if (controller.collisions.above || controller.collisions.below)
-        {
-            velocity.y = 0;
-        }
+
 
         Vector2 input = new Vector2(moveInput.x, moveInput.y);
 
         if (isJump && controller.collisions.below)
         {
-            velocity.y = jumpVelocity;
+            velocity.y = maxJumpVelocity;
+        }
+        if (!isJump)
+        {
+            if (velocity.y > minJumpVelocity)
+            {
+                velocity.y = minJumpVelocity;
+            }
         }
 
         // 가속 및 감속 부분
@@ -55,9 +61,13 @@ public class PlayerController : MonoBehaviour
         //velocity.x = input.x*moveSpeed;
 
         velocity.y += gravity * Time.fixedDeltaTime;
-        controller.Move(velocity * Time.fixedDeltaTime);
+        controller.Move(velocity * Time.fixedDeltaTime,input);
 
-
+        // 중력 초기화
+        if (controller.collisions.above || controller.collisions.below)
+        {
+            velocity.y = 0;
+        }
     }
 
     private void OnMove(InputValue value)

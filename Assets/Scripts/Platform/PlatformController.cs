@@ -152,7 +152,7 @@ public class PlatformController : RaycastController
                 Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength, Color.red);
 
 
-                if (hit)
+                if (hit&&hit.distance !=0)
                 {
                     if (!movedPassengers.Contains(hit.transform))
                     {
@@ -187,7 +187,7 @@ public class PlatformController : RaycastController
                 Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength, Color.red);
 
 
-                if (hit)
+                if (hit && hit.distance != 0)
                 {
                     if (!movedPassengers.Contains(hit.transform))
                     {
@@ -218,7 +218,7 @@ public class PlatformController : RaycastController
                 Debug.DrawRay(rayOrigin, Vector2.up * rayLength, Color.red);
 
 
-                if (hit)
+                if (hit && hit.distance != 0)
                 {
                     if (!movedPassengers.Contains(hit.transform))
                     {

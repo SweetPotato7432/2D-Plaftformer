@@ -9,6 +9,8 @@ public class Controller2D : RaycastController
 
     public CollisionInfo collisions;
 
+    Vector2 playerInput;
+
 
     public override void Start()
     {
@@ -16,10 +18,17 @@ public class Controller2D : RaycastController
 
     }
     //이동
-    public void Move(Vector3 velocity, bool standingOnPlatform = false)
+    public void Move(Vector3 velocity, bool standingOnPlatform)
+    {
+        Move(velocity,Vector2.zero, standingOnPlatform);
+    }
+
+    public void Move(Vector3 velocity,Vector2 input, bool standingOnPlatform = false)
     {
         UpdateRaycastOrigins();
         collisions.Reset();// 충돌 확인 리셋
+
+        playerInput = input;
 
         collisions.velocityOld = velocity;
 
@@ -48,6 +57,8 @@ public class Controller2D : RaycastController
     // 수평 Collsion체크
     void HorizontalCollisions(ref Vector3 velocity)
     {
+        float directionY = Mathf.Sign(velocity.y);
+
         float directionX = Mathf.Sign(velocity.x);
         float rayLength = Mathf.Abs(velocity.x) + skinWidth;
 
@@ -64,9 +75,19 @@ public class Controller2D : RaycastController
             //무언가 충돌
             if (hit)
             {
+                // Through태그를 가진 오브젝트와 충돌시 이동 제한 해제
+                if (hit.collider.tag == "Through")
+                {
+                    if (directionY == 1 || hit.distance == 0)
+                    {
+                        continue;
+                    }
+                    
+                }
+
                 // 플레이어가 모종의 이유로 발판과의 거리가 0 일때(발판을 관통해 지나갈때)
                 // 발판을 통과하지 못하고 비정상적으로 이동하는것을 방지 하기위해 체크를 넘어감
-                if(hit.distance == 0)
+                if (hit.distance == 0)
                 {
                     continue;
                 }
@@ -135,6 +156,28 @@ public class Controller2D : RaycastController
             // 무언가 충돌
             if (hit)
             {
+                //Through태그를 가진 오브젝트와 충돌시 이동 제한 해제
+                if(hit.collider.tag == "Through")
+                {
+                    if(directionY == 1 || hit.distance ==0)
+                    {
+                        continue;
+                    }
+                    if (collisions.fallingThroughPlatform)
+                    {
+                        continue;
+                    }
+                    // 아래키 누르면 하향 점프
+                    if (playerInput.y == -1)
+                    {
+                        collisions.fallingThroughPlatform = true;
+
+                        Invoke("ResetFallingThroughPlatform", 0.5f);
+                        continue;
+                    }
+                }
+
+                // 속도 제한, 사물 못 뚫음
                 velocity.y = (hit.distance-skinWidth)*directionY;
                 rayLength = hit.distance;
 
@@ -230,6 +273,11 @@ public class Controller2D : RaycastController
         }
     }
 
+    void ResetFallingThroughPlatform()
+    {
+        collisions.fallingThroughPlatform = false;
+    }
+
 
 
 
@@ -243,6 +291,7 @@ public class Controller2D : RaycastController
         public bool descendingSlope;
         public float slopeAngle,slopeAngleOld;
         public Vector3 velocityOld;
+        public bool fallingThroughPlatform;
 
         public void Reset()
         {

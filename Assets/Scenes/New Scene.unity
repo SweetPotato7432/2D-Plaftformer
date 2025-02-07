@@ -981,7 +981,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81ee468f5c525a340a1f299842f3244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpHeight: 4
+  maxJumpHeight: 4
+  minJumpHeight: 1
   timeToJumpApex: 0.4
 --- !u!212 &1440400701
 SpriteRenderer:
@@ -1431,7 +1432,7 @@ GameObject:
   - component: {fileID: 2052066419}
   m_Layer: 6
   m_Name: movingPlatform
-  m_TagString: Untagged
+  m_TagString: Through
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1582,6 +1583,7 @@ MonoBehaviour:
   speed: 7.76
   cyclic: 0
   waitTime: 1
+  easeAmount: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
