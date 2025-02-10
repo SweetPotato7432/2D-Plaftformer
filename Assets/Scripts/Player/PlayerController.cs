@@ -23,7 +23,8 @@ public class PlayerController : MonoBehaviour
     Vector2 moveInput;
 
     bool isJump = false;
-    
+    public bool isDownJump = false;
+
 
     private void Start()
     {
@@ -61,7 +62,7 @@ public class PlayerController : MonoBehaviour
         //velocity.x = input.x*moveSpeed;
 
         velocity.y += gravity * Time.fixedDeltaTime;
-        controller.Move(velocity * Time.fixedDeltaTime,input);
+        controller.Move(velocity * Time.fixedDeltaTime,input,isDownJump);
 
         // 중력 초기화
         if (controller.collisions.above || controller.collisions.below)
@@ -79,14 +80,21 @@ public class PlayerController : MonoBehaviour
     {
         if (value.isPressed)
         {
-            isJump = true;
+            if (moveInput.y == -1)
+            {
+                isDownJump = true;
+            }
+            else
+            {
+                isJump = true;
+            }
         }
         else
         {
             isJump = false;
+            isDownJump = false;
         }
     }
-
 
     
 }

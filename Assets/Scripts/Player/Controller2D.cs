@@ -11,6 +11,8 @@ public class Controller2D : RaycastController
 
     Vector2 playerInput;
 
+    bool isDownJump = false;
+
 
     public override void Start()
     {
@@ -20,15 +22,16 @@ public class Controller2D : RaycastController
     //이동
     public void Move(Vector3 velocity, bool standingOnPlatform)
     {
-        Move(velocity,Vector2.zero, standingOnPlatform);
+        Move(velocity,Vector2.zero,false, standingOnPlatform);
     }
 
-    public void Move(Vector3 velocity,Vector2 input, bool standingOnPlatform = false)
+    public void Move(Vector3 velocity,Vector2 input,bool isDownJump, bool standingOnPlatform = false)
     {
         UpdateRaycastOrigins();
         collisions.Reset();// 충돌 확인 리셋
 
         playerInput = input;
+        this.isDownJump = isDownJump;
 
         collisions.velocityOld = velocity;
 
@@ -52,6 +55,8 @@ public class Controller2D : RaycastController
         {
             collisions.below = true;
         }
+
+        Debug.Log(collisions.fallingThroughPlatform);
     }
 
     // 수평 Collsion체크
@@ -168,7 +173,7 @@ public class Controller2D : RaycastController
                         continue;
                     }
                     // 아래키 누르면 하향 점프
-                    if (playerInput.y == -1)
+                    if (isDownJump&&playerInput.y == -1)
                     {
                         collisions.fallingThroughPlatform = true;
 
