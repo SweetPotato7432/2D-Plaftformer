@@ -9,7 +9,7 @@ public class Controller2D : RaycastController
 
     public CollisionInfo collisions;
 
-    Vector2 playerInput;
+    public Vector2 playerInput;
 
     bool isDownJump = false;
 
@@ -56,7 +56,7 @@ public class Controller2D : RaycastController
             collisions.below = true;
         }
 
-        Debug.Log(collisions.fallingThroughPlatform);
+        //Debug.Log(collisions.fallingThroughPlatform);
     }
 
     // 수평 Collsion체크

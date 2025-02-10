@@ -18,7 +18,7 @@ public class RaycastController : MonoBehaviour
     public BoxCollider2D collider;
     public RaycastOrigins raycastOrigins;
 
-    public virtual void Start()
+    public virtual void Awake()
     {
 
 
@@ -32,6 +32,11 @@ public class RaycastController : MonoBehaviour
         verticalRayCount = Mathf.Clamp((int)(collider.bounds.size.x * 5), 4, 15);
         horizontalRayCount = Mathf.Clamp((int)(collider.bounds.size.y * 5), 4, 15);
 
+
+    }
+
+    public virtual void Start()
+    {
         CalculateRaySpacing();
     }
 
