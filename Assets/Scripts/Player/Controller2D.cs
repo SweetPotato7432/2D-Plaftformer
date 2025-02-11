@@ -113,7 +113,7 @@ public class Controller2D : RaycastController
                         distanceToSlopeStart = hit.distance-skinWidth;
                         moveAmount.x -= distanceToSlopeStart * directionX;
                     }
-                    ClimbSlope(ref moveAmount,slopeAngle);
+                    ClimbSlope(ref moveAmount,slopeAngle,hit.normal);
                     moveAmount.x += distanceToSlopeStart * directionX;
 
                     //Debug.Log(slopeAngle);
@@ -216,11 +216,13 @@ public class Controller2D : RaycastController
                 {
                     moveAmount.x = (hit.distance - skinWidth) * directionX;
                     collisions.slopeAngle = slopeAngle;
+                    collisions.slopeNormal = hit.normal;
+
                 }
             }
         }
     }
-    private void ClimbSlope(ref Vector2 moveAmount, float slopeAngle)
+    private void ClimbSlope(ref Vector2 moveAmount, float slopeAngle,Vector2 slopeNormal)
     {
         // 경사로의 각도에 따라 x,y의 이동 속도를 변환 시켜 주어야함
         // y이동거리 = 경사로 이동거리 * sin(경사각도)
@@ -238,41 +240,77 @@ public class Controller2D : RaycastController
             collisions.below = true;
             collisions.climbingSlope = true;
             collisions.slopeAngle = slopeAngle;
+
+            collisions.slopeNormal =slopeNormal;
+
         }
         //else
         //{
         //    Debug.Log("jumping on slope");
         //}
-        
 
-        
+
+
     }
 
     private void DescendSlope(ref Vector2 moveAmount)
     {
-        float directionX = Mathf.Sign(moveAmount.x);
-        Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomRight : raycastOrigins.bottomLeft;
-        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, -Vector2.up, Mathf.Infinity, collisionMask);
+        RaycastHit2D maxSlopehitLeft = Physics2D.Raycast(raycastOrigins.bottomLeft, Vector2.down, Mathf.Abs(moveAmount.y) + skinWidth, collisionMask);
+        RaycastHit2D maxSlopehitRight = Physics2D.Raycast(raycastOrigins.bottomRight, Vector2.down, Mathf.Abs(moveAmount.y) + skinWidth, collisionMask);
 
-        if (hit)
+        if (maxSlopehitLeft ^ maxSlopehitRight)
         {
-            float slopeAngle = Vector2.Angle(hit.normal,Vector2.up);
-            if (slopeAngle != 0 && slopeAngle <= maxSlopeAngle)
-            {
-                if (Mathf.Sign(hit.normal.x) == directionX)
-                {
-                    if (hit.distance - skinWidth <= Mathf.Tan(slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(moveAmount.x))
-                    {
-                        float moveDistance = Mathf.Abs(moveAmount.x);
-                        float desendmoveAmountY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
-                        moveAmount.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(moveAmount.x);
-                        moveAmount.y -= desendmoveAmountY;
+            SlideDownMaxSlope(maxSlopehitLeft, ref moveAmount);
+            SlideDownMaxSlope(maxSlopehitRight, ref moveAmount);
+        }
 
-                        collisions.slopeAngle = slopeAngle;
-                        collisions.descendingSlope = true;
-                        collisions.below = true;
+        if (!collisions.slidingDownMaxSlope)
+        {
+            float directionX = Mathf.Sign(moveAmount.x);
+            Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomRight : raycastOrigins.bottomLeft;
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, -Vector2.up, Mathf.Infinity, collisionMask);
+
+            if (hit)
+            {
+                float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+                if (slopeAngle != 0 && slopeAngle <= maxSlopeAngle)
+                {
+                    if (Mathf.Sign(hit.normal.x) == directionX)
+                    {
+                        if (hit.distance - skinWidth <= Mathf.Tan(slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(moveAmount.x))
+                        {
+                            float moveDistance = Mathf.Abs(moveAmount.x);
+                            float desendmoveAmountY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
+                            moveAmount.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(moveAmount.x);
+                            moveAmount.y -= desendmoveAmountY;
+
+                            collisions.slopeAngle = slopeAngle;
+                            collisions.descendingSlope = true;
+                            collisions.below = true;
+
+                            collisions.slopeNormal = hit.normal;
+
+                        }
                     }
                 }
+            }
+        }
+
+        
+    }
+
+    void SlideDownMaxSlope(RaycastHit2D hit, ref Vector2 moveAmount)
+    {
+        if (hit)
+        {
+            float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+            if (slopeAngle > maxSlopeAngle)
+            {
+                moveAmount.x = hit.normal.x*(Mathf.Abs(moveAmount.y)-hit.distance)/Mathf.Tan(slopeAngle*Mathf.Deg2Rad);
+
+                collisions.slopeAngle = slopeAngle;
+                collisions.slidingDownMaxSlope = true;
+                collisions.slopeNormal = hit.normal;
             }
         }
     }
@@ -293,7 +331,10 @@ public class Controller2D : RaycastController
 
         public bool climbingSlope;
         public bool descendingSlope;
+        public bool slidingDownMaxSlope;
+
         public float slopeAngle,slopeAngleOld;
+        public Vector2 slopeNormal;
         public Vector2 moveAmountOld;
         public bool fallingThroughPlatform;
 
@@ -303,6 +344,9 @@ public class Controller2D : RaycastController
             left = right = false;
             climbingSlope = false;
             descendingSlope = false;
+            slidingDownMaxSlope = false;
+            slopeNormal = Vector2.zero;
+
             slopeAngleOld = slopeAngle;
             slopeAngle = 0;
         }

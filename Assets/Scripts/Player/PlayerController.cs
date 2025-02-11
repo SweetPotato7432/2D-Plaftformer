@@ -45,7 +45,14 @@ public class PlayerController : MonoBehaviour
         // 중력 초기화
         if (controller.collisions.above || controller.collisions.below)
         {
-            velocity.y = 0;
+            if (controller.collisions.slidingDownMaxSlope)
+            {
+                velocity.y += controller.collisions.slopeNormal.y*-gravity*Time.fixedDeltaTime;
+            }
+            else
+            {
+                velocity.y = 0;
+            }
         }
     }
 
@@ -60,7 +67,20 @@ public class PlayerController : MonoBehaviour
 
         if (controller.collisions.below)
         {
-            velocity.y = maxJumpVelocity;
+            if (controller.collisions.slidingDownMaxSlope)
+            {
+                
+                if(directionalInput.x != -Mathf.Sign(controller.collisions.slopeNormal.x))
+                {// 오를 수 없는 경사로에서 점프 불가능
+                    velocity.y = maxJumpVelocity * controller.collisions.slopeNormal.y;
+                    velocity.x = maxJumpVelocity * controller.collisions.slopeNormal.x;
+                }
+            }
+            else
+            {
+                velocity.y = maxJumpVelocity;
+
+            }
         }
     }
 
