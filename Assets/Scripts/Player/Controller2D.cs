@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Controller2D : RaycastController
 {
-    float maxClimbAngle = 80; // 오를 수 있는 최대 경사로
-    float maxDesendAngle = 80;
+    public float maxSlopeAngle = 80; // 오를 수 있는 최대 경사로
 
     public CollisionInfo collisions;
 
@@ -20,12 +19,12 @@ public class Controller2D : RaycastController
 
     }
     //이동
-    public void Move(Vector3 velocity, bool standingOnPlatform)
+    public void Move(Vector2 moveAmount, bool standingOnPlatform)
     {
-        Move(velocity,Vector2.zero,false, standingOnPlatform);
+        Move(moveAmount,Vector2.zero,false, standingOnPlatform);
     }
 
-    public void Move(Vector3 velocity,Vector2 input,bool isDownJump, bool standingOnPlatform = false)
+    public void Move(Vector2 moveAmount,Vector2 input,bool isDownJump, bool standingOnPlatform = false)
     {
         UpdateRaycastOrigins();
         collisions.Reset();// 충돌 확인 리셋
@@ -33,23 +32,23 @@ public class Controller2D : RaycastController
         playerInput = input;
         this.isDownJump = isDownJump;
 
-        collisions.velocityOld = velocity;
+        collisions.moveAmountOld = moveAmount;
 
-        if (velocity.y < 0)
+        if (moveAmount.y < 0)
         {
-            DescendSlope(ref velocity);
+            DescendSlope(ref moveAmount);
         }
-        if(velocity.x != 0)
+        if(moveAmount.x != 0)
         {
-            HorizontalCollisions(ref velocity);
+            HorizontalCollisions(ref moveAmount);
         }
-        if (velocity.y != 0)
+        if (moveAmount.y != 0)
         {
-            VerticalCollisions(ref velocity);
+            VerticalCollisions(ref moveAmount);
         }
         
 
-        transform.Translate(velocity);
+        transform.Translate(moveAmount);
 
         if (standingOnPlatform)
         {
@@ -60,12 +59,12 @@ public class Controller2D : RaycastController
     }
 
     // 수평 Collsion체크
-    void HorizontalCollisions(ref Vector3 velocity)
+    void HorizontalCollisions(ref Vector2 moveAmount)
     {
-        float directionY = Mathf.Sign(velocity.y);
+        float directionY = Mathf.Sign(moveAmount.y);
 
-        float directionX = Mathf.Sign(velocity.x);
-        float rayLength = Mathf.Abs(velocity.x) + skinWidth;
+        float directionX = Mathf.Sign(moveAmount.x);
+        float rayLength = Mathf.Abs(moveAmount.x) + skinWidth;
 
 
         for (int i = 0; i < horizontalRayCount; i++)
@@ -75,7 +74,7 @@ public class Controller2D : RaycastController
             rayOrigin += Vector2.up * (horizontalRaySpacing * i);
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, collisionMask);
 
-            Debug.DrawRay(rayOrigin, Vector2.right * directionX * rayLength, Color.red);
+            Debug.DrawRay(rayOrigin, Vector2.right * directionX /* * rayLength*/, Color.red);
 
             //무언가 충돌
             if (hit)
@@ -99,64 +98,64 @@ public class Controller2D : RaycastController
 
                 // 바닥과 충돌했을때, 경사로라면 경사로의 각도를 확인해야함
                 float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
-                if (i == 0 && slopeAngle <= maxClimbAngle) 
+                if (i == 0 && slopeAngle <= maxSlopeAngle) 
                 {
                     // 경사로를 오르는 것과 내려가는것을 동시에 작동해, 속도가 어색해지는것을 방지
                     if (collisions.descendingSlope)
                     {
                         collisions.descendingSlope = false;
-                        velocity = collisions.velocityOld;
+                        moveAmount = collisions.moveAmountOld;
                     }
                     // 경사로를 탈때 간격이 벌어지는 문제 수정 및 다른 각도로 변환 될때 자연스럽게 함
                     float distanceToSlopeStart = 0;
                     if (slopeAngle != collisions.slopeAngleOld) 
                     {
                         distanceToSlopeStart = hit.distance-skinWidth;
-                        velocity.x -= distanceToSlopeStart * directionX;
+                        moveAmount.x -= distanceToSlopeStart * directionX;
                     }
-                    ClimbSlope(ref velocity,slopeAngle);
-                    velocity.x += distanceToSlopeStart * directionX;
+                    ClimbSlope(ref moveAmount,slopeAngle);
+                    moveAmount.x += distanceToSlopeStart * directionX;
 
                     //Debug.Log(slopeAngle);
                 }
 
                 // 경사로를 오르지 않을때 작동
-                if (!collisions.climbingSlope || slopeAngle > maxClimbAngle)
+                if (!collisions.climbingSlope || slopeAngle > maxSlopeAngle)
                 {
-                    velocity.x = (hit.distance - skinWidth) * directionX;
+                    moveAmount.x = (hit.distance - skinWidth) * directionX;
                     rayLength = hit.distance;
 
                     if (collisions.climbingSlope)
                     {
                         // 경사로 이동 중에  수평으로 장애물을 만남
                         // 이동거리로 수직 이동속도를 계산하지 못하므로 경사각을 이용해 확인
-                        velocity.y = Mathf.Tan(collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(velocity.x);
+                        moveAmount.y = Mathf.Tan(collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(moveAmount.x);
                     }
 
                     collisions.left = directionX == -1;
                     collisions.right = directionX == 1;
                 }
             }
-        }
+        }   
     }
 
     
 
     // 수직 Collsion체크
-    void VerticalCollisions(ref Vector3 velocity)
+    void VerticalCollisions(ref Vector2 moveAmount)
     {
-        float directionY = Mathf.Sign(velocity.y);
-        float rayLength = Mathf.Abs(velocity.y) + skinWidth;
+        float directionY = Mathf.Sign(moveAmount.y);
+        float rayLength = Mathf.Abs(moveAmount.y) + skinWidth;
 
 
         for (int i = 0; i < verticalRayCount; i++)
         {
             // 캐릭터가 점프 or 낙하 중일때 raycast가 시작될 부분 설정
             Vector2 rayOrigin = (directionY == -1)?raycastOrigins.bottomLeft:raycastOrigins.topLeft;
-            rayOrigin += Vector2.right * (verticalRaySpacing * i + velocity.x);
+            rayOrigin += Vector2.right * (verticalRaySpacing * i + moveAmount.x);
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin,Vector2.up*directionY,rayLength,collisionMask);
 
-            Debug.DrawRay(rayOrigin, Vector2.up*directionY*rayLength, Color.red);
+            Debug.DrawRay(rayOrigin, Vector2.up*directionY/* *rayLength*/, Color.red);
 
             // 무언가 충돌
             if (hit)
@@ -183,14 +182,14 @@ public class Controller2D : RaycastController
                 }
 
                 // 속도 제한, 사물 못 뚫음
-                velocity.y = (hit.distance-skinWidth)*directionY;
+                moveAmount.y = (hit.distance-skinWidth)*directionY;
                 rayLength = hit.distance;
 
                 if (collisions.climbingSlope)
                 {
                     // 경사로 이동 중에  수직으로 장애물을 만남
                     // x이동속도 = y이동 속도 / tan(경사각도)
-                    velocity.x = velocity.y/Mathf.Tan(collisions.slopeAngle*Mathf.Deg2Rad)*Mathf.Sign(velocity.x);
+                    moveAmount.x = moveAmount.y/Mathf.Tan(collisions.slopeAngle*Mathf.Deg2Rad)*Mathf.Sign(moveAmount.x);
                 }
 
                 collisions.below = directionY == -1;
@@ -203,9 +202,9 @@ public class Controller2D : RaycastController
         // 1프레임에 경사로를 이동했을때, 이동할 위치에 경사로의 각도가 변경되었는지 확인
         if (collisions.climbingSlope)
         {
-            float directionX = Mathf.Sign(velocity.x);
-            rayLength = Mathf.Abs(velocity.x) + skinWidth;
-            Vector2 rayOrigin = ((directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight) + Vector2.up * velocity.y;
+            float directionX = Mathf.Sign(moveAmount.x);
+            rayLength = Mathf.Abs(moveAmount.x) + skinWidth;
+            Vector2 rayOrigin = ((directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight) + Vector2.up * moveAmount.y;
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin,Vector2.right*directionX,rayLength,collisionMask);
 
             //Debug.DrawRay(rayOrigin, Vector2.up * directionY * rayLength, Color.yellow);
@@ -215,26 +214,26 @@ public class Controller2D : RaycastController
                 float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
                 if (slopeAngle != collisions.slopeAngle)
                 {
-                    velocity.x = (hit.distance - skinWidth) * directionX;
+                    moveAmount.x = (hit.distance - skinWidth) * directionX;
                     collisions.slopeAngle = slopeAngle;
                 }
             }
         }
     }
-    private void ClimbSlope(ref Vector3 velocity, float slopeAngle)
+    private void ClimbSlope(ref Vector2 moveAmount, float slopeAngle)
     {
         // 경사로의 각도에 따라 x,y의 이동 속도를 변환 시켜 주어야함
         // y이동거리 = 경사로 이동거리 * sin(경사각도)
         // x이동거리 = 경사로 이동거리 * cos(경사각도)
 
         //Mathf.Deg2Rad : 각도를 라디안으로 변환
-        float moveDistance = Mathf.Abs(velocity.x);
-        float climbVelocityY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
+        float moveDistance = Mathf.Abs(moveAmount.x);
+        float climbmoveAmountY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
 
-        if (velocity.y <= climbVelocityY)
+        if (moveAmount.y <= climbmoveAmountY)
         {
-            velocity.y = climbVelocityY;
-            velocity.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(velocity.x);
+            moveAmount.y = climbmoveAmountY;
+            moveAmount.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(moveAmount.x);
             // 점프를 위해 하단 충돌 판정을 켜줌
             collisions.below = true;
             collisions.climbingSlope = true;
@@ -249,25 +248,25 @@ public class Controller2D : RaycastController
         
     }
 
-    private void DescendSlope(ref Vector3 velocity)
+    private void DescendSlope(ref Vector2 moveAmount)
     {
-        float directionX = Mathf.Sign(velocity.x);
+        float directionX = Mathf.Sign(moveAmount.x);
         Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomRight : raycastOrigins.bottomLeft;
         RaycastHit2D hit = Physics2D.Raycast(rayOrigin, -Vector2.up, Mathf.Infinity, collisionMask);
 
         if (hit)
         {
             float slopeAngle = Vector2.Angle(hit.normal,Vector2.up);
-            if (slopeAngle != 0 && slopeAngle <= maxDesendAngle)
+            if (slopeAngle != 0 && slopeAngle <= maxSlopeAngle)
             {
                 if (Mathf.Sign(hit.normal.x) == directionX)
                 {
-                    if (hit.distance - skinWidth <= Mathf.Tan(slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(velocity.x))
+                    if (hit.distance - skinWidth <= Mathf.Tan(slopeAngle * Mathf.Deg2Rad) * Mathf.Abs(moveAmount.x))
                     {
-                        float moveDistance = Mathf.Abs(velocity.x);
-                        float desendVelocityY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
-                        velocity.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(velocity.x);
-                        velocity.y -= desendVelocityY;
+                        float moveDistance = Mathf.Abs(moveAmount.x);
+                        float desendmoveAmountY = Mathf.Sin(slopeAngle * Mathf.Deg2Rad) * moveDistance;
+                        moveAmount.x = Mathf.Cos(slopeAngle * Mathf.Deg2Rad) * moveDistance * Mathf.Sign(moveAmount.x);
+                        moveAmount.y -= desendmoveAmountY;
 
                         collisions.slopeAngle = slopeAngle;
                         collisions.descendingSlope = true;
@@ -295,7 +294,7 @@ public class Controller2D : RaycastController
         public bool climbingSlope;
         public bool descendingSlope;
         public float slopeAngle,slopeAngleOld;
-        public Vector3 velocityOld;
+        public Vector2 moveAmountOld;
         public bool fallingThroughPlatform;
 
         public void Reset()

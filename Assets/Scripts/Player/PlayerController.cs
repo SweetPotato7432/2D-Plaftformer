@@ -20,10 +20,9 @@ public class PlayerController : MonoBehaviour
     Vector3 velocity;
     float velocityXSmoothing;
 
-    Vector2 moveInput;
+    bool isDownJump = false;
 
-    bool isJump = false;
-    public bool isDownJump = false;
+    Vector2 directionalInput;
 
 
     private void Start()
@@ -36,33 +35,12 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"Gravity :{gravity}, JumpVelocity : {maxJumpVelocity}");
 
     }
-
     private void FixedUpdate()
     {
 
-
-        Vector2 input = new Vector2(moveInput.x, moveInput.y);
-
-        if (isJump && controller.collisions.below)
-        {
-            velocity.y = maxJumpVelocity;
-        }
-        if (!isJump)
-        {
-            if (velocity.y > minJumpVelocity)
-            {
-                velocity.y = minJumpVelocity;
-            }
-        }
-
         // 가속 및 감속 부분
-        float targetVelocityX = input.x * moveSpeed;
-        velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below)?accelarationTimeGrounded: accelarationTimeAirborne);
-
-        //velocity.x = input.x*moveSpeed;
-
-        velocity.y += gravity * Time.fixedDeltaTime;
-        controller.Move(velocity * Time.fixedDeltaTime,input,isDownJump);
+        CalculateVelocity();
+        controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
 
         // 중력 초기화
         if (controller.collisions.above || controller.collisions.below)
@@ -71,30 +49,40 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnMove(InputValue value)
+    public void SetDirectionalInput(Vector2 input)
     {
-        moveInput = value.Get<Vector2>();
+        directionalInput = input;
     }
 
-    private void OnJump(InputValue value)
+    public void OnJumpInputDown(bool isJump, bool isDownJump)
     {
-        if (value.isPressed)
+        this.isDownJump = isDownJump;
+
+        if (controller.collisions.below)
         {
-            if (moveInput.y == -1)
-            {
-                isDownJump = true;
-            }
-            else
-            {
-                isJump = true;
-            }
-        }
-        else
-        {
-            isJump = false;
-            isDownJump = false;
+            velocity.y = maxJumpVelocity;
         }
     }
 
+    public void OnJumpInputUp(bool isJump, bool isDownJump)
+    {
+        this.isDownJump = isDownJump;
+
+        if (velocity.y > minJumpVelocity)
+        {
+            velocity.y = minJumpVelocity;
+        }
+    }
+
+
+
+
+    void CalculateVelocity()
+    {
+        float targetVelocityX = directionalInput.x * moveSpeed;
+        velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? accelarationTimeGrounded : accelarationTimeAirborne);
+
+        velocity.y += gravity * Time.fixedDeltaTime;
+    }
     
 }
