@@ -57,6 +57,39 @@ public class Controller2D : RaycastController
 
         //Debug.Log(collisions.fallingThroughPlatform);
     }
+    public void Dash(Vector2 moveAmount,Vector2 input, bool standingOnPlatform = false)
+    {
+        UpdateRaycastOrigins();
+        collisions.Reset();// 충돌 확인 리셋
+
+        playerInput = input;
+
+        collisions.moveAmountOld = moveAmount;
+
+        if (moveAmount.y < 0)
+        {
+            DescendSlope(ref moveAmount);
+        }
+        if(moveAmount.x != 0)
+        {
+            HorizontalCollisions(ref moveAmount);
+        }
+        if (moveAmount.y != 0)
+        {
+            VerticalCollisions(ref moveAmount);
+        }
+        
+        
+
+        transform.Translate(moveAmount);
+
+        if (standingOnPlatform)
+        {
+            collisions.below = true;
+        }
+
+        //Debug.Log(collisions.fallingThroughPlatform);
+    }
 
     // 수평 Collsion체크
     void HorizontalCollisions(ref Vector2 moveAmount)
@@ -155,7 +188,7 @@ public class Controller2D : RaycastController
             rayOrigin += Vector2.right * (verticalRaySpacing * i + moveAmount.x);
             RaycastHit2D hit = Physics2D.Raycast(rayOrigin,Vector2.up*directionY,rayLength,collisionMask);
 
-            Debug.DrawRay(rayOrigin, Vector2.up*directionY/* *rayLength*/, Color.red);
+            Debug.DrawRay(rayOrigin, Vector2.up*directionY *rayLength, Color.red);
 
             // 무언가 충돌
             if (hit)

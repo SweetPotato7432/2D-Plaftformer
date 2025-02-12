@@ -982,6 +982,7 @@ GameObject:
   - component: {fileID: 1440400707}
   - component: {fileID: 1440400699}
   - component: {fileID: 1440400709}
+  - component: {fileID: 1440400710}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -1004,6 +1005,9 @@ MonoBehaviour:
   maxJumpHeight: 4
   minJumpHeight: 1
   timeToJumpApex: 0.3
+  dashDistance: 7
+  timeToDashApex: 0.1
+  currentJumpCount: 0
 --- !u!212 &1440400701
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1185,6 +1189,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDownJump: 0
+--- !u!114 &1440400710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1440400698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c859259534114544e9d3aa6a79f39ed9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ghostDelay: 0.02
+  ghost: {fileID: 2444082209999948782, guid: 4bbabfb3d917dcf439cd5f8bb3c266eb, type: 3}
+  makeGhost: 0
 --- !u!1 &1614080474
 GameObject:
   m_ObjectHideFlags: 0

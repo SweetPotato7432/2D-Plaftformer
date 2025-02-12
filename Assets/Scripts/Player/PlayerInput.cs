@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR;
+using System.Collections;
+
 
 [RequireComponent (typeof (PlayerController))]
 public class PlayerInput : MonoBehaviour
@@ -9,9 +10,12 @@ public class PlayerInput : MonoBehaviour
 
     Vector2 moveInput;
 
+    bool canDash = true;
 
     bool isJump = false;
     public bool isDownJump = false;
+
+    Vector2 directionalInput;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -22,17 +26,17 @@ public class PlayerInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector2 directionalInput = new Vector2(moveInput.x, moveInput.y);
+        directionalInput = new Vector2(moveInput.x, moveInput.y);
         player.SetDirectionalInput (directionalInput);
 
-        if (isJump)
-        {
-            player.OnJumpInputDown(isJump,isDownJump);
-        }
-        if (!isJump)
-        {
-            player.OnJumpInputUp(isJump,isDownJump);
-        }
+        //if (isJump)
+        //{
+        //    player.OnJumpInputDown(isJump,isDownJump);
+        //}
+        //if (!isJump)
+        //{
+        //    player.OnJumpInputUp(isJump,isDownJump);
+        //}
 
     }
 
@@ -53,13 +57,40 @@ public class PlayerInput : MonoBehaviour
             {
                 isJump = true;
             }
+            player.OnJumpInputDown(isJump, isDownJump);
+
         }
         else
         {
             isJump = false;
             isDownJump = false;
+            player.OnJumpInputUp(isJump, isDownJump);
+
         }
     }
+
+    private void OnDash(InputValue value)
+    {
+        if (value.isPressed&&canDash && directionalInput.x !=0)
+        {
+            player.OnDashInputDown();
+            StartCoroutine("DashCoolTime");
+        }
+        else
+        {
+
+        }
+    }
+
+    IEnumerator DashCoolTime()
+    {
+        canDash = false;
+
+        yield return new WaitForSeconds(0.5f);
+
+        canDash = true;
+    }
+
 
 
 }
