@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine;
 public class Ghost : MonoBehaviour
 {
     public float ghostDistance = 0.5f; // 잔상을 생성할 최소 이동 거리
-    public GameObject ghost;
+
     public bool makeGhost;
 
     private Vector3 lastGhostPosition; // 마지막 잔상이 생성된 위치
@@ -31,9 +32,18 @@ public class Ghost : MonoBehaviour
 
     void CreateGhost()
     {
-        GameObject currentGhost = Instantiate(ghost, transform.position, transform.rotation);
+        GameObject currentGhost = GhostPoolManager.Instance.GetGhost();
+        currentGhost.transform.position = transform.position;
         currentGhost.transform.localScale = transform.localScale;
         currentGhost.GetComponent<SpriteRenderer>().sprite = GetComponent<SpriteRenderer>().sprite;
-        Destroy(currentGhost, 1f);
+        currentGhost.SetActive(true);
+        StartCoroutine(SetDisableGhost(currentGhost));
+    }
+
+    IEnumerator SetDisableGhost(GameObject ghost)
+    {
+        yield return new WaitForSeconds(1f);
+        GhostPoolManager.Instance.ReturnGhost(ghost);
+        ghost.SetActive(false);
     }
 }
