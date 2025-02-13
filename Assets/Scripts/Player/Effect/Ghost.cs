@@ -42,7 +42,7 @@ public class Ghost : MonoBehaviour
 
     IEnumerator SetDisableGhost(GameObject ghost)
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.3f);
         GhostPoolManager.Instance.ReturnGhost(ghost);
         ghost.SetActive(false);
     }

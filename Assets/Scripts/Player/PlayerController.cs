@@ -31,7 +31,7 @@ public class PlayerController : MonoBehaviour
     Vector3 velocity;
     float velocityXSmoothing;
 
-    bool isDownJump = false;
+    public bool isDownJump = false;
     bool isDashing = false;
 
     Vector2 directionalInput;
@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour
     {
         this.isDownJump = isDownJump;
 
-        if (currentJumpCount < maxJumpCount)
+        if (!isDownJump&&currentJumpCount < maxJumpCount)
         {
             if (controller.collisions.below)
             {

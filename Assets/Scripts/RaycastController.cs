@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider2D))]
+
 public class RaycastController : MonoBehaviour
 {
     public const float skinWidth = .015f;

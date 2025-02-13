@@ -32,6 +32,7 @@ public class CameraFollow : MonoBehaviour
     public void Start()
     {
         focusArea = new FocusArea(target.collider.bounds,focusAreaSize);
+        transform.position = focusArea.center + Vector2.up * verticalOffset;
     }
 
     private void FixedUpdate()

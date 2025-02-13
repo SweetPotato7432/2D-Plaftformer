@@ -57,6 +57,7 @@ public class PlatformController : RaycastController
         UpdateRaycastOrigins();
 
         //Vector3 velocity = move * Time.fixedDeltaTime;
+
         Vector3 velocity = CalculatePlatformMovement();
 
         CalculatePassengersMovement(velocity);
@@ -64,6 +65,7 @@ public class PlatformController : RaycastController
         MovePassengers(true);
         transform.Translate(velocity);
         MovePassengers(false);
+
     }
 
     float Ease(float x)
