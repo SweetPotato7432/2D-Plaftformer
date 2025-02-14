@@ -36,18 +36,25 @@ public class Room : MonoBehaviour
             if (door == directions[0])
             {
                 doorObj[0].DoorActive(true);
+                doorObj[0].SetDestination(roomPos + door);
             }
             else if (door == directions[1])
             {
                 doorObj[1].DoorActive(true);
+                doorObj[1].SetDestination(roomPos + door);
+
             }
             else if(door == directions[2])
             {
                 doorObj[2].DoorActive(true);
+                doorObj[2].SetDestination(roomPos + door);
+
             }
             else if (door == directions[3])
             {
                 doorObj[3].DoorActive(true);
+                doorObj[3].SetDestination(roomPos + door);
+
             }
         }
     }

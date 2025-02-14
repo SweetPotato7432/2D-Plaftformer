@@ -909,6 +909,22 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8515439095467478783, guid: ce25fbbf66662164eb04eba0b93da0d7, type: 3}
+      propertyPath: localWaypoints.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8515439095467478783, guid: ce25fbbf66662164eb04eba0b93da0d7, type: 3}
+      propertyPath: localWaypoints.Array.data[1].x
+      value: -5.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8515439095467478783, guid: ce25fbbf66662164eb04eba0b93da0d7, type: 3}
+      propertyPath: localWaypoints.Array.data[2].x
+      value: -5.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8515439095467478783, guid: ce25fbbf66662164eb04eba0b93da0d7, type: 3}
+      propertyPath: localWaypoints.Array.data[2].y
+      value: -3.59
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

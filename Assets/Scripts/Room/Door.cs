@@ -7,6 +7,13 @@ public class Door : MonoBehaviour
     [SerializeField]
     GameObject wall;
 
+    [SerializeField]
+    BoxCollider2D teleportPoint;
+
+    Vector2 destination;
+
+    
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -32,6 +39,21 @@ public class Door : MonoBehaviour
                 door.SetActive(false);
                 wall.SetActive(true);
                 break;
+        }
+    }
+
+    public void SetDestination(Vector2 destination)
+    {
+        this.destination = destination;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // 방이동 로직
+            Debug.Log(destination);
+            
         }
     }
 }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlatformController : TilemapRaycastController
+public class PlatformController : RaycastController
 {
     public LayerMask passengerMask;
     ////단순 이동
