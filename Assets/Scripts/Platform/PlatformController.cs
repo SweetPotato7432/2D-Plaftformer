@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlatformController : RaycastController
+public class PlatformController : TilemapRaycastController
 {
     public LayerMask passengerMask;
     ////단순 이동
@@ -58,13 +58,17 @@ public class PlatformController : RaycastController
 
         //Vector3 velocity = move * Time.fixedDeltaTime;
 
-        Vector3 velocity = CalculatePlatformMovement();
+        if (localWaypoints.Length > 0)
+        {
+            Vector3 velocity = CalculatePlatformMovement();
 
-        CalculatePassengersMovement(velocity);
+            CalculatePassengersMovement(velocity);
 
-        MovePassengers(true);
-        transform.Translate(velocity);
-        MovePassengers(false);
+            MovePassengers(true);
+            transform.Translate(velocity);
+            MovePassengers(false);
+        }
+
 
     }
 

@@ -1,8 +1,9 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
-[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(TilemapCollider2D))]
 
-public class RaycastController : MonoBehaviour
+public class TilemapRaycastController : MonoBehaviour
 {
     public const float skinWidth = .015f;
 
@@ -18,14 +19,14 @@ public class RaycastController : MonoBehaviour
     public float verticalRaySpacing;
 
     [HideInInspector]
-    public BoxCollider2D collider;
+    public TilemapCollider2D collider;
     public RaycastOrigins raycastOrigins;
 
     public virtual void Awake()
     {
 
 
-        collider = GetComponent<BoxCollider2D>();
+        collider = GetComponent<TilemapCollider2D>();
 
 
     }
@@ -35,7 +36,7 @@ public class RaycastController : MonoBehaviour
         CalculateRaySpacing();
     }
 
-    //Raycastì¶”ê°€ë¥¼ ìœ„í•œ ê¸°ì¤€ì  ì„¤ì •(ìƒí•˜ì¢Œìš° ê¼­ì§“ì )
+    //RaycastÃß°¡¸¦ À§ÇÑ ±âÁØÁ¡ ¼³Á¤(»óÇÏÁÂ¿ì ²ÀÁşÁ¡)
     public void UpdateRaycastOrigins()
     {
         Bounds bounds = collider.bounds;
@@ -49,7 +50,7 @@ public class RaycastController : MonoBehaviour
         raycastOrigins.topRight = new Vector2(bounds.max.x, bounds.max.y);
     }
 
-    // RayCast ì§€ì • ê°œìˆ˜ ë§Œí¼ ì¶”ê°€
+    // RayCast ÁöÁ¤ °³¼ö ¸¸Å­ Ãß°¡
     public void CalculateRaySpacing()
     {
         Bounds bounds = collider.bounds;
@@ -68,7 +69,7 @@ public class RaycastController : MonoBehaviour
 
     }
 
-    // Raycastê¸°ì¤€ ê¼­ì§“ì 
+    // Raycast±âÁØ ²ÀÁşÁ¡
     public struct RaycastOrigins
     {
         public Vector2 topLeft, topRight;
