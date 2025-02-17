@@ -15,7 +15,6 @@ public class RoomManager : MonoBehaviour
     }
 
     [SerializeField] private int roomAmount;    // 생성할 방의 개수
-    [SerializeField] private GameObject roomPrefab;  // 방 프리팹
     [SerializeField] private int mapWidth;      // 맵의 가로 크기
     [SerializeField] private int mapHeight;     // 맵의 세로 크기
 
@@ -28,6 +27,9 @@ public class RoomManager : MonoBehaviour
     private List<Vector2Int> createdRooms = new();   // 생성된 방들의 리스트
     private HashSet<Vector2Int> blockedPositions = new(); // 금지된 방 위치
     private List<Vector2Int> endRooms = new(); // 끝방 위치
+
+    [SerializeField]
+    private Dictionary<Vector2Int, Room> roomDic = new();
 
     [SerializeField]
     private GameObject[] roomPrefaps;
@@ -374,11 +376,20 @@ public class RoomManager : MonoBehaviour
                     prefab = roomPrefaps[4];
                     break;
             }
-            GameObject tempRoom = Instantiate(prefab);
+            Vector3 roomPos = new Vector3((room.Key.x - mapWidth / 2) * 180, (room.Key.y - mapHeight / 2) * 180, 0);
+            GameObject tempRoom = Instantiate(prefab,roomPos,Quaternion.identity);
             Vector2Int pos = room.Key;
-            tempRoom.GetComponent<Room>().IntializeRoomData(pos, roomDoors[pos]);
+            roomDic.Add(pos, tempRoom.GetComponent<Room>());
+            roomDic[pos].IntializeRoomData(pos, roomDoors[pos]);
+            
             tempRoom.name = $"Room ({room.Key.x}, {room.Key.y})";
-            tempRoom.transform.position = new Vector3((room.Key.x - mapWidth / 2) * 180, (room.Key.y - mapHeight/2) * 180, 0);
+            //tempRoom.transform.position = new Vector3((room.Key.x - mapWidth / 2) * 180, (room.Key.y - mapHeight/2) * 180, 0);
         }
+    }
+
+    public void setMoveRoomDestination(Vector2Int currentPos, Vector2Int destination)
+    {
+        roomDic[destination].SetMoveSpawn(currentPos, destination);
+        
     }
 }

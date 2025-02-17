@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5731958731927987068}
   - component: {fileID: 967748917302811275}
   m_Layer: 0
-  m_Name: Normal 1-1 1
+  m_Name: Normal 1-1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -64,6 +64,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6386066c1dfd8043ae057bffe8e2d6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
   roomPos: {x: 0, y: 0}
   doors: []
   doorObj:
@@ -71,6 +72,13 @@ MonoBehaviour:
   - {fileID: 6461322543915407121}
   - {fileID: 6363239662212207126}
   - {fileID: 7362053300680896294}
+  localSpawnpoints:
+  - {x: 26, y: 13, z: 0}
+  - {x: 26, y: 10, z: 0}
+  - {x: -25, y: -13, z: 0}
+  - {x: -28, y: -13, z: 0}
+  globalSpawnpoints: []
+  curSpawnpoints: {x: 0, y: 0, z: 0}
 --- !u!1 &2668045811663329269
 GameObject:
   m_ObjectHideFlags: 0

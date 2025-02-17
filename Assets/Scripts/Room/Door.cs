@@ -10,13 +10,15 @@ public class Door : MonoBehaviour
     [SerializeField]
     BoxCollider2D teleportPoint;
 
-    Vector2 destination;
+    Vector2Int roomPos;
+    Vector2Int destination;
 
-    
+    RoomManager roomManager;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+        roomManager = FindFirstObjectByType<RoomManager>();
         DoorActive(false);
     }
 
@@ -42,8 +44,9 @@ public class Door : MonoBehaviour
         }
     }
 
-    public void SetDestination(Vector2 destination)
+    public void InitializeDoor(Vector2Int roomPos,Vector2Int destination)
     {
+        this.roomPos = roomPos;
         this.destination = destination;
     }
 
@@ -53,7 +56,7 @@ public class Door : MonoBehaviour
         {
             // 방이동 로직
             Debug.Log(destination);
-            
+            roomManager.setMoveRoomDestination(roomPos, destination);
         }
     }
 }

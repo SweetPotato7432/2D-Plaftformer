@@ -471,7 +471,7 @@ GameObject:
   - component: {fileID: 1611731555}
   - component: {fileID: 1611731556}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: RoomManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -505,7 +505,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roomAmount: 10
-  roomPrefab: {fileID: 1257641521911862345, guid: 1b602fb76d32d4740826dab2fc9469a3, type: 3}
   mapWidth: 20
   mapHeight: 20
   roomPrefaps:
@@ -833,9 +832,9 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 329395130}
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 1611731555}
   - {fileID: 1801621544}
   - {fileID: 1002058109}
-  - {fileID: 329395130}
