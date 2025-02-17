@@ -87,19 +87,19 @@ public class Room : MonoBehaviour
 
         if (roomDir == directions[0])
         {
-            curSpawnpoints = globalSpawnpoints[0];
+            curSpawnpoints = globalSpawnpoints[2];
         }
         else if(roomDir == directions[1])
         {
-            curSpawnpoints = globalSpawnpoints[1];
+            curSpawnpoints = globalSpawnpoints[3];
         }
         else if(roomDir == directions[2])
         {
-            curSpawnpoints = globalSpawnpoints[2];
+            curSpawnpoints = globalSpawnpoints[0];
         }
         else if(roomDir == directions[3])
         {
-            curSpawnpoints = globalSpawnpoints[3];
+            curSpawnpoints = globalSpawnpoints[1];
         }
 
         gameManager.PlayerMoveRoom(curSpawnpoints);
