@@ -8803,11 +8803,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3674656092177228776, guid: 2a969f90e90f2974f89c436473ddd2d6, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4176027807755240074, guid: 2a969f90e90f2974f89c436473ddd2d6, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6576338436226519688, guid: 2a969f90e90f2974f89c436473ddd2d6, type: 3}
       propertyPath: m_LocalPosition.x
