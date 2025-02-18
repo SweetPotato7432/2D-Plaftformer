@@ -12,6 +12,8 @@ public class PlayerInput : MonoBehaviour
 
     bool canDash = true;
 
+    bool canDownJump = true;
+
     bool isJump = false;
     public bool isDownJump = false;
 
@@ -49,15 +51,24 @@ public class PlayerInput : MonoBehaviour
     {
         if (value.isPressed)
         {
-            if (moveInput.y == -1)
+            if (canDownJump&&moveInput.y == -1)
             {
                 isDownJump = true;
+                canDownJump = false;
+                isJump = false;
+                player.OnJumpInputDown(isJump, isDownJump);
+
+                StartCoroutine(DownJumpCoolTime());
+
+
             }
-            else
+            else if(moveInput.y != -1)
             {
                 isJump = true;
+                isDownJump = false;
+                player.OnJumpInputDown(isJump, isDownJump);
+
             }
-            player.OnJumpInputDown(isJump, isDownJump);
 
         }
         else
@@ -80,6 +91,18 @@ public class PlayerInput : MonoBehaviour
         {
 
         }
+    }
+
+    IEnumerator DownJumpCoolTime()
+    {
+
+        yield return new WaitForSeconds(0.1f);
+        isDownJump = false ;
+        player.OnJumpInputUp(isJump, isDownJump);
+
+        yield return new WaitForSeconds(0.1f);
+        canDownJump = true;
+
     }
 
     IEnumerator DashCoolTime()
