@@ -19,6 +19,8 @@ public class PlayerInput : MonoBehaviour
 
     Vector2 directionalInput;
 
+    bool isAttack = false;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -30,15 +32,6 @@ public class PlayerInput : MonoBehaviour
     {
         directionalInput = new Vector2(moveInput.x, moveInput.y);
         player.SetDirectionalInput (directionalInput);
-
-        //if (isJump)
-        //{
-        //    player.OnJumpInputDown(isJump,isDownJump);
-        //}
-        //if (!isJump)
-        //{
-        //    player.OnJumpInputUp(isJump,isDownJump);
-        //}
 
     }
 
@@ -114,6 +107,19 @@ public class PlayerInput : MonoBehaviour
         canDash = true;
     }
 
+
+    private void OnAttack(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            isAttack = true;
+        }
+        else
+        {
+            isAttack= false;
+        }
+
+    }
 
 
 }
