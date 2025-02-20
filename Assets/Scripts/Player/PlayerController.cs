@@ -36,6 +36,10 @@ public class PlayerController : MonoBehaviour
 
     Vector2 directionalInput;
 
+    [Header ("MeleeAttack")]
+    public Vector2 meleeBoxSize;
+    Vector2 meleeBoxPosition;
+
 
     private void Start()
     {
@@ -82,6 +86,10 @@ public class PlayerController : MonoBehaviour
                 velocity.y = 0;
             }
         }
+
+        // 사각형의 중심 위치
+        meleeBoxPosition = new Vector2(transform.position.x + 1f * directionalInput.x, transform.position.y);
+
 
     }
 
@@ -176,9 +184,6 @@ public class PlayerController : MonoBehaviour
         isDashing = false;
     }
     
-
-
-
     void CalculateVelocity(float moveSpeed)
     {
         float targetVelocityX = directionalInput.x * moveSpeed;
@@ -186,5 +191,21 @@ public class PlayerController : MonoBehaviour
 
         velocity.y += gravity * Time.fixedDeltaTime;
     }
-    
+
+    public void MeleeAttack()
+    {
+        Collider2D[] colliders = Physics2D.OverlapBoxAll(meleeBoxPosition, meleeBoxSize, 0f);
+        foreach(Collider2D collider in colliders)
+        {
+            
+            
+                
+            
+        }
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = new Color(0, 1, 0, .3f);
+        Gizmos.DrawCube(meleeBoxPosition, meleeBoxSize);
+    }
 }

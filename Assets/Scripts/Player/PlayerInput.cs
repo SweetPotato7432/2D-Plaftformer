@@ -15,7 +15,7 @@ public class PlayerInput : MonoBehaviour
     bool canDownJump = true;
 
     bool isJump = false;
-    public bool isDownJump = false;
+    bool isDownJump = false;
 
     Vector2 directionalInput;
 
