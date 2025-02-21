@@ -113,10 +113,14 @@ public class PlayerInput : MonoBehaviour
         if (value.isPressed)
         {
             isAttack = true;
+            player.MeleeAttack(isAttack);
+
         }
         else
         {
             isAttack= false;
+            player.MeleeAttack(isAttack);
+
         }
 
     }

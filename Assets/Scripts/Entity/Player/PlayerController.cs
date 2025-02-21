@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Controller2D))]
 public class PlayerController : MonoBehaviour
@@ -36,9 +35,12 @@ public class PlayerController : MonoBehaviour
 
     Vector2 directionalInput;
 
-    [Header ("MeleeAttack")]
+    [Header("MeleeAttack")]
+    public bool isAttack;
     public Vector2 meleeBoxSize;
     Vector2 meleeBoxPosition;
+    float attackDir = 1;
+    
 
 
     private void Start()
@@ -87,8 +89,10 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+
         // 사각형의 중심 위치
-        meleeBoxPosition = new Vector2(transform.position.x + 1f * directionalInput.x, transform.position.y);
+        meleeBoxPosition = new Vector2(transform.position.x + (meleeBoxSize.x/2) * attackDir, controller.collider.transform.position.y + controller.collider.offset.y);
+
 
 
     }
@@ -96,6 +100,10 @@ public class PlayerController : MonoBehaviour
     public void SetDirectionalInput(Vector2 input)
     {
         directionalInput = input;
+        if(attackDir != directionalInput.x && directionalInput.x != 0)
+        {
+            attackDir = Mathf.Sign(directionalInput.x);
+        }
     }
 
     public void OnJumpInputDown(bool isJump, bool isDownJump)
@@ -192,20 +200,30 @@ public class PlayerController : MonoBehaviour
         velocity.y += gravity * Time.fixedDeltaTime;
     }
 
-    public void MeleeAttack()
+    public void MeleeAttack(bool isAttack)
     {
-        Collider2D[] colliders = Physics2D.OverlapBoxAll(meleeBoxPosition, meleeBoxSize, 0f);
-        foreach(Collider2D collider in colliders)
+        this.isAttack = isAttack;
+        if (isAttack)
         {
-            
-            
-                
-            
+            Collider2D[] colliders = Physics2D.OverlapBoxAll(meleeBoxPosition, meleeBoxSize, 0f);
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.CompareTag("Enemy"))
+                {
+                    collider.gameObject.GetComponent<Entity>().TakeDamage(5);
+                }
+                //Debug.Log(collider.name);
+            }
         }
+        
     }
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
-        Gizmos.color = new Color(0, 1, 0, .3f);
-        Gizmos.DrawCube(meleeBoxPosition, meleeBoxSize);
+        if (isAttack)
+        {
+            Gizmos.color = new Color(0, 1, 0, .3f);
+            Gizmos.DrawCube(meleeBoxPosition, meleeBoxSize);
+        }
+
     }
 }
