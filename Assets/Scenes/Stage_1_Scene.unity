@@ -358,7 +358,7 @@ GameObject:
   - component: {fileID: 600248035}
   - component: {fileID: 600248034}
   - component: {fileID: 600248036}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -976,6 +976,6 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 619394802}
   - {fileID: 1611731555}
-  - {fileID: 1801621544}
   - {fileID: 1002058109}
+  - {fileID: 1801621544}
   - {fileID: 600248033}
