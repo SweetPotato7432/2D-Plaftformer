@@ -2,16 +2,16 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-    float id;
-    string characterName;
-    float maxHP;
-    float curHP;
-    int attackType;// 0 : 근접, 1 : 원거리
-    float attackRange;
-    float atk;
-    float atkSpeed;
-    float moveSpeed;
-    float jumpForce;
+    protected float id;
+    protected string characterName;
+    protected float maxHP;
+    protected float curHP;
+    protected bool attackType;// 0 : 근접, 1 : 원거리
+    protected float attackRange;
+    protected float atk;
+    protected float attackSpeed;
+    protected float moveSpeed;
+    protected float jumpForce;
 
     virtual public void Update()
     {
@@ -28,7 +28,7 @@ public class Entity : MonoBehaviour
         curHP -= damage;
     }
 
-    public void Initialize(float id, string characterName, float maxHP, int attackType, float attackRange, float atk, float atkSpeed, float moveSpeed, float jumpForce)
+    public void Initialize(float id, string characterName, float maxHP, bool attackType, float attackRange, float atk, float atkSpeed, float moveSpeed, float jumpForce)
     {
         this.id = id;
         this.characterName = characterName;
@@ -37,7 +37,7 @@ public class Entity : MonoBehaviour
         this.attackType = attackType;
         this.attackRange = attackRange;
         this.atk = atk;
-        this.atkSpeed = atkSpeed;
+        this.attackSpeed = atkSpeed;
         this.moveSpeed = moveSpeed;
         this.jumpForce = jumpForce;
     }

@@ -1,0 +1,7 @@
+id, name, hp, attackType ,attackRange, attackSpeed, moveSpeed, jumpPower
+201, 좀비, 5, false, 0, 1, 0, 0.3, 0
+202, 들개, 6.5, false, 0, 1, 0, 1.2, 1
+203, 스켈레톤 검사, 10, false, 1, 1, 2, 1, 1
+204, 스켈레톤 궁병, 7.5, true, 5, 1, 1, 0.8, 1
+205, 스켈레톤 마법사, 6, true, 7, 1, 4, 0.6, 1
+
