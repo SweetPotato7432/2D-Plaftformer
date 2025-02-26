@@ -148,7 +148,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abd5efd039a51b741af1b66137f64abb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  csvLoadManager: {fileID: 0}
+  csvLoadManager: {fileID: 839358541}
+  cameraFollow: {fileID: 0}
 --- !u!4 &329395130
 Transform:
   m_ObjectHideFlags: 0

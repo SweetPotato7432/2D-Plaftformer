@@ -30,7 +30,6 @@ public class Door : MonoBehaviour
 
     public void DoorActive(bool active)
     {
-        Debug.Log("ActiveDoor");
         switch (active)
         {
             case true:

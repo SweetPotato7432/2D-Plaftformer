@@ -1,5 +1,3 @@
-using JetBrains.Annotations;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
@@ -29,8 +27,18 @@ public class CameraFollow : MonoBehaviour
 
     bool lookAheadStopped;
 
+    float roomWidth;
+    float roomHeight;
+    Vector2 centerPos;
+
+    float height;
+    float width;
+
     public void Start()
     {
+        height = Camera.main.orthographicSize;
+        width = height * Screen.width / Screen.height;
+
         focusArea = new FocusArea(target.collider.bounds,focusAreaSize);
         transform.position = focusArea.center + Vector2.up * verticalOffset;
     }
@@ -66,7 +74,27 @@ public class CameraFollow : MonoBehaviour
         focusPosition += Vector2.right * currentLookAheadX;
 
         transform.position = (Vector3)focusPosition + Vector3.forward *-10;
+        //LimitCameraArea();
     }
+
+    void LimitCameraArea()
+    {
+        float lx = roomWidth/2 - width;
+        float clampX = Mathf.Clamp(transform.position.x, -lx + centerPos.x, lx + centerPos.x);
+
+        float ly = roomHeight/2 - height;
+        float clampY = Mathf.Clamp(transform.position.y, -ly + centerPos.y, ly + centerPos.y);
+
+        transform.position = new Vector3(clampX, clampY, -10f);
+    }
+
+    public void SetCameraArea(float roomWidth, float roomHeight, Vector2 centerPos)
+    {
+        this.roomWidth = roomWidth;
+        this.roomHeight = roomHeight;
+        this.centerPos = centerPos;
+    }
+
 
     private void OnDrawGizmos()
     {

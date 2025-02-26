@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-    protected float id;
+    public int id;
     protected string characterName;
     protected float maxHP;
     protected float curHP;
@@ -28,7 +28,7 @@ public class Entity : MonoBehaviour
         curHP -= damage;
     }
 
-    public void Initialize(float id, string characterName, float maxHP, bool attackType, float attackRange, float atk, float atkSpeed, float moveSpeed, float jumpForce)
+    public void Initialize(int id, string characterName, float maxHP, bool attackType, float attackRange, float atk, float atkSpeed, float moveSpeed, float jumpForce)
     {
         this.id = id;
         this.characterName = characterName;

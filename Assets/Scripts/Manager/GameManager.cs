@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
     public CSVLoadManager csvLoadManager;
     PlayerController playerController;
 
+    public CameraFollow cameraFollow;
+
     public List<MonsterInfo> monsterInfo;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -37,9 +39,10 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void PlayerMoveRoom(Vector3 transformPos)
+    public void PlayerMoveRoom(Vector3 transformPos, float roomWidth, float roomHeight, Vector2 centerPos)
     {
         playerController.transform.position = transformPos;
+        cameraFollow.SetCameraArea(roomWidth, roomHeight, centerPos);
     }
 
     public MonsterInfo EnemeyStatInitialize(int id)
