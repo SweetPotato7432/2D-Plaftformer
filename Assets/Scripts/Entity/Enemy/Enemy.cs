@@ -22,7 +22,7 @@ public class Enemy : Entity
     }
 
     // Update is called once per frame
-    virtual public void Update()
+    override public void Update()
     {
         base.Update();
     }

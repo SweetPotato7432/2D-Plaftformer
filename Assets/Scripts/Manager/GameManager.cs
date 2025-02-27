@@ -42,6 +42,7 @@ public class GameManager : MonoBehaviour
     public void PlayerMoveRoom(Vector3 transformPos, float roomWidth, float roomHeight, Vector2 centerPos)
     {
         playerController.transform.position = transformPos;
+        //Debug.Log($"{roomWidth} {roomHeight} {centerPos}");
         cameraFollow.SetCameraArea(roomWidth, roomHeight, centerPos);
     }
 

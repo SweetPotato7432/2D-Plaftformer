@@ -7,7 +7,7 @@ using static UnityEditor.PlayerSettings;
 public class Room : MonoBehaviour
 {
     [SerializeField]
-    GameManager gameManager;
+    public GameManager gameManager;
 
     [SerializeField]
     protected Vector2Int roomPos;
@@ -25,9 +25,14 @@ public class Room : MonoBehaviour
     [SerializeField]
     Vector3 curSpawnpoints;
 
-    float totalWidth;
-    float totalHeight;
-    Vector2 centerPos;
+    [SerializeField]
+    Transform BottomLeft;
+    [SerializeField]
+    Transform TopRight;
+
+    public float totalWidth;
+    public float totalHeight;
+    public Vector2 centerPos;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -116,44 +121,47 @@ public class Room : MonoBehaviour
 
     void MapSizeCalculate()
     {
-        float tileSize = 16f;
-        Tilemap[] tilemaps = this.GetComponentsInChildren<Tilemap>();
+        //float tileSize = 16f;
+        //Tilemap[] tilemaps = this.GetComponentsInChildren<Tilemap>();
 
-        if (tilemaps.Length == 0)
-        {
-            Debug.LogError("부모 오브젝트에 Tilemap이 없습니다!");
-            return;
-        }
+        //if (tilemaps.Length == 0)
+        //{
+        //    Debug.LogError("부모 오브젝트에 Tilemap이 없습니다!");
+        //    return;
+        //}
 
-        Vector3 minPos = new Vector3(float.MaxValue, float.MaxValue, 0);
-        Vector3 maxPos = new Vector3(float.MinValue, float.MinValue, 0);
+        //Vector3 minPos = new Vector3(float.MaxValue, float.MaxValue, 0);
+        //Vector3 maxPos = new Vector3(float.MinValue, float.MinValue, 0);
 
-        // 모든 Tilemap을 순회하며 좌측 하단, 우측 상단 좌표 찾기
-        foreach (Tilemap tilemap in tilemaps)
-        {
-            if (tilemap == null) continue;
+        //// 모든 Tilemap을 순회하며 좌측 하단, 우측 상단 좌표 찾기
+        //foreach (Tilemap tilemap in tilemaps)
+        //{
+        //    if (tilemap == null) continue;
 
-            BoundsInt bounds = tilemap.cellBounds;
-            Vector3 tilemapWorldPos = tilemap.transform.position;
+        //    BoundsInt bounds = tilemap.cellBounds;
+        //    Vector3 tilemapWorldPos = tilemap.transform.position;
 
-            Vector3 worldMin = tilemapWorldPos + new Vector3(bounds.min.x, bounds.min.y, 0);
-            Vector3 worldMax = tilemapWorldPos + new Vector3(bounds.max.x, bounds.max.y, 0);
+        //    Vector3 worldMin = tilemapWorldPos + new Vector3(bounds.min.x, bounds.min.y, 0);
+        //    Vector3 worldMax = tilemapWorldPos + new Vector3(bounds.max.x, bounds.max.y, 0);
 
-            minPos.x = Mathf.Min(minPos.x, worldMin.x);
-            minPos.y = Mathf.Min(minPos.y, worldMin.y);
-            maxPos.x = Mathf.Max(maxPos.x, worldMax.x);
-            maxPos.y = Mathf.Max(maxPos.y, worldMax.y);
-        }
+        //    minPos.x = Mathf.Min(minPos.x, worldMin.x);
+        //    minPos.y = Mathf.Min(minPos.y, worldMin.y);
+        //    maxPos.x = Mathf.Max(maxPos.x, worldMax.x);
+        //    maxPos.y = Mathf.Max(maxPos.y, worldMax.y);
+        //}
 
-        // 전체 맵의 가로, 세로 크기 계산
-        totalWidth = (maxPos.x - minPos.x) * tileSize;
-        totalHeight = (maxPos.y - minPos.y) * tileSize;
+        //// 전체 맵의 가로, 세로 크기 계산
+        //totalWidth = (maxPos.x - minPos.x);
+        //totalHeight = (maxPos.y - minPos.y);
+
+        totalWidth = Mathf.Abs(BottomLeft.localPosition.x)+Mathf.Abs(TopRight.localPosition.x);
+        totalHeight = Mathf.Abs(BottomLeft.localPosition.y)+Mathf.Abs(TopRight.localPosition.y);
 
         Debug.Log($"현재 맵 : {roomPos}");
         Debug.Log($"전체 타일맵 크기: 가로 {totalWidth}, 세로 {totalHeight}");
-        Debug.Log($"좌표 범위: 좌측 하단 ({minPos.x}, {minPos.y}), 우측 상단 ({maxPos.x}, {maxPos.y})");
+        Debug.Log($"좌표 범위: 좌측 하단 ({BottomLeft.position}), 우측 상단 ({TopRight.position})");
 
-        centerPos = new Vector2((maxPos.x + minPos.x)/2f, (maxPos.y - minPos.y)/2f);
+        centerPos = new Vector2((BottomLeft.position.x + TopRight.position.x) /2f, (BottomLeft.position.y + TopRight.position.y)/2f);
     }
     
     private void OnDrawGizmos()

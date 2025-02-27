@@ -27,17 +27,24 @@ public class CameraFollow : MonoBehaviour
 
     bool lookAheadStopped;
 
+    [SerializeField]
     float roomWidth;
+    [SerializeField]
     float roomHeight;
+    [SerializeField]
     Vector2 centerPos;
 
+    [SerializeField]
     float height;
+    [SerializeField]
     float width;
+
+    public float clampX;
+    public float clampY;
 
     public void Start()
     {
-        height = Camera.main.orthographicSize;
-        width = height * Screen.width / Screen.height;
+
 
         focusArea = new FocusArea(target.collider.bounds,focusAreaSize);
         transform.position = focusArea.center + Vector2.up * verticalOffset;
@@ -74,16 +81,19 @@ public class CameraFollow : MonoBehaviour
         focusPosition += Vector2.right * currentLookAheadX;
 
         transform.position = (Vector3)focusPosition + Vector3.forward *-10;
-        //LimitCameraArea();
+        LimitCameraArea();
     }
 
     void LimitCameraArea()
     {
+        height = Camera.main.orthographicSize;
+        width = height * Screen.width / Screen.height;
+
         float lx = roomWidth/2 - width;
-        float clampX = Mathf.Clamp(transform.position.x, -lx + centerPos.x, lx + centerPos.x);
+        clampX = Mathf.Clamp(transform.position.x, -lx + centerPos.x, lx + centerPos.x);
 
         float ly = roomHeight/2 - height;
-        float clampY = Mathf.Clamp(transform.position.y, -ly + centerPos.y, ly + centerPos.y);
+        clampY = Mathf.Clamp(transform.position.y, -ly + centerPos.y, ly + centerPos.y);
 
         transform.position = new Vector3(clampX, clampY, -10f);
     }
