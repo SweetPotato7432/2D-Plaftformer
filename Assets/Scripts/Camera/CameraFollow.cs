@@ -105,7 +105,6 @@ public class CameraFollow : MonoBehaviour
         this.centerPos = centerPos;
     }
 
-
     private void OnDrawGizmos()
     {
         Gizmos.color = new Color(1,0,0,.3f);

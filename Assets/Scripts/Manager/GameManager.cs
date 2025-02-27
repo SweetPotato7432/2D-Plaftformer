@@ -44,6 +44,10 @@ public class GameManager : MonoBehaviour
         playerController.transform.position = transformPos;
         //Debug.Log($"{roomWidth} {roomHeight} {centerPos}");
         cameraFollow.SetCameraArea(roomWidth, roomHeight, centerPos);
+        transformPos.z = -10;
+        cameraFollow.gameObject.transform.position = transformPos;
+        //암전기능 추가 0.1f초 정도?
+        
     }
 
     public MonsterInfo EnemeyStatInitialize(int id)
