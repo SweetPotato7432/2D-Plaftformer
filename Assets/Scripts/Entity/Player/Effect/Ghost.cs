@@ -13,6 +13,8 @@ public class Ghost : MonoBehaviour
 
     void Start()
     {
+        Material whiteMaterial = new Material(Shader.Find("Custom/GhostWhiteShader"));
+        GetComponent<SpriteRenderer>().material = whiteMaterial;
         lastGhostPosition = transform.position; // 시작 시 현재 위치 저장
     }
 
@@ -36,6 +38,7 @@ public class Ghost : MonoBehaviour
         currentGhost.transform.position = transform.position;
         currentGhost.transform.localScale = transform.localScale;
         currentGhost.GetComponent<SpriteRenderer>().sprite = GetComponent<SpriteRenderer>().sprite;
+        currentGhost.GetComponent<SpriteRenderer>().flipX = GetComponent<SpriteRenderer>().flipX;
         currentGhost.SetActive(true);
         StartCoroutine(SetDisableGhost(currentGhost));
     }

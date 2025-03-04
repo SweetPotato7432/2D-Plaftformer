@@ -2,11 +2,11 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Controller2D))]
-public class PlayerController : MonoBehaviour
+public class EnemyController : MonoBehaviour
 {
     Controller2D controller;
 
-    Animator playerAnim;
+    //Animator playerAnim;
 
     SpriteRenderer spriteRenderer;
 
@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
     float dashVelocity;
 
     int maxJumpCount = 2;
-    public int currentJumpCount =0;
+    public int currentJumpCount = 0;
 
     float gravity;
     float defaultGravity;
@@ -44,31 +44,31 @@ public class PlayerController : MonoBehaviour
     public Vector2 meleeBoxSize;
     Vector2 meleeBoxPosition;
     float attackDir = 1;
-    
+
 
 
     private void Start()
     {
         controller = GetComponent<Controller2D>();
-        playerAnim = GetComponent<Animator>();
+        //playerAnim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         ghost = GetComponent<Ghost>();
 
-        defaultGravity = -(2*maxJumpHeight)/Mathf.Pow(timeToJumpApex, 2);
+        defaultGravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
         gravity = defaultGravity;
-        maxJumpVelocity = Mathf.Abs(gravity)*timeToJumpApex;
-        minJumpVelocity = Mathf.Sqrt(2*Mathf.Abs(gravity)*minJumpHeight);
+        maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+        minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) * minJumpHeight);
 
-        dashVelocity = dashDistance/timeToDashApex;
+        dashVelocity = dashDistance / timeToDashApex;
 
         Debug.Log($"Gravity :{gravity}, JumpVelocity : {maxJumpVelocity}");
 
     }
     private void FixedUpdate()
     {
-        // Í∞ÄÏÜç Î∞è Í∞êÏÜç Î∂ÄÎ∂Ñ
+        // ∞°º” π◊ ∞®º” ∫Œ∫–
         CalculateVelocity(moveSpeed);
-        // Controller2DÎ°ú Ïù¥Îèô Î∞è Î≥ÄÏàò Ï†ÑÎã¨
+        // Controller2D∑Œ ¿Ãµø π◊ ∫Øºˆ ¿¸¥ﬁ
         controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
 
 
@@ -81,26 +81,17 @@ public class PlayerController : MonoBehaviour
 
         if (controller.collisions.below)
         {
-            playerAnim.SetFloat("YVelocity", 0);
-            playerAnim.SetBool("isGround",true);
+            //playerAnim.SetFloat("YVelocity", 0);
+            //playerAnim.SetBool("isGround", true);
             currentJumpCount = 0;
         }
         else
         {
-            playerAnim.SetBool("isGround", false);
-            playerAnim.SetFloat("YVelocity", velocity.y);
+            //playerAnim.SetBool("isGround", false);
+            //playerAnim.SetFloat("YVelocity", velocity.y);
         }
 
-        if(directionalInput.x != 0)
-        {
-            playerAnim.SetBool("isWalking", true);
-        }
-        else
-        {
-            playerAnim.SetBool("isWalking", false);
-        }
-
-        // Ï§ëÎ†• Ï¥àÍ∏∞Ìôî
+        // ¡ﬂ∑¬ √ ±‚»≠
         if (controller.collisions.above || controller.collisions.below)
         {
             if (controller.collisions.slidingDownMaxSlope)
@@ -114,8 +105,8 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        // ÏÇ¨Í∞ÅÌòïÏùò Ï§ëÏã¨ ÏúÑÏπò
-        meleeBoxPosition = new Vector2(transform.position.x + (meleeBoxSize.x/2) * attackDir, controller.collider.transform.position.y + controller.collider.offset.y);
+        // ªÁ∞¢«¸¿« ¡ﬂΩ… ¿ßƒ°
+        meleeBoxPosition = new Vector2(transform.position.x + (meleeBoxSize.x / 2) * attackDir, controller.collider.transform.position.y + controller.collider.offset.y);
 
 
 
@@ -128,12 +119,12 @@ public class PlayerController : MonoBehaviour
         {
             spriteRenderer.flipX = false;
         }
-        else if(directionalInput.x < 0)
+        else
         {
-            spriteRenderer.flipX= true;
+            spriteRenderer.flipX = true;
         }
 
-        if(attackDir != directionalInput.x && directionalInput.x != 0)
+        if (attackDir != directionalInput.x && directionalInput.x != 0)
         {
             attackDir = Mathf.Sign(directionalInput.x);
         }
@@ -143,7 +134,7 @@ public class PlayerController : MonoBehaviour
     {
         this.isDownJump = isDownJump;
 
-        if (!isDownJump&&currentJumpCount < maxJumpCount)
+        if (!isDownJump && currentJumpCount < maxJumpCount)
         {
             if (controller.collisions.below)
             {
@@ -151,7 +142,7 @@ public class PlayerController : MonoBehaviour
                 {
 
                     if (directionalInput.x != -Mathf.Sign(controller.collisions.slopeNormal.x))
-                    {// Ïò§Î•º Ïàò ÏóÜÎäî Í≤ΩÏÇ¨Î°úÏóêÏÑú Ï†êÌîÑ Î∂àÍ∞ÄÎä•
+                    {// ø¿∏¶ ºˆ æ¯¥¬ ∞ÊªÁ∑Œø°º≠ ¡°«¡ ∫“∞°¥…
                         velocity.y = maxJumpVelocity * controller.collisions.slopeNormal.y;
                         velocity.x = maxJumpVelocity * controller.collisions.slopeNormal.x;
                     }
@@ -166,12 +157,12 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                // ÎçîÎ∏î Ï†êÌîÑ
+                // ¥ı∫Ì ¡°«¡
                 if (controller.collisions.slidingDownMaxSlope)
                 {
 
                     if (directionalInput.x != -Mathf.Sign(controller.collisions.slopeNormal.x))
-                    {// Ïò§Î•º Ïàò ÏóÜÎäî Í≤ΩÏÇ¨Î°úÏóêÏÑú Ï†êÌîÑ Î∂àÍ∞ÄÎä•
+                    {// ø¿∏¶ ºˆ æ¯¥¬ ∞ÊªÁ∑Œø°º≠ ¡°«¡ ∫“∞°¥…
                         velocity.y = maxJumpVelocity * controller.collisions.slopeNormal.y;
                         velocity.x = maxJumpVelocity * controller.collisions.slopeNormal.x;
                     }
@@ -185,7 +176,7 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-        
+
     }
 
     public void OnJumpInputUp(bool isJump, bool isDownJump)
@@ -206,9 +197,8 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Dash()
     {
-        
+
         if (isDashing) { yield break; }
-        playerAnim.SetTrigger("isDash");
         isDashing = true;
 
         if (!controller.collisions.below)
@@ -226,7 +216,7 @@ public class PlayerController : MonoBehaviour
         ghost.makeGhost = false;
         isDashing = false;
     }
-    
+
     void CalculateVelocity(float moveSpeed)
     {
         float targetVelocityX = directionalInput.x * moveSpeed;
@@ -235,7 +225,7 @@ public class PlayerController : MonoBehaviour
         velocity.y += gravity * Time.fixedDeltaTime;
     }
 
-    // Í≥µÍ≤©Î∞©Ïãù
+    // ∞¯∞›πÊΩƒ
     public void MeleeAttack(bool isAttack)
     {
         this.isAttack = isAttack;
@@ -251,7 +241,7 @@ public class PlayerController : MonoBehaviour
                 //Debug.Log(collider.name);
             }
         }
-        
+
     }
     private void OnDrawGizmosSelected()
     {
