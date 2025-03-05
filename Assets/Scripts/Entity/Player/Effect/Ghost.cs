@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,17 +36,22 @@ public class Ghost : MonoBehaviour
     void CreateGhost()
     {
         GameObject currentGhost = GhostPoolManager.Instance.GetGhost();
+        SpriteRenderer spriteRenderer = currentGhost.GetComponent<SpriteRenderer>();
         currentGhost.transform.position = transform.position;
         currentGhost.transform.localScale = transform.localScale;
-        currentGhost.GetComponent<SpriteRenderer>().sprite = GetComponent<SpriteRenderer>().sprite;
-        currentGhost.GetComponent<SpriteRenderer>().flipX = GetComponent<SpriteRenderer>().flipX;
+        spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1);
+        spriteRenderer.sprite = GetComponent<SpriteRenderer>().sprite;
+        spriteRenderer.flipX = GetComponent<SpriteRenderer>().flipX;
         currentGhost.SetActive(true);
         StartCoroutine(SetDisableGhost(currentGhost));
     }
 
     IEnumerator SetDisableGhost(GameObject ghost)
     {
-        yield return new WaitForSeconds(.3f);
+        SpriteRenderer spriteRenderer = ghost.GetComponent<SpriteRenderer>();
+        Tween tween = spriteRenderer.DOFade(0f, .3f);
+        yield return tween.WaitForCompletion();
+        //yield return new WaitForSeconds(.3f);
         GhostPoolManager.Instance.ReturnGhost(ghost);
         ghost.SetActive(false);
     }
