@@ -855,7 +855,7 @@ MonoBehaviour:
   currentJumpCount: 0
   isDownJump: 0
   isAttack: 0
-  meleeBoxSize: {x: 3, y: 2}
+  meleeBoxSize: {x: 4.5, y: 4}
 --- !u!114 &1801621540
 MonoBehaviour:
   m_ObjectHideFlags: 0

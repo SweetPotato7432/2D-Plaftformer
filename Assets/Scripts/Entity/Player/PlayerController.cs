@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Controller2D))]
@@ -44,8 +45,11 @@ public class PlayerController : MonoBehaviour
     public Vector2 meleeBoxSize;
     Vector2 meleeBoxPosition;
     float attackDir = 1;
-    
 
+    bool enableCombo = true;
+    bool enableAttackBox = false;
+
+    HashSet<Enemy> attackedEnemy = new HashSet<Enemy>();
 
     private void Start()
     {
@@ -117,7 +121,26 @@ public class PlayerController : MonoBehaviour
         // 사각형의 중심 위치
         meleeBoxPosition = new Vector2(transform.position.x /*+ (meleeBoxSize.x/2) * attackDir*/, controller.collider.transform.position.y + controller.collider.offset.y + (meleeBoxSize.y / 4));
 
+        //공격 범위 활성화
+        if (enableAttackBox)
+        {
+            Collider2D[] colliders = Physics2D.OverlapBoxAll(meleeBoxPosition, meleeBoxSize, 0f);
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.CompareTag("Enemy"))
+                {
+                    Enemy enemy = collider.GetComponent<Enemy>();
+                    if (!attackedEnemy.Contains(enemy))
+                    {
+                        attackedEnemy.Add(enemy);
+                        // 추후 공격 스탯 기반으로 수정
+                        enemy.TakeDamage(1);
+                    }
 
+                }
+                //Debug.Log(collider.name);
+            }
+        }
 
     }
 
@@ -241,22 +264,40 @@ public class PlayerController : MonoBehaviour
         this.isAttack = isAttack;
         if (isAttack)
         {
-            playerAnim.SetTrigger("nextCombo");
-            Collider2D[] colliders = Physics2D.OverlapBoxAll(meleeBoxPosition, meleeBoxSize, 0f);
-            foreach (Collider2D collider in colliders)
+            if (enableCombo)
             {
-                if (collider.CompareTag("Enemy"))
-                {
-                    collider.gameObject.GetComponent<Entity>().TakeDamage(5);
-                }
-                //Debug.Log(collider.name);
+                playerAnim.SetTrigger("nextCombo");
             }
+            
         }
         
+
     }
+
+    void EnableComboAttack()
+    {
+        enableCombo = true;
+    }
+    void DisableComboAttack()
+    {
+        enableCombo = false;
+    }
+    void EnableAttackBox()
+    {
+        if (!enableAttackBox)
+        {
+            enableAttackBox = true;
+        }
+        else
+        {
+            enableAttackBox = false;
+            attackedEnemy.Clear();
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
-        if (isAttack)
+        if (enableAttackBox)
         {
             Gizmos.color = new Color(0, 1, 0, .3f);
             Gizmos.DrawCube(meleeBoxPosition, meleeBoxSize);

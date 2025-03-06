@@ -14,8 +14,8 @@ public class Ghost : MonoBehaviour
 
     void Start()
     {
-        Material whiteMaterial = new Material(Shader.Find("Custom/GhostWhiteShader"));
-        GetComponent<SpriteRenderer>().material = whiteMaterial;
+        //Material whiteMaterial = new Material(Shader.Find("Custom/GhostWhiteShader"));
+        //GetComponent<SpriteRenderer>().material = whiteMaterial;
         lastGhostPosition = transform.position; // 시작 시 현재 위치 저장
     }
 
