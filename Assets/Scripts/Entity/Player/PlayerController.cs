@@ -268,7 +268,6 @@ public class PlayerController : MonoBehaviour
             {
                 playerAnim.SetTrigger("nextCombo");
             }
-            
         }
         
 

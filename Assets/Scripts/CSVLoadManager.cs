@@ -2,6 +2,18 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
+public class PlayerInfo
+{
+    public int id;
+    public string characterName;
+    public float hp;
+    public bool attackType;
+    public float attackRange;
+    public float attackSpeed;
+    public float moveSpeed;
+    public float jumpForce;
+}
+
 public class MonsterInfo
 {
     public int id;
@@ -18,11 +30,17 @@ public class CSVLoadManager : MonoBehaviour
 {
     private List<List<string>> csvData = new List<List<string>>();
 
+    private List<PlayerInfo> playerInfo = new List<PlayerInfo>();
     private List<MonsterInfo> monsterInfo = new List<MonsterInfo>();// 몬스터 정보
 
     private void Awake()
     {
         LoadMonsterCsv();
+    }
+
+    public List<PlayerInfo> GetPlayerList()
+    {
+        return playerInfo;
     }
 
     public List<MonsterInfo> GetMonsterList()

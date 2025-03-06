@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     public CameraFollow cameraFollow;
 
+    public List<PlayerInfo> playerInfo;
     public List<MonsterInfo> monsterInfo;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -50,8 +51,15 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public PlayerInfo PlayerStatInitialize(int id)
+    {
+        return playerInfo[id - 100];
+    }
+
     public MonsterInfo EnemeyStatInitialize(int id)
     {
         return monsterInfo[id - 200];
     }
+
+
 }

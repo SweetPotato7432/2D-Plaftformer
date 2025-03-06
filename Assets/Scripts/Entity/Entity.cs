@@ -2,6 +2,15 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
+    enum States
+    {
+        NONE,
+        IDLE,
+        MOVE,
+        ATTACK,
+        DEAD
+    }
+
     public int id;
     protected string characterName;
     protected float maxHP;
