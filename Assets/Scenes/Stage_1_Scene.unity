@@ -503,7 +503,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c029daceac1a4f4409fa91d66d0f975a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 201
+  id: 200
 --- !u!114 &600248035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -796,6 +796,7 @@ GameObject:
   - component: {fileID: 1801621544}
   - component: {fileID: 1801621543}
   - component: {fileID: 1801621542}
+  - component: {fileID: 1801621546}
   - component: {fileID: 1801621541}
   - component: {fileID: 1801621540}
   - component: {fileID: 1801621539}
@@ -847,11 +848,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81ee468f5c525a340a1f299842f3244c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxJumpHeight: 4
-  minJumpHeight: 1
-  timeToJumpApex: 0.3
-  dashDistance: 7
-  timeToDashApex: 0.1
+  maxJumpHeight: 0
+  minJumpHeight: 0
+  timeToJumpApex: 0
   currentJumpCount: 0
   isDownJump: 0
   isAttack: 0
@@ -1046,6 +1045,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1801621546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1801621534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e04158a7952803744b77d25e2427eb3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  id: 100
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

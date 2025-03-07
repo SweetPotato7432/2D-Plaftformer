@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
-    enum States
+    public enum States
     {
         NONE,
         IDLE,
@@ -10,6 +10,8 @@ public class Entity : MonoBehaviour
         ATTACK,
         DEAD
     }
+
+    public States state;
 
     public int id;
     protected string characterName;
@@ -20,7 +22,9 @@ public class Entity : MonoBehaviour
     protected float atk;
     protected float attackSpeed;
     protected float moveSpeed;
-    protected float jumpForce;
+    protected float maxJumpHeight;
+    protected float minJumpHeight;
+    protected float timeToJumpApex;
 
     virtual public void Update()
     {
@@ -37,7 +41,7 @@ public class Entity : MonoBehaviour
         curHP -= damage;
     }
 
-    public void Initialize(int id, string characterName, float maxHP, bool attackType, float attackRange, float atk, float atkSpeed, float moveSpeed, float jumpForce)
+    public void Initialize(int id, string characterName, float maxHP, bool attackType, float attackRange, float atk, float atkSpeed, float moveSpeed, float maxJumpHeight, float minJumpHeight, float timeToJumpApex)
     {
         this.id = id;
         this.characterName = characterName;
@@ -48,6 +52,8 @@ public class Entity : MonoBehaviour
         this.atk = atk;
         this.attackSpeed = atkSpeed;
         this.moveSpeed = moveSpeed;
-        this.jumpForce = jumpForce;
+        this.maxJumpHeight = maxJumpHeight;
+        this.minJumpHeight = minJumpHeight;
+        this.timeToJumpApex = timeToJumpApex;
     }
 }

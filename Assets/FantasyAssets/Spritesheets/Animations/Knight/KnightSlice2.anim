@@ -100,7 +100,7 @@ AnimationClip:
     intParameter: 0
     messageOptions: 0
   - time: 0.25
-    functionName: EnableAttackBox
+    functionName: DisableAttackBox
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

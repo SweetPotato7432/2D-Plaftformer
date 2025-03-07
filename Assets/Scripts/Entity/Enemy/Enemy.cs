@@ -9,16 +9,19 @@ public class Enemy : Entity
     void Start()
     {
         stat = GameManager.Instance.EnemeyStatInitialize(id);
-        this.id = stat.id;
-        this.characterName = stat.characterName;
-        this.maxHP = stat.hp;
-        this.curHP = stat.hp;
-        this.attackType = stat.attackType;
-        this.attackRange = stat.attackRange;
-        this.attackSpeed = stat.attackSpeed;
-        this.moveSpeed = stat.moveSpeed;
-        this.jumpForce = stat.jumpForce;
-        //Initialize(1, "test", 10, 1, 0, 1, 1, 1, 1);
+
+        Initialize(stat.id,
+            stat.characterName,
+            stat.hp,
+            stat.attackType,
+            stat.attackRange,
+            stat.atk,
+            stat.attackSpeed,
+            stat.moveSpeed,
+            stat.maxJumpHeight,
+            stat.minJumpHeight,
+            stat.timeToJumpApex
+            );
     }
 
     // Update is called once per frame

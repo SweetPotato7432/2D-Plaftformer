@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Controller2D))]
+[RequireComponent(typeof(Player))]
 public class PlayerController : MonoBehaviour
 {
     Controller2D controller;
@@ -13,15 +14,18 @@ public class PlayerController : MonoBehaviour
 
     Ghost ghost;
 
-    public float maxJumpHeight = 4;
-    public float minJumpHeight = 1;
-    public float timeToJumpApex = .4f;
+    Player player;
+
+    public float maxJumpHeight;
+    public float minJumpHeight;
+    public float timeToJumpApex;
+    // 미끌리는 시간
     float accelarationTimeAirborne = .2f;
     float accelarationTimeGrounded = .1f;
-    float moveSpeed = 12;
+    float moveSpeed;
 
-    public float dashDistance = 4f;
-    public float timeToDashApex = .1f;
+    float dashDistance = 4f;
+    float timeToDashApex = .1f;
 
     float dashVelocity;
 
@@ -49,6 +53,9 @@ public class PlayerController : MonoBehaviour
     bool enableCombo = true;
     bool enableAttackBox = false;
 
+    float atk;
+    float atkSpeed;
+
     HashSet<Enemy> attackedEnemy = new HashSet<Enemy>();
 
     private void Start()
@@ -57,31 +64,47 @@ public class PlayerController : MonoBehaviour
         playerAnim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         ghost = GetComponent<Ghost>();
+        player = GetComponent<Player>();
 
-        defaultGravity = -(2*maxJumpHeight)/Mathf.Pow(timeToJumpApex, 2);
+        Debug.Log(player.stat.atk);
+
+        atk = player.stat.atk;
+        atkSpeed = player.stat.attackSpeed;
+        moveSpeed = player.stat.moveSpeed;
+        maxJumpHeight = player.stat.maxJumpHeight;
+        minJumpHeight = player.stat.minJumpHeight;
+        timeToJumpApex = player.stat.timeToJumpApex;
+
+        defaultGravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
         gravity = defaultGravity;
-        maxJumpVelocity = Mathf.Abs(gravity)*timeToJumpApex;
-        minJumpVelocity = Mathf.Sqrt(2*Mathf.Abs(gravity)*minJumpHeight);
+        maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+        minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) * minJumpHeight);
 
-        dashVelocity = dashDistance/timeToDashApex;
+        dashVelocity = dashDistance / timeToDashApex;
 
         Debug.Log($"Gravity :{gravity}, JumpVelocity : {maxJumpVelocity}");
-
     }
+
     private void FixedUpdate()
     {
-        // 가속 및 감속 부분
-        CalculateVelocity(moveSpeed);
-        // Controller2D로 이동 및 변수 전달
-        controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
 
+
+        if (player.state == Entity.States.ATTACK && controller.collisions.below)
+        {
+            
+        }
+        else
+        {
+            // 가속 및 감속 부분
+            CalculateVelocity(moveSpeed);
+            // Controller2D로 이동 및 변수 전달
+            controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
+        }
 
 
         //CalculateVelocity(dashSpeed);
         //controller.Dash(velocity * Time.fixedDeltaTime, directionalInput);
         ////onDash = false;
-
-
 
         if (controller.collisions.below)
         {
@@ -134,7 +157,7 @@ public class PlayerController : MonoBehaviour
                     {
                         attackedEnemy.Add(enemy);
                         // 추후 공격 스탯 기반으로 수정
-                        enemy.TakeDamage(1);
+                        enemy.TakeDamage(atk);
                     }
 
                 }
@@ -272,13 +295,21 @@ public class PlayerController : MonoBehaviour
         
 
     }
+    
+    void EndComboAttack()
+    {
+        player.state = Entity.States.IDLE;
+    }
 
     void EnableComboAttack()
     {
+
         enableCombo = true;
     }
     void DisableComboAttack()
     {
+        player.state = Entity.States.ATTACK;
+
         enableCombo = false;
     }
     void EnableAttackBox()
@@ -287,11 +318,15 @@ public class PlayerController : MonoBehaviour
         {
             enableAttackBox = true;
         }
-        else
+    }
+    void DisableAttackBox()
+    {
+        if (enableAttackBox)
         {
             enableAttackBox = false;
             attackedEnemy.Clear();
         }
+
     }
 
     private void OnDrawGizmosSelected()

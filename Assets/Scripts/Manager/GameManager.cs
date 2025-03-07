@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject); // 기존 인스턴스가 있으면 새로 생성된 것을 파괴
         }
         monsterInfo = csvLoadManager.GetMonsterList();
+        playerInfo = csvLoadManager.GetPlayerList();
     }
 
     public CSVLoadManager csvLoadManager;
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
 
     public List<PlayerInfo> playerInfo;
     public List<MonsterInfo> monsterInfo;
+    
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

@@ -1,0 +1,2 @@
+id, name, hp, attackType ,  attackRange, attack, attackSpeed, moveSpeed, maxJumpHeight, minJumpHeight, timeToJumpApex
+101, 전사, 10, false, 1, 2.5, 1, 12 , 4, 1,  0.4
