@@ -5,7 +5,7 @@ public class Player : Entity
     public PlayerInfo stat;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         stat = GameManager.Instance.PlayerStatInitialize(id);
 

@@ -503,7 +503,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c029daceac1a4f4409fa91d66d0f975a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 200
+  state: 0
+  id: 0
 --- !u!114 &600248035
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1057,7 +1058,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e04158a7952803744b77d25e2427eb3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  id: 100
+  state: 0
+  id: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
