@@ -32,7 +32,9 @@ public class RoomManager : MonoBehaviour
     private Dictionary<Vector2Int, Room> roomDic = new();
 
     [SerializeField]
-    private GameObject[] roomPrefaps;
+    private GameObject[] normalRoomPrefaps;
+    [SerializeField]
+    private GameObject[] specialRoomPrefaps;
 
     void Start()
     {
@@ -354,26 +356,38 @@ public class RoomManager : MonoBehaviour
     private void GeneratePlayableRoom()
     {
         GameObject prefab = null;
+
+        List<GameObject> tempNormalRooms = new List<GameObject>();
+
         //실제 플레이 가능 한 방을 생성
         foreach (var room in roomTypes)
         {
+            if (tempNormalRooms.Count <= 0) 
+            {
+                tempNormalRooms = normalRoomPrefaps.ToList();
+            }
+
             // 임시로 방 타입으로 만 나눔, 추후엔 일반방 여러개 두고 랜덤으로 뽑을 예정
             switch (room.Value)
             {
                 case RoomType.START:
-                    prefab = roomPrefaps[0];
+                    prefab = specialRoomPrefaps[0];
                     break;
                 case RoomType.NORMAL:
-                    prefab = roomPrefaps[1];
+                    int rand = Random.Range(0,tempNormalRooms.Count);
+
+                    prefab = tempNormalRooms[rand];
+                    tempNormalRooms.RemoveAt(rand);
+                    //prefab = normalRoomPrefaps[1];
                     break;
                 case RoomType.TREASURE:
-                    prefab = roomPrefaps[2];
+                    prefab = specialRoomPrefaps[1];
                     break;
                 case RoomType.SHOP:
-                    prefab = roomPrefaps[3];
+                    prefab = specialRoomPrefaps[2];
                     break;
                 case RoomType.BOSS:
-                    prefab = roomPrefaps[4];
+                    prefab = specialRoomPrefaps[3];
                     break;
             }
             Vector3 roomPos = new Vector3((room.Key.x - mapWidth / 2) * 180, (room.Key.y - mapHeight / 2) * 180, 0);
