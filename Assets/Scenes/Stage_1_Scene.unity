@@ -785,6 +785,8 @@ MonoBehaviour:
   - {fileID: 1257641521911862345, guid: c1f39b28e0cf56449a8ae80c64e466e7, type: 3}
   - {fileID: 1257641521911862345, guid: c47bdece54169b64091250ce3431a0d2, type: 3}
   - {fileID: 1257641521911862345, guid: f0ceaa9f5b1abb74a95919675bec881d, type: 3}
+  - {fileID: 1257641521911862345, guid: ce74cdbd8470c1a41b516c0e57f8b0c2, type: 3}
+  - {fileID: 1257641521911862345, guid: a614746134684e64aad97ba6c5545b3c, type: 3}
   specialRoomPrefaps:
   - {fileID: 1257641521911862345, guid: 3ddaccf75e4ef5548b4940ad1f93240d, type: 3}
   - {fileID: 545696991532507695, guid: 0928a41ceef441d47809123886d12c55, type: 3}

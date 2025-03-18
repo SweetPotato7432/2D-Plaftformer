@@ -25,8 +25,8 @@ public class Player : Entity
     }
 
     // Update is called once per frame
-    void Update()
+    override public void Update()
     {
-        
+        base.Update();
     }
 }

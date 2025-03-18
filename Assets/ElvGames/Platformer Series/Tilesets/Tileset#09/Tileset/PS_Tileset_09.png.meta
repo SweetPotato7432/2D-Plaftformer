@@ -234,11 +234,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape:
-      - - {x: 8, y: 5}
-        - {x: 5, y: 8}
-        - {x: 2, y: 7}
-        - {x: -3, y: 8}
-        - {x: -6, y: 7}
+      - - {x: 8, y: 6}
+        - {x: 5, y: 6}
+        - {x: -3, y: 6}
+        - {x: -8, y: 6}
         - {x: -8, y: 0}
         - {x: -8, y: -8}
         - {x: 8, y: -8}
