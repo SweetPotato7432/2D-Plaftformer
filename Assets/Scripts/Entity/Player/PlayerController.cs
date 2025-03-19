@@ -379,6 +379,16 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public void EnableInvinsible()
+    {
+        playerAnim.SetBool("TakeDMG", true);
+    }
+
+    public void DisableInvinsible()
+    {
+        playerAnim.SetBool("TakeDMG", false);
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (enableAttackBox)

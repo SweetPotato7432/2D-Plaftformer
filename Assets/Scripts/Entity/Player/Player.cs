@@ -1,8 +1,13 @@
+using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerController))]
 public class Player : Entity
 {
     public PlayerInfo stat;
+    PlayerController controller;
+
+    bool isInvinsible = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -24,9 +29,33 @@ public class Player : Entity
 
     }
 
+    private void Start()
+    {
+        controller = GetComponent<PlayerController>();
+    }
+
     // Update is called once per frame
     override public void Update()
     {
         base.Update();
+    }
+
+    public override void TakeDamage(float damage)
+    {
+        if (!isInvinsible)
+        {
+            base.TakeDamage(damage);
+            StartCoroutine("InvincibleCoolTime");
+        }
+    }
+
+    IEnumerator InvincibleCoolTime()
+    {
+        controller.EnableInvinsible();
+        isInvinsible = true;
+        yield return new WaitForSeconds(1f);
+
+        controller.DisableInvinsible();
+        isInvinsible = false;
     }
 }

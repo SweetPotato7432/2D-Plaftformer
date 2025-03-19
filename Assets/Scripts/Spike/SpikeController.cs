@@ -126,7 +126,6 @@ public class SpikeController : RaycastController
 
         if (hit != null)
         {
-            Debug.Log("플레이어가 가시에 닿음!");
             hit.GetComponent<Player>().TakeDamage(1);
         }
 

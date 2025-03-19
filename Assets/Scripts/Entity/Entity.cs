@@ -35,7 +35,7 @@ public class Entity : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float damage)
+    virtual public void TakeDamage(float damage)
     {
         Debug.Log("takeDamage"+damage);
         curHP -= damage;
