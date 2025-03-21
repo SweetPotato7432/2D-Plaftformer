@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class Enemy : Entity 
 {
+    
     public MonsterInfo stat;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    virtual public void Start()
     {
-        stat = GameManager.Instance.EnemeyStatInitialize(id);
+        stat = GameManager.Instance.EnemyStatInitialize(id);
 
         Initialize(stat.id,
             stat.characterName,

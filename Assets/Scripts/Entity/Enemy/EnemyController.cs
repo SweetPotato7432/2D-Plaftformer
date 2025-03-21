@@ -12,9 +12,10 @@ public class EnemyController : MonoBehaviour
 
     Ghost ghost;
 
-    public float maxJumpHeight = 4;
-    public float minJumpHeight = 1;
-    public float timeToJumpApex = .4f;
+    public float maxJumpHeight;
+    public float minJumpHeight;
+    public float timeToJumpApex;
+
     float accelarationTimeAirborne = .2f;
     float accelarationTimeGrounded = .1f;
     float moveSpeed = 12;
@@ -45,7 +46,12 @@ public class EnemyController : MonoBehaviour
     Vector2 meleeBoxPosition;
     float attackDir = 1;
 
+    Enemy thisEnemy;
 
+    float atk;
+    float atkSpeed;
+
+    MonsterInfo stat;
 
     private void Start()
     {
@@ -53,6 +59,16 @@ public class EnemyController : MonoBehaviour
         //playerAnim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         ghost = GetComponent<Ghost>();
+        thisEnemy = GetComponent<Enemy>();
+
+        stat = GameManager.Instance.EnemyStatInitialize(thisEnemy.id);
+
+        atk = stat.atk;
+        atkSpeed = stat.attackSpeed;
+        moveSpeed = stat.moveSpeed;
+        maxJumpHeight = stat.maxJumpHeight;
+        minJumpHeight = stat.minJumpHeight;
+        timeToJumpApex = stat.timeToJumpApex;
 
         defaultGravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
         gravity = defaultGravity;

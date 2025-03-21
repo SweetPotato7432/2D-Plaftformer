@@ -43,7 +43,7 @@ public class Entity : MonoBehaviour
 
     public void Initialize(int id, string characterName, float maxHP, bool attackType, float attackRange, float atk, float atkSpeed, float moveSpeed, float maxJumpHeight, float minJumpHeight, float timeToJumpApex)
     {
-        this.id = id;
+        //this.id = id;
         this.characterName = characterName;
         this.maxHP = maxHP;
         this.curHP = maxHP;

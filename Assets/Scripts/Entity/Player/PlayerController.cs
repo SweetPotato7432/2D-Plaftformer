@@ -60,6 +60,8 @@ public class PlayerController : MonoBehaviour
 
     HashSet<Enemy> attackedEnemy = new HashSet<Enemy>();
 
+    PlayerInfo stat;
+
     private void Start()
     {
         controller = GetComponent<Controller2D>();
@@ -68,14 +70,14 @@ public class PlayerController : MonoBehaviour
         ghost = GetComponent<Ghost>();
         player = GetComponent<Player>();
 
-        Debug.Log(player.stat.atk);
+        stat = GameManager.Instance.PlayerStatInitialize(player.id);
 
-        atk = player.stat.atk;
-        atkSpeed = player.stat.attackSpeed;
-        moveSpeed = player.stat.moveSpeed;
-        maxJumpHeight = player.stat.maxJumpHeight;
-        minJumpHeight = player.stat.minJumpHeight;
-        timeToJumpApex = player.stat.timeToJumpApex;
+        atk = stat.atk;
+        atkSpeed = stat.attackSpeed;
+        moveSpeed = stat.moveSpeed;
+        maxJumpHeight = stat.maxJumpHeight;
+        minJumpHeight = stat.minJumpHeight;
+        timeToJumpApex = stat.timeToJumpApex;
 
         defaultGravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
         gravity = defaultGravity;

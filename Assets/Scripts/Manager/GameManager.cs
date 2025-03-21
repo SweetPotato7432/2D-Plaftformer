@@ -55,12 +55,12 @@ public class GameManager : MonoBehaviour
 
     public PlayerInfo PlayerStatInitialize(int id)
     {
-        return playerInfo[id];
+        return playerInfo[id-101];
     }
 
-    public MonsterInfo EnemeyStatInitialize(int id)
+    public MonsterInfo EnemyStatInitialize(int id)
     {
-        return monsterInfo[id];
+        return monsterInfo[id-201];
     }
 
 
