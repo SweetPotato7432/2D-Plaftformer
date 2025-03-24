@@ -31,6 +31,7 @@ public class Entity : MonoBehaviour
         if (curHP <= 0)
         {
             curHP = 0;
+            // 추후 비활성화로 변경
             Destroy(gameObject);
         }
     }

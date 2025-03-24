@@ -250,7 +250,7 @@ public class EnemyController : MonoBehaviour
             Collider2D[] colliders = Physics2D.OverlapBoxAll(meleeBoxPosition, meleeBoxSize, 0f);
             foreach (Collider2D collider in colliders)
             {
-                if (collider.CompareTag("Enemy"))
+                if (collider.CompareTag("Player"))
                 {
                     collider.gameObject.GetComponent<Entity>().TakeDamage(5);
                 }
@@ -259,6 +259,10 @@ public class EnemyController : MonoBehaviour
         }
 
     }
+
+     
+
+
     private void OnDrawGizmosSelected()
     {
         if (isAttack)

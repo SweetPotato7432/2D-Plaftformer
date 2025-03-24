@@ -353,6 +353,23 @@ public class Controller2D : RaycastController
         collisions.fallingThroughPlatform = false;
     }
 
+    public bool CliffCheck(Vector2 moveAmount)
+    {
+        float directionX = Mathf.Sign(moveAmount.x);
+        float rayLength = Mathf.Abs(moveAmount.x) + skinWidth;
+
+        // 캐릭터가 점프 or 낙하 중일때 raycast가 시작될 부분 설정
+        Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
+        rayOrigin += Vector2.right* moveAmount.x*0.2f;
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, rayLength, collisionMask);
+
+        if (hit.collider == null)
+        {
+            Debug.Log("경고 낭떠러지");
+            return true;
+        }
+        return false;
+    }
 
 
 

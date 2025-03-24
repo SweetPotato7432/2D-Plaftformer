@@ -86,7 +86,7 @@ public class PlayerController : MonoBehaviour
 
         dashVelocity = dashDistance / timeToDashApex;
 
-        attackVelocity = 1 / 0.1f;
+        attackVelocity = 3f;
 
         Debug.Log($"Gravity :{gravity}, JumpVelocity : {maxJumpVelocity}");
     }
