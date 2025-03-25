@@ -8,7 +8,6 @@ public class Slime : Enemy
     Vector2 directionalInput;
     public int nextMove;
 
-    bool frontCliff;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void Awake()
@@ -34,8 +33,9 @@ public class Slime : Enemy
     {
         controller.SetDirectionalInput(directionalInput);
 
-        frontCliff = controller2D.CliffCheck(directionalInput);
-        if (frontCliff)
+        bool frontCliff = controller2D.CliffCheck(directionalInput);
+        bool frontWall = controller2D.WallCheck(directionalInput);
+        if (frontCliff || frontWall)
         {
             nextMove *= -1;
             directionalInput = new Vector2(nextMove, 0);
