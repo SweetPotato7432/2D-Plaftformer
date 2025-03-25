@@ -5,31 +5,70 @@ public class Slime : Enemy
     EnemyController controller;
     Controller2D controller2D;
 
+
+
     Vector2 directionalInput;
     public int nextMove;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public void Awake()
+    override public void Awake()
     {
         id = 201;
-
+        base.Awake();
     }
 
     override public void Start()
     {
+        base.Start();
+
         controller = GetComponent<EnemyController>();
         controller2D = GetComponent<Controller2D>();
+
+        ChangeToMoveState();
 
         nextMove = 1;
         Invoke("Think", 5);
 
 
 
-        base.Start();
+        
     }
 
     private void FixedUpdate()
+    {
+        stateMachine.Update();
+
+    }
+
+    // Update is called once per frame
+    override public void Update()
+    {
+        base.Update();
+    }
+
+    public override void Think()
+    {
+        // 이동 지정
+        nextMove = Random.Range(-1, 2);
+        Debug.Log(nextMove);
+        directionalInput = new Vector2(nextMove, 0);
+
+        if (nextMove == 0)
+        {
+            CancelInvoke();
+            controller.SetDirectionalInput(directionalInput);
+            ChangeToIdleState();
+        }
+        else
+        {
+            Invoke("Think", 5);
+        }
+
+
+    }
+
+    public override void Move()
     {
         controller.SetDirectionalInput(directionalInput);
 
@@ -43,25 +82,8 @@ public class Slime : Enemy
             Invoke("Think", 5);
 
         }
-
-        //controller.SetDirectionalInput(directionalInput);
-
-
     }
 
-    // Update is called once per frame
-    override public void Update()
-    {
-        base.Update();
-    }
 
-    void Think()
-    {
-        // 이동 지정
-        nextMove = Random.Range(-1, 2);
-        Debug.Log(nextMove);
-        directionalInput = new Vector2(nextMove, 0);
 
-        Invoke("Think", 5);
-    }
 }

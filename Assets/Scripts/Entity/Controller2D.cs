@@ -381,7 +381,6 @@ public class Controller2D : RaycastController
 
         if (!collisions.climbingSlope && !collisions.descendingSlope && hit.collider == null )
         {
-            Debug.Log("경고 낭떠러지");
             return true;
         }
         return false;
@@ -416,7 +415,6 @@ public class Controller2D : RaycastController
 
         if (!collisions.climbingSlope && !collisions.descendingSlope && hit.collider != null)
         {
-            Debug.Log("경고 벽");
             return true;
         }
         return false;
