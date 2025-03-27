@@ -42,15 +42,22 @@ public abstract class Enemy : Entity
 
     public abstract void Think();
     public abstract void Move();
+    public abstract void Attack();
 
     // 상태 변경 메서드
-    public void ChangeToMoveState()
+    protected void ChangeToMoveState()
     {
         stateMachine.ChangeState(new MoveState(this));
     }
 
-    public void ChangeToIdleState()
+    protected void ChangeToIdleState()
     {
         stateMachine.ChangeState(new IdleState(this));
+    }
+
+    protected void ChangeToAttackState()
+    {
+        stateMachine.ChangeState(new AttackState(this));
+
     }
 }

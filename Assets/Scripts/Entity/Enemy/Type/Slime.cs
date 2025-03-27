@@ -5,8 +5,6 @@ public class Slime : Enemy
     EnemyController controller;
     Controller2D controller2D;
 
-
-
     Vector2 directionalInput;
     public int nextMove;
 
@@ -29,10 +27,7 @@ public class Slime : Enemy
 
         nextMove = 1;
         Invoke("Think", 5);
-
-
-
-        
+ 
     }
 
     private void FixedUpdate()
@@ -82,6 +77,11 @@ public class Slime : Enemy
             Invoke("Think", 5);
 
         }
+    }
+
+    public override void Attack()
+    {
+        
     }
 
 

@@ -381,6 +381,7 @@ public class Controller2D : RaycastController
 
         if (!collisions.climbingSlope && !collisions.descendingSlope && hit.collider == null )
         {
+            //Debug.Log("절벽 감지");
             return true;
         }
         return false;
@@ -391,33 +392,45 @@ public class Controller2D : RaycastController
         float directionX = Mathf.Sign(moveAmount.x);
         float rayLength = Mathf.Abs(moveAmount.x) + skinWidth;
 
-        //이동 방향의 앞쪽 바닥에서 경사로 감지
-        Vector2 slopeCheckOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
-        slopeCheckOrigin += Vector2.up * (horizontalRaySpacing); // 조금 앞쪽에서 감지
-
-        RaycastHit2D slopeHit = Physics2D.Raycast(slopeCheckOrigin, Vector2.right * directionX, rayLength, collisionMask);
-        Debug.DrawRay(slopeCheckOrigin, Vector2.right * directionX * (rayLength), Color.green); // 경사로 감지 Debug
-
-        // 경사로가 감지되었고, 각도가 유효하면 낭떠러지 감지 중단
-        if (slopeHit.collider != null)
+        for (int i = 0; i < horizontalRayCount; i++)
         {
-            float slopeAngle = Vector2.Angle(slopeHit.normal, Vector2.up);
-            if (slopeAngle > 0 && slopeAngle <= maxSlopeAngle)
+            //이동 방향의 앞쪽 바닥에서 경사로 감지
+            Vector2 slopeCheckOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
+            slopeCheckOrigin += Vector2.up * (horizontalRaySpacing * i); // 조금 앞쪽에서 감지
+
+            RaycastHit2D slopeHit = Physics2D.Raycast(slopeCheckOrigin, Vector2.right * directionX, rayLength, collisionMask);
+            Debug.DrawRay(slopeCheckOrigin, Vector2.right * directionX * (rayLength), Color.green); // 경사로 감지 Debug
+
+            // 경사로가 감지되었고, 각도가 유효하면 낭떠러지 감지 중단
+            if (slopeHit.collider != null)
             {
-                return false; // 경사로면 낭떠러지 감지 안 함
+                float slopeAngle = Vector2.Angle(slopeHit.normal, Vector2.up);
+                if (slopeAngle > 0 && slopeAngle <= maxSlopeAngle)
+                {
+                    return false; // 경사로면 낭떠러지 감지 안 함
+                }
             }
         }
 
-        // 캐릭터가 점프 or 낙하 중일때 raycast가 시작될 부분 설정
-        Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
-        rayOrigin += Vector2.right * moveAmount.x * 0.2f;
-        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.left*directionX, rayLength, collisionMask);
-
-        if (!collisions.climbingSlope && !collisions.descendingSlope && hit.collider != null)
+        for(int i = 0; i< horizontalRayCount; i++)
         {
-            return true;
+            // 캐릭터가 점프 or 낙하 중일때 raycast가 시작될 부분 설정
+            Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
+            rayOrigin += Vector2.up * (horizontalRaySpacing * i);
+            RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength*0.2f, collisionMask);
+            Debug.DrawRay(rayOrigin, Vector2.right * directionX * (rayLength*0.2f), Color.blue); // 경사로 감지 Debug
+
+            if (!collisions.climbingSlope && !collisions.descendingSlope && hit)
+            {
+                //Debug.Log("벽 감지");
+
+                return true;
+            }
+            
         }
         return false;
+
+
     }
 
 

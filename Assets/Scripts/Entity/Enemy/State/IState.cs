@@ -55,3 +55,26 @@ public class MoveState : IState
         enemy.CancelInvoke();
     }
 }
+
+public class AttackState : IState
+{
+    private Enemy enemy;
+
+    public AttackState(Enemy enemy)
+    {
+        this.enemy = enemy;
+    }
+
+    public void Enter()
+    {
+        enemy.state = Entity.States.ATTACK;
+    }
+
+    public void Update()
+    {
+    }
+
+    public void Exit()
+    {
+    }
+}
