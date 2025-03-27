@@ -1,13 +1,13 @@
 using UnityEngine;
 
-public interface IState
+public interface IEnemyState
 {
     void Enter();
     void Update();
     void Exit();
 }
 
-public class IdleState : IState
+public class IdleState : IEnemyState
 {
     private Enemy enemy;
 
@@ -29,7 +29,7 @@ public class IdleState : IState
     public void Exit() { }
 }
 
-public class MoveState : IState
+public class MoveState : IEnemyState
 {
     private Enemy enemy;
 
@@ -56,7 +56,7 @@ public class MoveState : IState
     }
 }
 
-public class AttackState : IState
+public class AttackState : IEnemyState
 {
     private Enemy enemy;
 
@@ -67,7 +67,9 @@ public class AttackState : IState
 
     public void Enter()
     {
+        enemy.enemyAnim.SetTrigger("isAttack");
         enemy.state = Entity.States.ATTACK;
+        enemy.AttackStart();
     }
 
     public void Update()

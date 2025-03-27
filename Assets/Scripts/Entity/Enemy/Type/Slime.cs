@@ -1,13 +1,16 @@
+using System.Collections.Generic;
+using Unity.Android.Gradle.Manifest;
 using UnityEngine;
 
 public class Slime : Enemy
 {
-    EnemyController controller;
-    Controller2D controller2D;
+    EnemyController enemyController;
+    Controller2D controller;
 
     Vector2 directionalInput;
     public int nextMove;
 
+    Vector2 detectedPos;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     override public void Awake()
@@ -18,10 +21,12 @@ public class Slime : Enemy
 
     override public void Start()
     {
+        
+
         base.Start();
 
-        controller = GetComponent<EnemyController>();
-        controller2D = GetComponent<Controller2D>();
+        enemyController = GetComponent<EnemyController>();
+        controller = GetComponent<Controller2D>();
 
         ChangeToMoveState();
 
@@ -34,6 +39,7 @@ public class Slime : Enemy
     {
         stateMachine.Update();
 
+
     }
 
     // Update is called once per frame
@@ -44,7 +50,7 @@ public class Slime : Enemy
 
     public override void Think()
     {
-        // �̵� ����
+        // 이동 지정
         nextMove = Random.Range(-1, 2);
         Debug.Log(nextMove);
         directionalInput = new Vector2(nextMove, 0);
@@ -52,7 +58,7 @@ public class Slime : Enemy
         if (nextMove == 0)
         {
             CancelInvoke();
-            controller.SetDirectionalInput(directionalInput);
+            enemyController.SetDirectionalInput(directionalInput);
             ChangeToIdleState();
         }
         else
@@ -65,10 +71,34 @@ public class Slime : Enemy
 
     public override void Move()
     {
-        controller.SetDirectionalInput(directionalInput);
+        detectedPos = transform.position - new Vector3(0, 1.3f);
 
-        bool frontCliff = controller2D.CliffCheck(directionalInput);
-        bool frontWall = controller2D.WallCheck(directionalInput);
+        enemyController.SetDirectionalInput(directionalInput);
+
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(detectedPos, attackRange);
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.CompareTag("Player"))
+            {
+                float direction = collider.transform.position.x - transform.position.x;
+                if (direction > 0)
+                {
+                    directionalInput.x = 1;
+                    Debug.Log("플레이어가 우측에 있음");
+                }
+                else if (direction < 0)
+                {
+                    directionalInput.x = -1;
+                    Debug.Log("플레이어가 좌측에 있음");
+                }
+                enemyController.SetDirectionalInput(directionalInput);
+                ChangeToAttackState();
+            }
+        }
+
+
+        bool frontCliff = controller.CliffCheck(directionalInput);
+        bool frontWall = controller.WallCheck(directionalInput);
         if (frontCliff || frontWall)
         {
             nextMove *= -1;
@@ -79,11 +109,22 @@ public class Slime : Enemy
         }
     }
 
-    public override void Attack()
+    public override void AttackStart()
     {
-        
+
+    }
+
+    public override void AttackEnd()
+    {
+        ChangeToIdleState();
     }
 
 
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(0, 1, 1, .3f);
+        Gizmos.DrawWireSphere(detectedPos, attackRange);
+
+    }
 
 }

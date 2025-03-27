@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Controller2D))]
@@ -45,6 +46,9 @@ public class EnemyController : MonoBehaviour
     public Vector2 meleeBoxSize;
     Vector2 meleeBoxPosition;
     float attackDir = 1;
+    HashSet<Player> attackedPlayer = new HashSet<Player>();
+    bool enableAttackBox = false;
+
 
     Enemy thisEnemy;
 
@@ -84,14 +88,11 @@ public class EnemyController : MonoBehaviour
     {
         // 가속 및 감속 부분
         CalculateVelocity(moveSpeed);
-        // Controller2D로 이동 및 변수 전달
-        controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
-
-
-
-        //CalculateVelocity(dashSpeed);
-        //controller.Dash(velocity * Time.fixedDeltaTime, directionalInput);
-        ////onDash = false;
+        if (thisEnemy.state == Entity.States.MOVE)
+        {   
+            // Controller2D로 이동 및 변수 전달
+            controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
+        }
 
 
 
@@ -124,7 +125,30 @@ public class EnemyController : MonoBehaviour
         // 사각형의 중심 위치
         meleeBoxPosition = new Vector2(transform.position.x + (meleeBoxSize.x / 2) * attackDir, controller.collider.transform.position.y + controller.collider.offset.y);
 
+        //공격 범위 활성화
+        if (enableAttackBox)
+        {
+            Collider2D[] colliders = Physics2D.OverlapBoxAll(meleeBoxPosition, meleeBoxSize, 0f);
+            foreach (Collider2D collider in colliders)
+            {
+                if (collider.CompareTag("Player"))
+                {
 
+
+                    Player player = collider.GetComponent<Player>();
+                    if (!attackedPlayer.Contains(player))
+                    {
+                        
+
+                        attackedPlayer.Add(player);
+                        // 추후 공격 스탯 기반으로 수정
+                        player.TakeDamage(atk);
+                    }
+
+                }
+                //Debug.Log(collider.name);
+            }
+        }
 
     }
 
@@ -241,31 +265,37 @@ public class EnemyController : MonoBehaviour
         velocity.y += gravity * Time.fixedDeltaTime;
     }
 
-    // 공격방식
-    public void MeleeAttack(bool isAttack)
+
+    void EnableAttackBox()
     {
-        this.isAttack = isAttack;
-        if (isAttack)
+        if (!enableAttackBox)
         {
-            Collider2D[] colliders = Physics2D.OverlapBoxAll(meleeBoxPosition, meleeBoxSize, 0f);
-            foreach (Collider2D collider in colliders)
-            {
-                if (collider.CompareTag("Player"))
-                {
-                    collider.gameObject.GetComponent<Entity>().TakeDamage(5);
-                }
-                //Debug.Log(collider.name);
-            }
+            enableAttackBox = true;
+        }
+    }
+    void DisableAttackBox()
+    {
+        if (enableAttackBox)
+        {
+
+
+            enableAttackBox = false;
+            attackedPlayer.Clear();
         }
 
     }
 
-     
+    public void StopMoving()
+    {
+        // 이동 정지
+        velocity.x = 0;
+    }
+
 
 
     private void OnDrawGizmosSelected()
     {
-        if (isAttack)
+        if (enableAttackBox)
         {
             Gizmos.color = new Color(0, 1, 0, .3f);
             Gizmos.DrawCube(meleeBoxPosition, meleeBoxSize);

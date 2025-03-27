@@ -1,8 +1,8 @@
 public class EnemyStateMachine
 {
-    private IState currentState;
+    private IEnemyState currentState;
 
-    public void ChangeState(IState newState)
+    public void ChangeState(IEnemyState newState)
     {
         currentState?.Exit();
         currentState = newState;

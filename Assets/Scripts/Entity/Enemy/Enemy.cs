@@ -9,6 +9,14 @@ public abstract class Enemy : Entity
 
     protected EnemyStateMachine stateMachine;
 
+    [Header("MeleeAttack")]
+    public bool isAttack;
+    public Vector2 meleeBoxSize;
+    protected Vector2 meleeBoxPosition;
+    protected float attackDir = 1;
+    protected bool enableAttackBox = false;
+
+
     virtual public void Awake()
     {
         stateMachine = new EnemyStateMachine();
@@ -42,7 +50,8 @@ public abstract class Enemy : Entity
 
     public abstract void Think();
     public abstract void Move();
-    public abstract void Attack();
+    public abstract void AttackStart();
+    public abstract void AttackEnd();
 
     // 상태 변경 메서드
     protected void ChangeToMoveState()
