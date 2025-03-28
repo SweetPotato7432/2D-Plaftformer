@@ -10,29 +10,33 @@ public class Room : MonoBehaviour
     protected Vector2Int roomPos;
     [SerializeField]
     protected List<Vector2Int> doors = new(); // 각 방의 문 정보
+
+
     [Header("Door"),Tooltip("0 : Top, 1: Right, 2:Bottom, 3:Left")]
     [SerializeField]
     protected List<Door> doorObj = new();
 
     [Tooltip("0 : Top, 1: Right, 2:Bottom, 3:Left")]
     public Vector3[] localSpawnpoints;
-    [SerializeField]
     Vector3[] globalSpawnpoints;
 
-    [SerializeField]
     Vector3 curSpawnpoints;
 
+    [Header("RoomSize")]
     [SerializeField]
     Transform BottomLeft;
     [SerializeField]
     Transform TopRight;
 
+    [HideInInspector]
     public float totalWidth;
+    [HideInInspector]
     public float totalHeight;
+    [HideInInspector]
     public Vector2 centerPos;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Awake()
+    public virtual void Awake()
     {
         
 
@@ -58,33 +62,8 @@ public class Room : MonoBehaviour
         this.roomPos = pos;
         this.doors = doors.ToList();
 
-        Vector2Int[] directions = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
+        OpenDoor();
 
-        foreach (var door in doors)
-        {
-            if (door == directions[0])
-            {
-                doorObj[0].DoorActive(true);
-                doorObj[0].InitializeDoor(roomPos,roomPos + door);
-            }
-            else if (door == directions[1])
-            {
-                doorObj[1].DoorActive(true);
-                doorObj[1].InitializeDoor(roomPos,roomPos + door);
-
-            }
-            else if(door == directions[2])
-            {
-                doorObj[2].DoorActive(true);
-                doorObj[2].InitializeDoor(roomPos, roomPos + door);
-
-            }
-            else if (door == directions[3])
-            {
-                doorObj[3].DoorActive(true);
-                doorObj[3].InitializeDoor(roomPos, roomPos + door);
-            }
-        }
         MapSizeCalculate();
 
     }
@@ -118,38 +97,7 @@ public class Room : MonoBehaviour
 
     void MapSizeCalculate()
     {
-        //float tileSize = 16f;
-        //Tilemap[] tilemaps = this.GetComponentsInChildren<Tilemap>();
 
-        //if (tilemaps.Length == 0)
-        //{
-        //    Debug.LogError("부모 오브젝트에 Tilemap이 없습니다!");
-        //    return;
-        //}
-
-        //Vector3 minPos = new Vector3(float.MaxValue, float.MaxValue, 0);
-        //Vector3 maxPos = new Vector3(float.MinValue, float.MinValue, 0);
-
-        //// 모든 Tilemap을 순회하며 좌측 하단, 우측 상단 좌표 찾기
-        //foreach (Tilemap tilemap in tilemaps)
-        //{
-        //    if (tilemap == null) continue;
-
-        //    BoundsInt bounds = tilemap.cellBounds;
-        //    Vector3 tilemapWorldPos = tilemap.transform.position;
-
-        //    Vector3 worldMin = tilemapWorldPos + new Vector3(bounds.min.x, bounds.min.y, 0);
-        //    Vector3 worldMax = tilemapWorldPos + new Vector3(bounds.max.x, bounds.max.y, 0);
-
-        //    minPos.x = Mathf.Min(minPos.x, worldMin.x);
-        //    minPos.y = Mathf.Min(minPos.y, worldMin.y);
-        //    maxPos.x = Mathf.Max(maxPos.x, worldMax.x);
-        //    maxPos.y = Mathf.Max(maxPos.y, worldMax.y);
-        //}
-
-        //// 전체 맵의 가로, 세로 크기 계산
-        //totalWidth = (maxPos.x - minPos.x);
-        //totalHeight = (maxPos.y - minPos.y);
 
         totalWidth = Mathf.Abs(BottomLeft.localPosition.x)+Mathf.Abs(TopRight.localPosition.x);
         totalHeight = Mathf.Abs(BottomLeft.localPosition.y)+Mathf.Abs(TopRight.localPosition.y);
@@ -160,8 +108,70 @@ public class Room : MonoBehaviour
 
         centerPos = new Vector2((BottomLeft.position.x + TopRight.position.x) /2f, (BottomLeft.position.y + TopRight.position.y)/2f);
     }
+
+    public void OpenDoor()
+    {
+        Vector2Int[] directions = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
+
+        foreach (var door in doors)
+        {
+            if (door == directions[0])
+            {
+                doorObj[0].DoorActive(true);
+                doorObj[0].InitializeDoor(roomPos, roomPos + door);
+            }
+            else if (door == directions[1])
+            {
+                doorObj[1].DoorActive(true);
+                doorObj[1].InitializeDoor(roomPos, roomPos + door);
+
+            }
+            else if (door == directions[2])
+            {
+                doorObj[2].DoorActive(true);
+                doorObj[2].InitializeDoor(roomPos, roomPos + door);
+
+            }
+            else if (door == directions[3])
+            {
+                doorObj[3].DoorActive(true);
+                doorObj[3].InitializeDoor(roomPos, roomPos + door);
+            }
+        }
+    }
+
+    public void ClosedDoor()
+    {
+        Vector2Int[] directions = { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
+
+        foreach (var door in doors)
+        {
+            if (door == directions[0])
+            {
+                doorObj[0].DoorActive(false);
+                doorObj[0].InitializeDoor(roomPos, roomPos + door);
+            }
+            else if (door == directions[1])
+            {
+                doorObj[1].DoorActive(false);
+                doorObj[1].InitializeDoor(roomPos, roomPos + door);
+
+            }
+            else if (door == directions[2])
+            {
+                doorObj[2].DoorActive(false);
+                doorObj[2].InitializeDoor(roomPos, roomPos + door);
+
+            }
+            else if (door == directions[3])
+            {
+                doorObj[3].DoorActive(false);
+                doorObj[3].InitializeDoor(roomPos, roomPos + door);
+            }
+        }
+    }
     
-    private void OnDrawGizmos()
+    public virtual void OnDrawGizmos()
     {
         if (localSpawnpoints != null)
         {
