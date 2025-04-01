@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Entity : MonoBehaviour
+public abstract class Entity : MonoBehaviour
 {
     public enum States
     {
@@ -28,12 +28,7 @@ public class Entity : MonoBehaviour
 
     virtual public void Update()
     {
-        if (curHP <= 0)
-        {
-            curHP = 0;
-            // 추후 비활성화로 변경
-            Destroy(gameObject);
-        }
+        EntityDeadCheck();
     }
 
     virtual public void TakeDamage(float damage)
@@ -57,4 +52,6 @@ public class Entity : MonoBehaviour
         this.minJumpHeight = minJumpHeight;
         this.timeToJumpApex = timeToJumpApex;
     }
+
+    public abstract void EntityDeadCheck();
 }

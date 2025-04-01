@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5292768456490676239}
-  - component: {fileID: 5945556952483367303}
+  - component: {fileID: 4846822797667146439}
   m_Layer: 0
-  m_Name: PoolManager
+  m_Name: EnemyPoolManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5945556952483367303
+--- !u!114 &4846822797667146439
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,8 +41,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 9198692849882640340}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61554d234c0f2a446a6ac028638b4701, type: 3}
+  m_Script: {fileID: 11500000, guid: eef60c7e4bf07664fa53eefa80a196da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ghostPrefab: {fileID: 2444082209999948782, guid: 4bbabfb3d917dcf439cd5f8bb3c266eb, type: 3}
-  initialPoolSize: 5
+  pools:
+  - id: Slime
+    prefab: {fileID: 1026890706875280539, guid: d09223fb7aa3ed7479217fe06151f9aa, type: 3}
+    size: 5

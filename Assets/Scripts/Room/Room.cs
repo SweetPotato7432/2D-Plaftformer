@@ -68,7 +68,7 @@ public class Room : MonoBehaviour
 
     }
 
-    public void SetMoveSpawn(Vector2Int currentPos, Vector2Int destination)
+    virtual public void SetMoveSpawn(Vector2Int currentPos, Vector2Int destination)
     {
         Vector2Int roomDir = destination - currentPos;
 

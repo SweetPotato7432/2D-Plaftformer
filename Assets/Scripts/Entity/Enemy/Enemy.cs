@@ -53,6 +53,7 @@ public abstract class Enemy : Entity
     public abstract void AttackStart();
     public abstract void AttackEnd();
 
+
     // 상태 변경 메서드
     protected void ChangeToMoveState()
     {
@@ -68,5 +69,15 @@ public abstract class Enemy : Entity
     {
         stateMachine.ChangeState(new AttackState(this));
 
+    }
+
+    public override void EntityDeadCheck()
+    {
+        if (curHP <= 0)
+        {
+            curHP = 0;
+            EnemyPoolManager.Instance.ReturnEnemy(gameObject, stat.characterName);
+            gameObject.SetActive(false);
+        }
     }
 }

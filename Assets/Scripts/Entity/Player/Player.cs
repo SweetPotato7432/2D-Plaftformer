@@ -58,4 +58,12 @@ public class Player : Entity
         controller.DisableInvinsible();
         isInvinsible = false;
     }
+    public override void EntityDeadCheck()
+    {
+        if (curHP <= 0)
+        {
+            curHP = 0;
+            gameObject.SetActive(false);
+        }
+    }
 }
