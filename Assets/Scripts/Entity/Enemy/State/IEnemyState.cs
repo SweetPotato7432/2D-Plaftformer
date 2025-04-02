@@ -80,3 +80,28 @@ public class AttackState : IEnemyState
     {
     }
 }
+
+public class DeadState : IEnemyState
+{
+    private Enemy enemy;
+
+    public DeadState(Enemy enemy)
+    {
+        this.enemy = enemy;
+    }
+
+    public void Enter()
+    {
+        enemy.enemyAnim.SetTrigger("isDead");
+        enemy.state = Entity.States.DEAD;
+        enemy.AttackStart();
+    }
+
+    public void Update()
+    {
+    }
+
+    public void Exit()
+    {
+    }
+}

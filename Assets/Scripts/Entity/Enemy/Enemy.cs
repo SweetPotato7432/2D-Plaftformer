@@ -16,6 +16,8 @@ public abstract class Enemy : Entity
     protected float attackDir = 1;
     protected bool enableAttackBox = false;
 
+    public NormalRoom curNormalRoom;
+
 
     virtual public void Awake()
     {
@@ -28,18 +30,14 @@ public abstract class Enemy : Entity
         enemyAnim = GetComponent<Animator>();
         stat = GameManager.Instance.EnemyStatInitialize(id);
 
-        Initialize(stat.id,
-            stat.characterName,
-            stat.hp,
-            stat.attackType,
-            stat.attackRange,
-            stat.atk,
-            stat.attackSpeed,
-            stat.moveSpeed,
-            stat.maxJumpHeight,
-            stat.minJumpHeight,
-            stat.timeToJumpApex
-            );
+        InitializeEnemy();
+    }
+
+    private void OnEnable()
+    {
+        stat = GameManager.Instance.EnemyStatInitialize(id);
+
+        InitializeEnemy();
     }
 
     // Update is called once per frame
@@ -70,6 +68,12 @@ public abstract class Enemy : Entity
         stateMachine.ChangeState(new AttackState(this));
 
     }
+    protected void ChangeToDeadState()
+    {
+        stateMachine.ChangeState(new DeadState(this));
+
+    }
+
 
     public override void EntityDeadCheck()
     {
@@ -77,7 +81,54 @@ public abstract class Enemy : Entity
         {
             curHP = 0;
             EnemyPoolManager.Instance.ReturnEnemy(gameObject, stat.characterName);
+
+            // 카운트로 바꾸기
+
+            curNormalRoom.enemyCnt--;
+            ChangeToDeadState();
+
             gameObject.SetActive(false);
         }
+    }
+
+    public void InitializeEnemy()
+    {
+        stat = GameManager.Instance.EnemyStatInitialize(id);
+
+        Initialize(stat.id,
+            stat.characterName,
+            stat.hp,
+            stat.attackType,
+            stat.attackRange,
+            stat.atk,
+            stat.attackSpeed,
+            stat.moveSpeed,
+            stat.maxJumpHeight,
+            stat.minJumpHeight,
+            stat.timeToJumpApex
+            );
+
+        ChangeToIdleState();
+    }
+    public void InitializeEnemy(NormalRoom room)
+    {
+        stat = GameManager.Instance.EnemyStatInitialize(id);
+
+        Initialize(stat.id,
+            stat.characterName,
+            stat.hp,
+            stat.attackType,
+            stat.attackRange,
+            stat.atk,
+            stat.attackSpeed,
+            stat.moveSpeed,
+            stat.maxJumpHeight,
+            stat.minJumpHeight,
+            stat.timeToJumpApex
+            );
+
+        curNormalRoom = room;
+        ChangeToIdleState();
+
     }
 }

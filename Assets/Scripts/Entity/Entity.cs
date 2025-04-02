@@ -16,7 +16,7 @@ public abstract class Entity : MonoBehaviour
     public int id;
     protected string characterName;
     protected float maxHP;
-    protected float curHP;
+    public float curHP;
     protected bool attackType;// 0 : 근접, 1 : 원거리
     protected float attackRange;
     protected float atk;
@@ -51,6 +51,11 @@ public abstract class Entity : MonoBehaviour
         this.maxJumpHeight = maxJumpHeight;
         this.minJumpHeight = minJumpHeight;
         this.timeToJumpApex = timeToJumpApex;
+    }
+
+    public void Initialize(float maxHP)
+    {
+        curHP = maxHP;
     }
 
     public abstract void EntityDeadCheck();

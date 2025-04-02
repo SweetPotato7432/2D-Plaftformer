@@ -13,7 +13,7 @@ public class NormalRoom : Room
         public Vector3 globalSpawnPoint;
     }
 
-    HashSet<GameObject> enemyList = new HashSet<GameObject>();
+    public int enemyCnt;
 
     public bool isRoomClear = false;
     bool isOnBattle = false;
@@ -49,10 +49,17 @@ public class NormalRoom : Room
     {
         if (isOnBattle)
         {
-            if (enemyList.Count <= 0)
+            if (enemyCnt <= 0)
             {
+                Debug.Log("Å¬¸®¾î");
+                isRoomClear = true;
+                isOnBattle = false;
+                OpenDoor();
 
             }
+        }
+        else
+        {
         }
     }
 
@@ -60,12 +67,14 @@ public class NormalRoom : Room
     {
         for (int i = 0; i < spawnInfos.Length; i++)
         {
-            GameObject Enemy = EnemyPoolManager.Instance.GetEnemy(spawnInfos[i].tag);
-            if (Enemy != null)
+            GameObject enemyObj = EnemyPoolManager.Instance.GetEnemy(spawnInfos[i].tag);
+            Enemy enemy = enemyObj.GetComponent<Enemy>();
+            if (enemyObj != null)
             {
-                Enemy.transform.position = spawnInfos[i].globalSpawnPoint;
-                Enemy.SetActive(true);
-                enemyList.Add(Enemy);
+                enemyObj.transform.position = spawnInfos[i].globalSpawnPoint;
+                enemy.InitializeEnemy(this);
+                enemyObj.SetActive(true);
+                enemyCnt++;
             }
 
         }
