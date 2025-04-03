@@ -1,9 +1,16 @@
+using Microlight.MicroBar;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerController))]
 public class Player : Entity
 {
+    [SerializeField]
+    MicroBar hpBar;
+    [SerializeField]
+    TMP_Text hpText;
+
     public PlayerInfo stat;
     PlayerController controller;
 
@@ -32,6 +39,9 @@ public class Player : Entity
     private void Start()
     {
         controller = GetComponent<PlayerController>();
+
+        if (hpBar != null) hpBar.Initialize(maxHP);
+        hpText.text = $"{curHP}/{maxHP}";
     }
 
     // Update is called once per frame
@@ -45,6 +55,9 @@ public class Player : Entity
         if (!isInvinsible)
         {
             base.TakeDamage(damage);
+
+            if (hpBar != null) hpBar.UpdateBar(curHP,false,UpdateAnim.Damage);
+            hpText.text = $"{curHP}/{maxHP}";
             StartCoroutine("InvincibleCoolTime");
         }
     }
