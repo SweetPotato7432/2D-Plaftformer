@@ -1,23 +1,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyPoolManager : MonoBehaviour
+public class EffectPoolManager : MonoBehaviour
 {
-
-    public static EnemyPoolManager Instance { get; private set; }
+    public static EffectPoolManager Instance { get; private set; }
 
     [System.Serializable]
-    public struct EnemyPool
+    public struct EffectPool
     {
         public string id;
         public GameObject prefab;
         public int size;
     }
 
-    public List<EnemyPool> pools;
+    public List<EffectPool> pools;
     public Dictionary<string, Queue<GameObject>> poolDictionary;
-    // EnemyPool 검색용
-    private Dictionary<string, EnemyPool> enemyPoolLookup;
+    //EffectPool 검색용
+    private Dictionary<string, EffectPool> effectPoolLookup;
 
     private void Awake()
     {
@@ -33,34 +32,33 @@ public class EnemyPoolManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
-        enemyPoolLookup = new Dictionary<string, EnemyPool>();
+        effectPoolLookup = new Dictionary<string, EffectPool>();
 
-
-        foreach (EnemyPool pool in pools)
+        foreach (EffectPool pool in pools)
         {
             InitializePool(pool);
-            enemyPoolLookup[pool.id] = pool;
+            effectPoolLookup[pool.id] = pool;
         }
     }
 
-    public void InitializePool(EnemyPool pool)
+    public void InitializePool(EffectPool pool)
     {
         Queue<GameObject> objectPool = new Queue<GameObject>();
         for (int i = 0; i < pool.size; i++)
         {
-            CreateNewEnemy(pool,  objectPool);
+            CreateNewEffect(pool, objectPool);
         }
         poolDictionary.Add(pool.id, objectPool);
     }
 
-    private void CreateNewEnemy(EnemyPool pool, Queue<GameObject> objectPool)
+    private void CreateNewEffect(EffectPool pool, Queue<GameObject> objectPool)
     {
-        GameObject enemyObject = Instantiate(pool.prefab);
-        enemyObject.SetActive(false);
-        objectPool.Enqueue(enemyObject);
+        GameObject effectObject = Instantiate(pool.prefab);
+        effectObject.SetActive(false);
+        objectPool.Enqueue(effectObject);
     }
 
-    public GameObject GetEnemy(string tag)
+    public GameObject GetEffect(string tag)
     {
         if (!poolDictionary.ContainsKey(tag))
         {
@@ -70,18 +68,18 @@ public class EnemyPoolManager : MonoBehaviour
 
         if (objectPool.Count == 0)
         {
-            if(!enemyPoolLookup.TryGetValue(tag, out EnemyPool pool))
+            if (!effectPoolLookup.TryGetValue(tag, out EffectPool pool))
             {
                 Debug.LogError($"[EnemyPoolManager] {tag}에 해당하는 EnemyPool이 존재하지 않습니다.");
                 return null;
             }
-            CreateNewEnemy(pool, objectPool);
+            CreateNewEffect(pool, objectPool);
         }
-        GameObject enemy = objectPool.Dequeue();
-        return enemy;
+        GameObject effect = objectPool.Dequeue();
+        return effect;
     }
 
-    public void ReturnEnemy(GameObject gameObject,string tag)
+    public void ReturnEffect(GameObject gameObject, string tag)
     {
         poolDictionary[tag].Enqueue(gameObject);
     }

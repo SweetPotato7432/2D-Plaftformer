@@ -35,7 +35,8 @@ public class Ghost : MonoBehaviour
 
     void CreateGhost()
     {
-        GameObject currentGhost = GhostPoolManager.Instance.GetGhost();
+        //GameObject currentGhost = GhostPoolManager.Instance.GetGhost();
+        GameObject currentGhost = EffectPoolManager.Instance.GetEffect("Ghost");
         SpriteRenderer spriteRenderer = currentGhost.GetComponent<SpriteRenderer>();
         currentGhost.transform.position = transform.position;
         currentGhost.transform.localScale = transform.localScale;
@@ -52,7 +53,8 @@ public class Ghost : MonoBehaviour
         Tween tween = spriteRenderer.DOFade(0f, .3f);
         yield return tween.WaitForCompletion();
         //yield return new WaitForSeconds(.3f);
-        GhostPoolManager.Instance.ReturnGhost(ghost);
+        //GhostPoolManager.Instance.ReturnGhost(ghost);
+        EffectPoolManager.Instance.ReturnEffect(ghost, "Ghost");
         ghost.SetActive(false);
     }
 }

@@ -1,8 +1,12 @@
+using Microlight.MicroBar;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public abstract class Enemy : Entity 
 {
-    
+    [SerializeField]
+    MicroBar hpBar;
+
     public MonsterInfo stat;
 
     public Animator enemyAnim;
@@ -18,6 +22,13 @@ public abstract class Enemy : Entity
 
     public NormalRoom curNormalRoom;
 
+    [Header("HPParticle")]
+    //the HP Particle
+    public GameObject HPParticle;
+
+    //Default Forces
+    Vector3 DefaultForce = new Vector3(0f, 200f, 0f);
+    float DefaultForceScatter = 100f;
 
     virtual public void Awake()
     {
@@ -27,6 +38,9 @@ public abstract class Enemy : Entity
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     virtual public void Start()
     {
+        if (hpBar != null) hpBar.Initialize(maxHP);
+        hpBar.gameObject.SetActive(false);
+
         enemyAnim = GetComponent<Animator>();
         stat = GameManager.Instance.EnemyStatInitialize(id);
 
@@ -74,6 +88,35 @@ public abstract class Enemy : Entity
 
     }
 
+    public override void TakeDamage(float damage)
+    {
+        if (!hpBar.gameObject.activeSelf)
+        {
+            hpBar.gameObject.SetActive(true);
+        }
+        base.TakeDamage(damage);
+        if (hpBar != null) hpBar.UpdateBar(curHP, false, UpdateAnim.Damage);
+
+        // 체력 시각화
+        //GameObject NewHPP = Instantiate(HPParticle, this.transform.position, gameObject.transform.rotation) as GameObject;
+        GameObject NewHPP = EffectPoolManager.Instance.GetEffect("Damage");
+        NewHPP.GetComponent<HPParticleScript>().Initalize(this.transform.position, this.transform.rotation);
+        NewHPP.SetActive(true);
+        NewHPP.GetComponent<AlwaysFace>().Target = GameObject.Find("Main Camera").gameObject;
+
+        TextMesh TM = NewHPP.transform.Find("HPLabel").GetComponent<TextMesh>();
+
+        if (damage > 0f)
+        {
+            TM.text = damage.ToString();
+            TM.color = new Color(1f, 0f, 0f, 1f);
+        }
+
+        Vector2 force = new Vector2(DefaultForce.x + Random.Range(-DefaultForceScatter, DefaultForceScatter), DefaultForce.y + Random.Range(-DefaultForceScatter, DefaultForceScatter));
+
+        NewHPP.GetComponent<Rigidbody>().AddForce(force);
+
+    }
 
     public override void EntityDeadCheck()
     {
