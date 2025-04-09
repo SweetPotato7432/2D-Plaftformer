@@ -17,7 +17,6 @@ public class GameSettingData : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             LoadAudioSettings(); // PlayerPrefs에서 설정을 불러오기
-            InitializeCurrentPlayer();
         }
         else
         {
@@ -29,56 +28,12 @@ public class GameSettingData : MonoBehaviour
     {
     }
 
-    // 점수 저장 및 리더보드 세팅
-    public void SaveScore(int currentScore)
-    {
-        bool firstSwap = true;
-
-        int tempScore = 0;
-
-        for (int i = 0; i < 10; i++)
-        {
-            bestScore[i] = PlayerPrefs.GetInt(i + "BestScore");
-
-            while (bestScore[i] < currentScore)
-            {
-                if (firstSwap)
-                {
-                    PlayerPrefs.SetInt("CurrentPlayerRank", i);
-                    firstSwap = false;
-                }
-
-                tempScore = bestScore[i];
-                bestScore[i] = currentScore;
-                PlayerPrefs.SetInt(i+"BestScore", currentScore);
-
-                currentScore = tempScore;
-            }
-            if (firstSwap)
-            {
-                InitializeCurrentPlayer();
-            }
-        }
-    }
-
-    public void ResetRanking()
-    {
-        PlayerPrefs.SetInt("CurrentPlayerRank", -1);
-        for(int i = 0;i < 10; i++)
-        {
-            PlayerPrefs.DeleteKey(i + "BestScore");
-        }
-        
-    }
-
-    public void InitializeCurrentPlayer()
-    {
-        PlayerPrefs.SetInt("CurrentPlayerRank", -1);
-    }
 
     // 오디오 세팅
-    public void SaveAudioSettings(float bgmVolume, float sfxVolume)
+    public void SaveAudioSettings(float masterVolume, float bgmVolume, float sfxVolume)
     {
+        PlayerPrefs.SetFloat("Master", masterVolume);
+
         PlayerPrefs.SetFloat("BGM", bgmVolume);
         PlayerPrefs.SetFloat("SFX", sfxVolume);
         PlayerPrefs.Save();
@@ -88,7 +43,9 @@ public class GameSettingData : MonoBehaviour
     {
         float bgmVolume = PlayerPrefs.GetFloat("BGM", 1f); // 기본값 0.75
         float sfxVolume = PlayerPrefs.GetFloat("SFX", 1f); // 기본값 0.75
+        float masterVolume = PlayerPrefs.GetFloat("Master", 1f);
 
+        SetMasterVolume(masterVolume);
         SetBGMVolume(bgmVolume);
         SetSFXVolume(sfxVolume);
 
@@ -103,14 +60,22 @@ public class GameSettingData : MonoBehaviour
     public void SetBGMVolume(float volume)
     {
         audioMixer.SetFloat("BGM", volume);
-        SaveAudioSettings(volume, PlayerPrefs.GetFloat("SFX", 0.75f));
+        SaveAudioSettings(PlayerPrefs.GetFloat("Master", 0.75f), volume, PlayerPrefs.GetFloat("SFX", 0.75f));
     }
 
     // SFX 볼륨 조절 (AudioMixer의 SFX 그룹 볼륨 조절)
     public void SetSFXVolume(float volume)
     {
         audioMixer.SetFloat("SFX", volume);
-        SaveAudioSettings(PlayerPrefs.GetFloat("BGM", 0.75f), volume);
+        SaveAudioSettings(PlayerPrefs.GetFloat("Master", 0.75f), PlayerPrefs.GetFloat("BGM", 0.75f), volume);
+    }
+
+    // Master 볼륨 조절 (AudioMixer의 Master 그룹 볼륨 조절)
+    public void SetMasterVolume(float volume)
+    {
+        Debug.Log("Set M");
+        audioMixer.SetFloat("Master", volume);
+        SaveAudioSettings(volume, PlayerPrefs.GetFloat("BGM", 0.75f), PlayerPrefs.GetFloat("SFX", 0.75f));
     }
 
     //public void SetBGMMute(bool isMuted)

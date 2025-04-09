@@ -14,7 +14,6 @@ public class SceneChange : MonoBehaviour
 
     public void ExitGame()
     {
-        GameSettingData.Instance.InitializeCurrentPlayer();
         Application.Quit();
     }
 }
