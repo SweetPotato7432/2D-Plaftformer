@@ -73,7 +73,7 @@ public class GameSettingData : MonoBehaviour
     // Master 볼륨 조절 (AudioMixer의 Master 그룹 볼륨 조절)
     public void SetMasterVolume(float volume)
     {
-        Debug.Log("Set M");
+
         audioMixer.SetFloat("Master", volume);
         SaveAudioSettings(volume, PlayerPrefs.GetFloat("BGM", 0.75f), PlayerPrefs.GetFloat("SFX", 0.75f));
     }

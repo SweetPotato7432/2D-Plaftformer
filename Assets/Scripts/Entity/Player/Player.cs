@@ -2,6 +2,7 @@ using Microlight.MicroBar;
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerController))]
 public class Player : Entity
@@ -79,4 +80,6 @@ public class Player : Entity
             gameObject.SetActive(false);
         }
     }
+
+
 }
