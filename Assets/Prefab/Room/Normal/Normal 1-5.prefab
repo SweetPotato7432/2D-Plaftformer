@@ -339,13 +339,26 @@ MonoBehaviour:
   - {x: 14, y: 10, z: 0}
   - {x: -11, y: -12, z: 0}
   - {x: -14, y: -12, z: 0}
-  globalSpawnpoints: []
-  curSpawnpoints: {x: 0, y: 0, z: 0}
   BottomLeft: {fileID: 698882063876231409}
   TopRight: {fileID: 4926158813901557941}
   totalWidth: 0
   totalHeight: 0
   centerPos: {x: 0, y: 0}
+  enemyCnt: 0
+  isRoomClear: 0
+  spawnInfos:
+  - tag: Slime
+    localSpawnpoint: {x: 0, y: 10, z: 0}
+    globalSpawnPoint: {x: 0, y: 0, z: 0}
+  - tag: Slime
+    localSpawnpoint: {x: -7, y: -1, z: 0}
+    globalSpawnPoint: {x: 0, y: 0, z: 0}
+  - tag: Slime
+    localSpawnpoint: {x: 7, y: -1, z: 0}
+    globalSpawnPoint: {x: 0, y: 0, z: 0}
+  - tag: Slime
+    localSpawnpoint: {x: 0, y: -12, z: 0}
+    globalSpawnPoint: {x: 0, y: 0, z: 0}
 --- !u!1 &1839268098201416617
 GameObject:
   m_ObjectHideFlags: 0

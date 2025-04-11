@@ -83,13 +83,20 @@ MonoBehaviour:
   - {x: 22, y: -5, z: 0}
   - {x: 0, y: -5, z: 0}
   - {x: -22, y: -5, z: 0}
-  globalSpawnpoints: []
-  curSpawnpoints: {x: 0, y: 0, z: 0}
   BottomLeft: {fileID: 1454583045721584691}
   TopRight: {fileID: 412403572326961005}
   totalWidth: 0
   totalHeight: 0
   centerPos: {x: 0, y: 0}
+  enemyCnt: 0
+  isRoomClear: 0
+  spawnInfos:
+  - tag: Slime
+    localSpawnpoint: {x: -10, y: 1, z: 0}
+    globalSpawnPoint: {x: 0, y: 0, z: 0}
+  - tag: Slime
+    localSpawnpoint: {x: 10, y: 1, z: 0}
+    globalSpawnPoint: {x: 0, y: 0, z: 0}
 --- !u!1 &1314496011118649088
 GameObject:
   m_ObjectHideFlags: 0
@@ -23942,11 +23949,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3674656092177228776, guid: 2a969f90e90f2974f89c436473ddd2d6, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4176027807755240074, guid: 2a969f90e90f2974f89c436473ddd2d6, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6576338436226519688, guid: 2a969f90e90f2974f89c436473ddd2d6, type: 3}
       propertyPath: m_LocalPosition.x

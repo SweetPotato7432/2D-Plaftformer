@@ -27,6 +27,7 @@ public class HPParticleScript : MonoBehaviour {
 		{
 			//Destroy(gameObject);
 			EffectPoolManager.Instance.ReturnEffect(this.gameObject, "Damage");
+			
             HPLabel.GetComponent<TextMesh>().color = new Color(CurrentColor.r, CurrentColor.g, CurrentColor.b, 1f);
 
             gameObject.SetActive(false);
@@ -38,10 +39,17 @@ public class HPParticleScript : MonoBehaviour {
         HPLabel = gameObject.transform.Find("HPLabel").gameObject;
 
         Color CurrentColor = HPLabel.GetComponent<TextMesh>().color;
+		
+		Rigidbody rb = GetComponent<Rigidbody>();
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
 
         gameObject.transform.position = transform;
         gameObject.transform.rotation = rotation;
-        HPLabel.GetComponent<TextMesh>().color = new Color(CurrentColor.r, CurrentColor.g, CurrentColor.b, 1f);
+
+        Alpha = 1f;
+        HPLabel.GetComponent<TextMesh>().color = new Color(CurrentColor.r, CurrentColor.g, CurrentColor.b, Alpha);
 
     }
 }
