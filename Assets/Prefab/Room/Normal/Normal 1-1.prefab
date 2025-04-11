@@ -85,6 +85,7 @@ MonoBehaviour:
   totalWidth: 0
   totalHeight: 0
   centerPos: {x: 0, y: 0}
+  enemyCnt: 0
   isRoomClear: 0
   spawnInfos:
   - tag: Slime

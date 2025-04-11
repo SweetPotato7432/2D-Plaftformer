@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
+    //미니맵 카메라
+    [SerializeField]
+    MiniMapCamera miniMapCamera;
+
     // player 연결
     public Controller2D target;
     // 캐릭터가 너무 중앙에 오지 않게 조정, 수치는 1정도
@@ -103,6 +107,7 @@ public class CameraFollow : MonoBehaviour
         this.roomWidth = roomWidth;
         this.roomHeight = roomHeight;
         this.centerPos = centerPos;
+        miniMapCamera.SetCameraArea(roomWidth, roomHeight, centerPos);
     }
 
     private void OnDrawGizmos()

@@ -8,15 +8,16 @@ TagManager:
   - Ground
   - Door
   - Enemy
+  - Effect
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Light
   - Water
   - UI
   - Ground
-  - 
+  - MiniMap
   - Player
   - Enemy
   - 

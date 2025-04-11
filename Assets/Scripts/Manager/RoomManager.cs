@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class RoomManager : MonoBehaviour
 {
@@ -35,6 +36,13 @@ public class RoomManager : MonoBehaviour
     private GameObject[] normalRoomPrefaps;
     [SerializeField]
     private GameObject[] specialRoomPrefaps;
+
+    [SerializeField]
+    private Tilemap miniMapTilemap;
+
+    [SerializeField]
+    private TileBase whiteTile;
+
 
     void Start()
     {
@@ -92,8 +100,12 @@ public class RoomManager : MonoBehaviour
         {
             Debug.Log($"키 : {room.Key}, 밸류 : {room.Value}");
         }
-
+        // 방 실제 생성
         GeneratePlayableRoom();
+
+        // 방 미니맵 생성
+        Tilemap[] sourceTilemaps = FindSourceTilemapsWithLayer("Ground");
+        GenerateMiniMap(sourceTilemaps);
     }
 
     void GenerateMap()
@@ -405,5 +417,60 @@ public class RoomManager : MonoBehaviour
     {
         roomDic[destination].SetMoveSpawn(currentPos, destination);
         
+    }
+
+
+    // Ground 태그가 붙은 모든 Tilemap 자동 검색
+    Tilemap[] FindSourceTilemapsWithLayer(string layerName)
+    {
+        int layer = LayerMask.NameToLayer(layerName);
+        if (layer == -1)
+        {
+            Debug.LogWarning($"레이어 \"{layerName}\" 를 찾을 수 없습니다.");
+            return new Tilemap[0];
+        }
+
+        List<Tilemap> result = new List<Tilemap>();
+        Tilemap[] allTilemaps = FindObjectsByType<Tilemap>(FindObjectsSortMode.None);
+
+        foreach (var tilemap in allTilemaps)
+        {
+            if (tilemap.gameObject.layer == layer)
+            {
+                result.Add(tilemap);
+            }
+        }
+
+        return result.ToArray();
+    }
+
+    void GenerateMiniMap(Tilemap[] sourceTilemaps)
+    {
+        miniMapTilemap.ClearAllTiles();
+
+        foreach (var source in sourceTilemaps)
+        {
+            BoundsInt bounds = source.cellBounds;
+
+            for (int x = bounds.xMin; x < bounds.xMax; x++)
+            {
+                for (int y = bounds.yMin; y < bounds.yMax; y++)
+                {
+                    Vector3Int localPos = new Vector3Int(x, y, 0);
+                    if (!source.HasTile(localPos)) continue;
+
+                    Vector3 worldPos = source.CellToWorld(localPos); // 타일의 실제 월드 위치
+                    Vector3Int miniMapCellPos = miniMapTilemap.WorldToCell(worldPos); // 미니맵 타일맵 좌표로 변환
+
+                    // 중복 체크 후 배치
+                    if (!miniMapTilemap.HasTile(miniMapCellPos))
+                    {
+                        miniMapTilemap.SetTile(miniMapCellPos, whiteTile);
+                    }
+                }
+            }
+        }
+
+        Debug.Log("미니맵 타일들이 실제 위치에 맞춰 배치되었습니다!");
     }
 }
