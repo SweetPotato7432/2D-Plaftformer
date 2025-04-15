@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 public class Room : MonoBehaviour
 {
     [SerializeField]
@@ -138,6 +139,9 @@ public class Room : MonoBehaviour
                 doorObj[3].InitializeDoor(roomPos, roomPos + door);
             }
         }
+
+        RoomManager roomManager = FindFirstObjectByType<RoomManager>();
+        roomManager.GenerateMiniMapforTilemap(GetComponentsInChildren<Tilemap>());
     }
 
     public void ClosedDoor()
@@ -169,6 +173,8 @@ public class Room : MonoBehaviour
                 doorObj[3].InitializeDoor(roomPos, roomPos + door);
             }
         }
+        RoomManager roomManager = FindFirstObjectByType<RoomManager>();
+        roomManager.GenerateMiniMapforTilemap(GetComponentsInChildren<Tilemap>());
     }
     
     public virtual void OnDrawGizmos()

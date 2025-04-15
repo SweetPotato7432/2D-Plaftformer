@@ -122,6 +122,11 @@ public abstract class Enemy : Entity
     {
         if (curHP <= 0)
         {
+            if (hpBar.gameObject.activeSelf)
+            {
+                hpBar.gameObject.SetActive(false);
+            }
+
             curHP = 0;
             EnemyPoolManager.Instance.ReturnEnemy(gameObject, stat.characterName);
 
