@@ -62,6 +62,8 @@ public class PlayerController : MonoBehaviour
 
     PlayerInfo stat;
 
+    bool isDead = false;
+
     private void Start()
     {
         controller = GetComponent<Controller2D>();
@@ -101,6 +103,10 @@ public class PlayerController : MonoBehaviour
             velocity.x = 0;
             // Controller2D로 이동 및 변수 전달
             controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
+        }
+        else if(player.state == Entity.States.DEAD)
+        {
+            isDead = true;
         }
         else
         {
@@ -194,6 +200,7 @@ public class PlayerController : MonoBehaviour
 
     public void SetDirectionalInput(Vector2 input)
     {
+        if(isDead) return;
         directionalInput = input;
         if (directionalInput.x > 0)
         {
@@ -212,6 +219,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnJumpInputDown(bool isJump, bool isDownJump)
     {
+        if (isDead) return;
         this.isDownJump = isDownJump;
 
         if (!isDownJump&&currentJumpCount < maxJumpCount)
@@ -261,6 +269,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnJumpInputUp(bool isJump, bool isDownJump)
     {
+        if (isDead) return;
         this.isDownJump = isDownJump;
 
         if (velocity.y > minJumpVelocity)
@@ -271,6 +280,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnDashInputDown()
     {
+        if (isDead) return;
         ghost.makeGhost = true;
         StartCoroutine("Dash");
     }
@@ -333,6 +343,7 @@ public class PlayerController : MonoBehaviour
     // 공격방식
     public void MeleeAttack(bool isAttack)
     {
+        if (isDead) return;
         this.isAttack = isAttack;
         if (isAttack)
         {
@@ -390,6 +401,12 @@ public class PlayerController : MonoBehaviour
     {
         playerAnim.SetBool("TakeDMG", false);
     }
+
+    public void DeadStart()
+    {
+        playerAnim.SetTrigger("isDead");
+    }
+
 
     private void OnDrawGizmosSelected()
     {

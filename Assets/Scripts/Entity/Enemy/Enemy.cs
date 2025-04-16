@@ -30,6 +30,8 @@ public abstract class Enemy : Entity
     Vector3 DefaultForce = new Vector3(0f, 200f, 0f);
     float DefaultForceScatter = 100f;
 
+    bool isDead = false;
+
     virtual public void Awake()
     {
         stateMachine = new EnemyStateMachine();
@@ -122,21 +124,27 @@ public abstract class Enemy : Entity
     {
         if (curHP <= 0)
         {
-            if (hpBar.gameObject.activeSelf)
-            {
-                hpBar.gameObject.SetActive(false);
-            }
-
             curHP = 0;
-            EnemyPoolManager.Instance.ReturnEnemy(gameObject, stat.characterName);
-
-            // 카운트로 바꾸기
-
-            curNormalRoom.enemyCnt--;
             ChangeToDeadState();
 
-            gameObject.SetActive(false);
+            curNormalRoom.enemyCnt--;
+
+            isDead = true;
+
         }
+    }
+
+    public void DeadEnd()//Anim끝나고 실행
+    {
+        if (hpBar.gameObject.activeSelf)
+        {
+            hpBar.gameObject.SetActive(false);
+        }
+
+       
+        EnemyPoolManager.Instance.ReturnEnemy(gameObject, stat.characterName);
+
+        gameObject.SetActive(false);
     }
 
     public void InitializeEnemy()
@@ -155,6 +163,8 @@ public abstract class Enemy : Entity
             stat.minJumpHeight,
             stat.timeToJumpApex
             );
+
+        isDead = false;
 
         ChangeToIdleState();
     }
@@ -175,6 +185,7 @@ public abstract class Enemy : Entity
             stat.timeToJumpApex
             );
 
+        isDead = false;
         curNormalRoom = room;
         ChangeToIdleState();
 

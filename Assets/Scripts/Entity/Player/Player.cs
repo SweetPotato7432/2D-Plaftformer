@@ -16,6 +16,8 @@ public class Player : Entity
     PlayerController controller;
 
     bool isInvinsible = false;
+    bool isDead = false;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -58,7 +60,11 @@ public class Player : Entity
             base.TakeDamage(damage);
 
             if (hpBar != null) hpBar.UpdateBar(curHP,false,UpdateAnim.Damage);
-            hpText.text = $"{curHP}/{maxHP}";
+            if (curHP <= 0)
+            {
+                curHP = 0;
+            }
+                hpText.text = $"{curHP}/{maxHP}";
             StartCoroutine("InvincibleCoolTime");
         }
     }
@@ -77,7 +83,11 @@ public class Player : Entity
         if (curHP <= 0)
         {
             curHP = 0;
-            gameObject.SetActive(false);
+            state = States.DEAD;
+
+            controller.DeadStart();
+
+            isDead = true;
         }
     }
 

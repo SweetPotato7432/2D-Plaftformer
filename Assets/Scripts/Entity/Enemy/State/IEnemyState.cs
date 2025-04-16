@@ -20,7 +20,7 @@ public class IdleState : IEnemyState
     {
         enemy.state = Entity.States.IDLE;
         // 일정 시간이 지나면 이동 상태로 전환
-        enemy.Invoke("ChangeToMoveState", 2f);
+        enemy.Invoke("ChangeToMoveState", 0.5f);
     }
     public void Update()
     {
@@ -69,7 +69,7 @@ public class AttackState : IEnemyState
     {
         enemy.enemyAnim.SetTrigger("isAttack");
         enemy.state = Entity.States.ATTACK;
-        enemy.AttackStart();
+        //enemy.AttackStart();
     }
 
     public void Update()
@@ -94,7 +94,6 @@ public class DeadState : IEnemyState
     {
         enemy.enemyAnim.SetTrigger("isDead");
         enemy.state = Entity.States.DEAD;
-        enemy.AttackStart();
     }
 
     public void Update()
