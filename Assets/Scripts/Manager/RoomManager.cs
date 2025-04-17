@@ -7,7 +7,7 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class RoomManager : MonoBehaviour
 {
-    enum RoomType
+    public enum RoomType
     {
         NONE,
         START,
@@ -39,11 +39,15 @@ public class RoomManager : MonoBehaviour
     [SerializeField]
     private GameObject[] specialRoomPrefaps;
 
+    [Header("Minimap")]
     [SerializeField]
     private Tilemap miniMapTilemap;
-
     [SerializeField]
     private TileBase whiteTile;
+
+    [Header("Worldmap")]
+    [SerializeField]
+    private UIManager uiManager;
 
 
     void Start()
@@ -108,6 +112,8 @@ public class RoomManager : MonoBehaviour
         // 방 미니맵 생성
         Tilemap[] sourceTilemaps = FindSourceTilemapsWithLayer("Ground");
         GenerateMiniMap(sourceTilemaps);
+
+        uiManager.GenerateWorldmap(roomTypes);
     }
 
     void GenerateMap()
@@ -381,7 +387,6 @@ public class RoomManager : MonoBehaviour
                 tempNormalRooms = normalRoomPrefaps.ToList();
             }
 
-            // 임시로 방 타입으로 만 나눔, 추후엔 일반방 여러개 두고 랜덤으로 뽑을 예정
             switch (room.Value)
             {
                 case RoomType.START:
