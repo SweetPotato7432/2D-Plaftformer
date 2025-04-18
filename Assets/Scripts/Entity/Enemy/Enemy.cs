@@ -122,7 +122,7 @@ public abstract class Enemy : Entity
 
     public override void EntityDeadCheck()
     {
-        if (curHP <= 0)
+        if (curHP <= 0 && !isDead)
         {
             curHP = 0;
             ChangeToDeadState();

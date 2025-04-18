@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,16 +13,20 @@ public class UIManager : MonoBehaviour
     private float worldMapPadding = 10;
 
     RectTransform prefabTransform;
-    RectTransform contentTransform;
 
     float roomWidth;
     float roomHeight;
+
+    // 월드맵 좌표 최대,최소
+    int minX;
+    int maxX;
+    int minY;
+    int maxY;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         RectTransform prefabTransform = worldMapPrefap.GetComponent<RectTransform>();
-        RectTransform contentTransform = worldMapScrollRect.content;
 
         roomWidth = prefabTransform.sizeDelta.x + worldMapPadding;
         roomHeight = prefabTransform.sizeDelta.y + worldMapPadding;
@@ -36,7 +39,15 @@ public class UIManager : MonoBehaviour
 
     public void GenerateWorldmap(Dictionary<Vector2Int, RoomManager.RoomType> createdRooms)
     {
-        //ResizeWorldmapContent(createdRooms);
+        // 방 좌표들의 최소/최대값 구하기
+        minX = createdRooms.Min(r => r.Key.x);
+        maxX = createdRooms.Max(r => r.Key.x);
+        minY = createdRooms.Min(r => r.Key.y);
+        maxY = createdRooms.Max(r => r.Key.y);
+
+        ResizeWorldmapContent(createdRooms);
+
+        List<GameObject> worldmapGameObject = new List<GameObject>();
 
         //실제 플레이 가능 한 방을 생성
         foreach (var room in createdRooms)
@@ -70,24 +81,57 @@ public class UIManager : MonoBehaviour
                 0);
             GameObject tempRoom = Instantiate(worldMapPrefap, roomPos, Quaternion.identity);
 
-            tempRoom.transform.SetParent(contentTransform, false);
+            tempRoom.transform.SetParent(worldMapScrollRect.content.gameObject.transform, false);
 
             tempRoom.name = $"Room ({room.Key.x}, {room.Key.y})";
+
+            worldmapGameObject.Add(tempRoom);
         }
+        RecenteringWorldMap(worldmapGameObject);
+
     }
 
     void ResizeWorldmapContent(Dictionary<Vector2Int, RoomManager.RoomType> createdRooms)
     {
-        // 방 좌표들의 최소/최대값 구하기
-        int minX = createdRooms.Min(r => r.Key.x);
-        int maxX = createdRooms.Max(r => r.Key.x);
-        int minY = createdRooms.Min(r => r.Key.y);
-        int maxY = createdRooms.Max(r => r.Key.y);
-
         // Content 영역 크기 계산
         float contentWidth = (maxX - minX + 1) * roomWidth;
         float contentHeight = (maxY - minY + 1) * roomHeight;
 
-        contentTransform.sizeDelta = new Vector2(contentWidth, contentHeight);
+        worldMapScrollRect.content.sizeDelta = new Vector2(
+            contentWidth
+            , contentHeight);
+    }
+
+    void RecenteringWorldMap(List<GameObject> worldmapGameObject)
+    {
+        if (worldmapGameObject.Count == 0) return;
+
+        float minX = float.MaxValue;
+        float maxX = float.MinValue;
+        float minY = float.MaxValue;
+        float maxY = float.MinValue;
+
+        foreach (var room in worldmapGameObject)
+        {
+            Vector3 pos = room.transform.localPosition;
+
+            if (pos.x < minX) minX = pos.x;
+            if (pos.x > maxX) maxX = pos.x;
+            if (pos.y < minY) minY = pos.y;
+            if (pos.y > maxY) maxY = pos.y;
+        }
+
+        // 바운딩 박스 중심 계산
+        Vector3 center = new Vector3(
+            (minX + maxX) / 2f,
+            (minY + maxY) / 2f,
+            0
+        );
+
+        // 중심만큼 모든 오브젝트 반대로 이동
+        foreach (var room in worldmapGameObject)
+        {
+            room.transform.localPosition -= center;
+        }
     }
 }
