@@ -37,52 +37,61 @@ public class PlayerInput : MonoBehaviour
 
     private void OnMove(InputValue value)
     {
-        moveInput = value.Get<Vector2>();
+        if (Time.timeScale >= 1.0f)
+        {
+            moveInput = value.Get<Vector2>();
+        }
     }
 
     private void OnJump(InputValue value)
     {
-        if (value.isPressed)
+        if (Time.timeScale >= 1.0f)
         {
-            if (canDownJump&&moveInput.y == -1)
+            if (value.isPressed)
             {
-                isDownJump = true;
-                canDownJump = false;
+                if (canDownJump && moveInput.y == -1)
+                {
+                    isDownJump = true;
+                    canDownJump = false;
+                    isJump = false;
+                    player.OnJumpInputDown(isJump, isDownJump);
+
+                    StartCoroutine(DownJumpCoolTime());
+
+
+                }
+                else if (moveInput.y != -1)
+                {
+                    isJump = true;
+                    isDownJump = false;
+                    player.OnJumpInputDown(isJump, isDownJump);
+
+                }
+
+            }
+            else
+            {
                 isJump = false;
-                player.OnJumpInputDown(isJump, isDownJump);
-
-                StartCoroutine(DownJumpCoolTime());
-
-
-            }
-            else if(moveInput.y != -1)
-            {
-                isJump = true;
                 isDownJump = false;
-                player.OnJumpInputDown(isJump, isDownJump);
+                player.OnJumpInputUp(isJump, isDownJump);
 
             }
-
-        }
-        else
-        {
-            isJump = false;
-            isDownJump = false;
-            player.OnJumpInputUp(isJump, isDownJump);
-
         }
     }
 
     private void OnDash(InputValue value)
     {
-        if (value.isPressed&&canDash && directionalInput.x !=0)
+        if (Time.timeScale >= 1.0f)
         {
-            player.OnDashInputDown();
-            StartCoroutine("DashCoolTime");
-        }
-        else
-        {
+            if (value.isPressed && canDash && directionalInput.x != 0)
+            {
+                player.OnDashInputDown();
+                StartCoroutine("DashCoolTime");
+            }
+            else
+            {
 
+            }
         }
     }
 
@@ -110,18 +119,22 @@ public class PlayerInput : MonoBehaviour
 
     private void OnAttack(InputValue value)
     {
-        if (value.isPressed)
+        if (Time.timeScale >= 1.0f ) 
         {
-            isAttack = true;
-            player.MeleeAttack(isAttack);
+            if (value.isPressed)
+            {
+                isAttack = true;
+                player.MeleeAttack(isAttack);
 
-        }
-        else
-        {
-            isAttack= false;
-            player.MeleeAttack(isAttack);
+            }
+            else
+            {
+                isAttack = false;
+                player.MeleeAttack(isAttack);
 
+            }
         }
+        
 
     }
 

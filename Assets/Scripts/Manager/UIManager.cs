@@ -5,6 +5,14 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    [SerializeField]
+    GameObject optionUI;
+    [SerializeField]
+    GameObject worldmapUI;
+
+    // 활성화 된 UI 저장
+    Stack<GameObject> activeUI;
+
     [Header("WorldMap")]
     [SerializeField]
     ScrollRect worldMapScrollRect;
@@ -26,6 +34,8 @@ public class UIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        activeUI = new Stack<GameObject>();
+
         RectTransform prefabTransform = worldMapPrefap.GetComponent<RectTransform>();
 
         roomWidth = prefabTransform.sizeDelta.x + worldMapPadding;
@@ -37,6 +47,65 @@ public class UIManager : MonoBehaviour
     {
     }
 
+    // UI 
+    public void ActiveOptionUI()
+    {
+        if (optionUI.activeSelf)
+        {
+            activeUI.Pop();
+            optionUI.SetActive(false);
+            if (activeUI.Count != 0)
+            {
+                activeUI.Peek().SetActive(true);
+            }
+            
+        }
+        else
+        {
+            if(activeUI.Count != 0)
+            {
+                activeUI.Pop().SetActive(false);
+                activeUI.Peek().SetActive(true);
+                //foreach(GameObject go in activeUI)
+                //{
+                //    go.SetActive(false);
+                //}
+            }
+            else
+            {
+                optionUI.SetActive(true);
+                activeUI.Push(optionUI);
+            }
+
+        }
+    }
+
+    public void ActiveWorldMapUI()
+    {
+        if (worldmapUI.activeSelf)
+        {
+            activeUI.Pop();
+            worldmapUI.SetActive(false);
+            if (activeUI.Count != 0)
+            {
+                activeUI.Peek().SetActive(true);
+            }
+        }
+        else
+        {
+            if (activeUI.Count != 0)
+            {
+                foreach (GameObject go in activeUI)
+                {
+                    go.SetActive(false);
+                }
+            }
+            worldmapUI.SetActive(true);
+            activeUI.Push(worldmapUI);
+        }
+    }
+
+    // WorldMap
     public void GenerateWorldmap(Dictionary<Vector2Int, RoomManager.RoomType> createdRooms)
     {
         // 방 좌표들의 최소/최대값 구하기

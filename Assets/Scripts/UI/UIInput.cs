@@ -1,16 +1,17 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class UIInput : MonoBehaviour
 {
-    [SerializeField]
-    GameObject pauseUI;
-    [SerializeField]
-    GameObject worldmapUI;
+    UIManager uiManager;
+
+    Stack<GameObject> activeUI;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        uiManager = GetComponent<UIManager>();
+        activeUI = new Stack<GameObject>();
     }
 
     // Update is called once per frame
@@ -19,18 +20,11 @@ public class UIInput : MonoBehaviour
         
     }
 
-    private void OnPause(InputValue value)
+    private void OnOption(InputValue value)
     {
         if (value.isPressed)
         {
-            if (pauseUI.activeSelf)
-            {
-                pauseUI.SetActive(false);
-            }
-            else
-            {
-                pauseUI.SetActive(true);
-            }
+            uiManager.ActiveOptionUI();
         }
 
     }
@@ -39,14 +33,7 @@ public class UIInput : MonoBehaviour
     {
         if (value.isPressed)
         {
-            if (worldmapUI.activeSelf)
-            {
-                worldmapUI.SetActive(false);
-            }
-            else
-            {
-                worldmapUI.SetActive(true);
-            }
+            uiManager.ActiveWorldMapUI();
         }
     }
 }
