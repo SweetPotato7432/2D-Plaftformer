@@ -423,7 +423,7 @@ public class RoomManager : MonoBehaviour
     public void setMoveRoomDestination(Vector2Int currentPos, Vector2Int destination)
     {
         roomDic[destination].SetMoveSpawn(currentPos, destination);
-        
+        uiManager.RevealedWorldmap(destination);
     }
 
 

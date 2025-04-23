@@ -31,6 +31,12 @@ public class UIManager : MonoBehaviour
     int minY;
     int maxY;
 
+    Dictionary<Vector2Int, GameObject> worldmapGameObject = new Dictionary<Vector2Int, GameObject>();
+
+    Dictionary<Vector2Int, bool> worldmapRevealed = new Dictionary<Vector2Int, bool>();
+    Dictionary<Vector2Int, bool> worldmapExpolered = new Dictionary<Vector2Int, bool>();
+    Vector2Int currentRoom;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -116,7 +122,7 @@ public class UIManager : MonoBehaviour
 
         ResizeWorldmapContent(createdRooms);
 
-        List<GameObject> worldmapGameObject = new List<GameObject>();
+        
 
         //실제 플레이 가능 한 방을 생성
         foreach (var room in createdRooms)
@@ -150,13 +156,21 @@ public class UIManager : MonoBehaviour
                 0);
             GameObject tempRoom = Instantiate(worldMapPrefap, roomPos, Quaternion.identity);
 
+            tempRoom.SetActive(false);
+
+            worldmapRevealed.Add((room.Key), false);
+            worldmapExpolered.Add((room.Key),false);
+
             tempRoom.transform.SetParent(worldMapScrollRect.content.gameObject.transform, false);
 
             tempRoom.name = $"Room ({room.Key.x}, {room.Key.y})";
 
-            worldmapGameObject.Add(tempRoom);
+            worldmapGameObject.Add(room.Key,tempRoom);
         }
         RecenteringWorldMap(worldmapGameObject);
+
+        RevealedWorldmap(new Vector2Int(10, 10));
+        
 
     }
 
@@ -171,7 +185,7 @@ public class UIManager : MonoBehaviour
             , contentHeight);
     }
 
-    void RecenteringWorldMap(List<GameObject> worldmapGameObject)
+    void RecenteringWorldMap(Dictionary<Vector2Int, GameObject> worldmapGameObject)
     {
         if (worldmapGameObject.Count == 0) return;
 
@@ -180,7 +194,7 @@ public class UIManager : MonoBehaviour
         float minY = float.MaxValue;
         float maxY = float.MinValue;
 
-        foreach (var room in worldmapGameObject)
+        foreach (var room in worldmapGameObject.Values)
         {
             Vector3 pos = room.transform.localPosition;
 
@@ -198,9 +212,55 @@ public class UIManager : MonoBehaviour
         );
 
         // 중심만큼 모든 오브젝트 반대로 이동
-        foreach (var room in worldmapGameObject)
+        foreach (var room in worldmapGameObject.Values)
         {
             room.transform.localPosition -= center;
+        }
+    }
+
+    public void RevealedWorldmap(Vector2Int currentRoomPos)
+    {
+        currentRoom = currentRoomPos;
+        worldmapExpolered[currentRoomPos] = true;
+        worldmapRevealed[currentRoomPos] = true;
+        if (worldmapRevealed.ContainsKey(new Vector2Int(currentRoomPos.x + 1, currentRoomPos.y)))
+        {
+            worldmapRevealed[new Vector2Int(currentRoomPos.x + 1, currentRoomPos.y)] = true;
+        }
+        if (worldmapRevealed.ContainsKey(new Vector2Int(currentRoomPos.x, currentRoomPos.y+1)))
+        {
+            worldmapRevealed[new Vector2Int(currentRoomPos.x, currentRoomPos.y+1)] = true;
+        }
+        if (worldmapRevealed.ContainsKey(new Vector2Int(currentRoomPos.x - 1, currentRoomPos.y)))
+        {
+            worldmapRevealed[new Vector2Int(currentRoomPos.x - 1, currentRoomPos.y)] = true;
+        }
+        if (worldmapRevealed.ContainsKey(new Vector2Int(currentRoomPos.x, currentRoomPos.y-1)))
+        {
+            worldmapRevealed[new Vector2Int(currentRoomPos.x, currentRoomPos.y-1)] = true;
+        }
+        RedrawWorldmap();
+    }
+
+    void RedrawWorldmap()
+    {
+        foreach (var worldmap in worldmapGameObject)
+        {
+            if (!worldmapExpolered[worldmap.Key] && worldmapRevealed[worldmap.Key])
+            {
+                worldmap.Value.GetComponent<RawImage>().color = new Color(1, 1, 1, 0.2f);
+                worldmap.Value.SetActive(true);
+            }
+            if (worldmapExpolered[worldmap.Key] && worldmapRevealed[worldmap.Key])
+            {
+                worldmap.Value.GetComponent<RawImage>().color = new Color(1, 1, 1, 1f);
+                worldmap.Value.SetActive(true);
+            }
+            if(worldmap.Key == currentRoom)
+            {
+                worldmap.Value.GetComponent<RawImage>().color = Color.green;
+            }
+
         }
     }
 }
