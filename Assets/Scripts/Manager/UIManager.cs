@@ -37,6 +37,9 @@ public class UIManager : MonoBehaviour
     Dictionary<Vector2Int, bool> worldmapExpolered = new Dictionary<Vector2Int, bool>();
     Vector2Int currentRoom;
 
+    [SerializeField]
+    GameObject gameOverUI;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -262,5 +265,10 @@ public class UIManager : MonoBehaviour
             }
 
         }
+    }
+
+    public void GameOverUIActive()
+    {
+        gameOverUI.SetActive(true);
     }
 }

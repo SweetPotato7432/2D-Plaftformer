@@ -63,5 +63,10 @@ public class GameManager : MonoBehaviour
         return monsterInfo[id-201];
     }
 
+    public void GameOver()
+    {
+
+    }
+
 
 }

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5400000}
   - component: {fileID: 11400000}
   - component: {fileID: 11400004}
-  m_Layer: 11
+  m_Layer: 5
   m_Name: HPParticle
   m_TagString: Effect
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 400004}
   - component: {fileID: 2300002}
   - component: {fileID: 10200002}
-  m_Layer: 11
+  m_Layer: 5
   m_Name: HPLabel
   m_TagString: Effect
   m_Icon: {fileID: 0}
