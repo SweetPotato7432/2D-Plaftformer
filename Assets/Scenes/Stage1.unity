@@ -5242,7 +5242,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2166303892444149508, guid: 7aee7dc1e5e49fd4b9485b486e11b23d, type: 3}
       propertyPath: pools.Array.data[1].size
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5542927247900552296, guid: 7aee7dc1e5e49fd4b9485b486e11b23d, type: 3}
       propertyPath: m_LocalPosition.x

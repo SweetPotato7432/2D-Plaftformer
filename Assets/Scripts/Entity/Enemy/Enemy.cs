@@ -102,9 +102,9 @@ public abstract class Enemy : Entity
         // 체력 시각화
         //GameObject NewHPP = Instantiate(HPParticle, this.transform.position, gameObject.transform.rotation) as GameObject;
         GameObject NewHPP = EffectPoolManager.Instance.GetEffect("Damage");
-        NewHPP.GetComponent<HPParticleScript>().Initalize(this.transform.position, new Quaternion(0,0,0,0));
+        NewHPP.GetComponent<HPParticleScript>().Initalize(this.transform.position, new Quaternion(0,180,0,0));
+        //NewHPP.GetComponent<AlwaysFace>().Target = GameObject.Find("Main Camera").gameObject;
         NewHPP.SetActive(true);
-        NewHPP.GetComponent<AlwaysFace>().Target = GameObject.Find("Main Camera").gameObject;
 
         TextMesh TM = NewHPP.transform.Find("HPLabel").GetComponent<TextMesh>();
 

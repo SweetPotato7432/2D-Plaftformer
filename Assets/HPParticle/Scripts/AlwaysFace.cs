@@ -40,7 +40,8 @@ public class AlwaysFace : MonoBehaviour {
 			Vector3 dir = Target.transform.position - transform.position;
 			Quaternion Rotation = Quaternion.LookRotation(dir);
 
-			gameObject.transform.rotation = Quaternion.Lerp (gameObject.transform.rotation,Rotation,Speed * Time.deltaTime);
+			//gameObject.transform.rotation = Quaternion.Lerp (gameObject.transform.rotation,Rotation,Speed * Time.deltaTime);
+			gameObject.transform.rotation = Rotation;
 		}
 	}
 }
