@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
         //Debug.Log($"{roomWidth} {roomHeight} {centerPos}");
         cameraFollow.SetCameraArea(roomWidth, roomHeight, centerPos);
         transformPos.z = -10;
-        cameraFollow.gameObject.transform.position = transformPos;
+        //cameraFollow.gameObject.transform.position = transformPos;
         //암전기능 추가 0.1f초 정도?
         
     }

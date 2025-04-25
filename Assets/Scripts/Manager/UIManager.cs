@@ -1,3 +1,5 @@
+using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -5,6 +7,9 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    
+
+
     [SerializeField]
     GameObject optionUI;
     [SerializeField]
@@ -12,6 +17,11 @@ public class UIManager : MonoBehaviour
 
     // 활성화 된 UI 저장
     Stack<GameObject> activeUI;
+
+    [Header("Fade")]
+    [SerializeField]
+    private CanvasGroup fade_IMG;
+    float fadeDuration = 0.25f;
 
     [Header("WorldMap")]
     [SerializeField]
@@ -266,6 +276,40 @@ public class UIManager : MonoBehaviour
 
         }
     }
+
+    public void FadeInMoveRoom(Action onComplete)
+    {
+        fade_IMG.DOFade(1, fadeDuration)
+            .SetUpdate(true)
+            .OnStart(() =>
+            {
+                fade_IMG.blocksRaycasts = true;
+                Time.timeScale = 0f;
+            })
+            .OnComplete(() =>
+            {
+                onComplete?.Invoke();
+                FadeOutMoveRoom();
+            });
+
+    }
+
+    public void FadeOutMoveRoom()
+    {
+        fade_IMG.DOFade(0, fadeDuration)
+            .SetUpdate(true)
+            .OnStart(() =>
+            {
+                fade_IMG.blocksRaycasts = false;
+                Time.timeScale = 1f;
+            })
+            .OnComplete(() =>
+            {
+                
+            });
+
+    }
+
 
     public void GameOverUIActive()
     {

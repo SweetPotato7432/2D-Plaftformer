@@ -8,6 +8,11 @@ public class PausedGame : MonoBehaviour
         Time.timeScale = 0f;
     }
 
+    private void Update()
+    {
+        Time.timeScale = 0f;
+    }
+
     private void OnDisable()
     {
         Debug.Log("Unpaused");

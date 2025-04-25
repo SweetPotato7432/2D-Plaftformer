@@ -48,6 +48,7 @@ public class RoomManager : MonoBehaviour
     private UIManager uiManager;
 
 
+
     void Start()
     {
         //roomArray = new GameObject[mapWidth, mapHeight];
@@ -418,10 +419,18 @@ public class RoomManager : MonoBehaviour
         }
     }
 
-    public void setMoveRoomDestination(Vector2Int currentPos, Vector2Int destination)
+    public void SetMoveRoomDestination(Vector2Int currentPos, Vector2Int destination)
     {
-        roomDic[destination].SetMoveSpawn(currentPos, destination);
-        uiManager.RevealedWorldmap(destination);
+        // 방 이동시 암전 효과(UI Manager)
+        uiManager.FadeInMoveRoom(() =>
+        {
+            // FadeInMoveRoom이 끝난 후에 다음 코드 실행
+            roomDic[destination].SetMoveSpawn(currentPos, destination);
+            uiManager.RevealedWorldmap(destination);
+        });
+
+        //roomDic[destination].SetMoveSpawn(currentPos, destination);
+        //uiManager.RevealedWorldmap(destination);
     }
 
 

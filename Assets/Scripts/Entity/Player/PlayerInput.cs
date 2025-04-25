@@ -41,6 +41,10 @@ public class PlayerInput : MonoBehaviour
         {
             moveInput = value.Get<Vector2>();
         }
+        else
+        {
+            moveInput = Vector2.zero;
+        }
     }
 
     private void OnJump(InputValue value)

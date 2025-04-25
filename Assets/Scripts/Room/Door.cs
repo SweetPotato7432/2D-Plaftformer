@@ -53,9 +53,9 @@ public class Door : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            // 방이동 로직
-            Debug.Log(destination);
-            roomManager.setMoveRoomDestination(roomPos, destination);
+            //// 방이동 로직
+            //Debug.Log(destination);
+            roomManager.SetMoveRoomDestination(roomPos, destination);
         }
     }
 }
