@@ -32,18 +32,34 @@ public class MonsterInfo
     public float timeToJumpApex;
 }
 
+public class DropItemInfo
+{
+    public enum EffectType
+    {
+        Heal,
+        Gold
+    }
+
+    public int id;
+    public string name;
+    public int rarity;
+    public EffectType effectType;
+    public string effect;
+}
+
 public class CSVLoadManager : MonoBehaviour
 {
     private List<List<string>> csvData = new List<List<string>>();
 
     private List<PlayerInfo> playerInfo = new List<PlayerInfo>();
     private List<MonsterInfo> monsterInfo = new List<MonsterInfo>();// 몬스터 정보
+    private List<DropItemInfo> dropItemInfo = new List<DropItemInfo>();
 
     private void Awake()
     {
-        LoadPlayerCsv();
+        LoadPlayerCSV();
 
-        LoadMonsterCsv();
+        LoadMonsterCSV();
     }
 
     public List<PlayerInfo> GetPlayerList()
@@ -56,7 +72,9 @@ public class CSVLoadManager : MonoBehaviour
         return monsterInfo;
     }
 
-    void LoadPlayerCsv() 
+
+
+    void LoadPlayerCSV() 
     {
         LoadCsv("Player", playerInfo, (row, info) =>
         {
@@ -86,7 +104,7 @@ public class CSVLoadManager : MonoBehaviour
             }
         });
     }
-    void LoadMonsterCsv()
+    void LoadMonsterCSV()
     {
         LoadCsv("Monster", monsterInfo, (row, info) =>
         {
@@ -111,6 +129,31 @@ public class CSVLoadManager : MonoBehaviour
                     case 8: monster.maxJumpHeight = float.Parse(field); break;
                     case 9: monster.minJumpHeight = float.Parse(field); break;
                     case 10: monster.timeToJumpApex = float.Parse(field); break;
+                }
+                field_num++;
+            }
+        });
+    }
+
+    void LoadDropItemCSV()
+    {
+        LoadCsv("DropItem", dropItemInfo, (row, info) =>
+        {
+            DropItemInfo dropItemInfo = info as DropItemInfo;
+            if (dropItemInfo == null) return;
+
+            int field_num = 0;
+            foreach (string field in row)
+            {
+                //Debug.Log("field : " + field);
+                switch (field_num)
+                {
+                    // 필요한 데이터 파싱 추가
+                    case 0: dropItemInfo.id = int.Parse(field); break;
+                    case 1: dropItemInfo.name = field; break;
+                    case 2: dropItemInfo.rarity = int.Parse(field); break;
+                    //case 3: dropItemInfo.effectType = Enum.Parse(typeof(DropItemInfo.EffectType),field); break;
+                    case 4: dropItemInfo.effect  = field; break;
                 }
                 field_num++;
             }

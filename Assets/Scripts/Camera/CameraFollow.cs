@@ -118,11 +118,7 @@ public class CameraFollow : MonoBehaviour
         focusPosition = focusArea.center + Vector2.up * verticalOffset;
 
         transform.position = (Vector3)focusPosition;
-        //focusPosition = centerPos;
-        //Debug.Log($"위치 이동{focusPosition}");
-        //transform.position = focusPosition;
 
-        //focusArea = new FocusArea(target.collider.bounds, focusAreaSize);
     }
 
     private void OnDrawGizmos()

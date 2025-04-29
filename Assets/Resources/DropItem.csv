@@ -1,0 +1,4 @@
+ItemID, Name, Rarity, EffectType, Effect
+1, 붕대, 0, Heal, 플레이어의 체력을 1 회복한다.
+2, 치유 포션, 1, Heal, 플레이어의 체력을 2 회복한다.
+3, 구급 상자, 2, Heal, 플레이어의 체력을 3 회복한다.
