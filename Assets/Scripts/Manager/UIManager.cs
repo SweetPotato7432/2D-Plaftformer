@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -289,13 +290,16 @@ public class UIManager : MonoBehaviour
             .OnComplete(() =>
             {
                 onComplete?.Invoke();
-                FadeOutMoveRoom();
+
+                StartCoroutine("FadeOutMoveRoom");
             });
 
     }
-
-    public void FadeOutMoveRoom()
+    
+    IEnumerator FadeOutMoveRoom()
     {
+        yield return new WaitForSecondsRealtime(.1f);
+
         fade_IMG.DOFade(0, fadeDuration)
             .SetUpdate(true)
             .OnStart(() =>

@@ -427,6 +427,8 @@ public class RoomManager : MonoBehaviour
             // FadeInMoveRoom이 끝난 후에 다음 코드 실행
             roomDic[destination].SetMoveSpawn(currentPos, destination);
             uiManager.RevealedWorldmap(destination);
+            
+            
         });
 
         //roomDic[destination].SetMoveSpawn(currentPos, destination);
