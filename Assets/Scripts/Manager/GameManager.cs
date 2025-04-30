@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
         }
         monsterInfo = csvLoadManager.GetMonsterList();
         playerInfo = csvLoadManager.GetPlayerList();
+        dropItemInfo = csvLoadManager.GetDropItemInfoList();
     }
 
     public CSVLoadManager csvLoadManager;
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
 
     public List<PlayerInfo> playerInfo;
     public List<MonsterInfo> monsterInfo;
+    public List<DropItemInfo> dropItemInfo;
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -59,6 +61,11 @@ public class GameManager : MonoBehaviour
     public MonsterInfo EnemyStatInitialize(int id)
     {
         return monsterInfo[id-201];
+    }
+
+    public DropItemInfo DropItemInfoInitialize(int id)
+    {
+        return dropItemInfo[id-1];
     }
 
     public void GameOver()

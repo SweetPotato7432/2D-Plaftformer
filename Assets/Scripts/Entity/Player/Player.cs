@@ -68,6 +68,19 @@ public class Player : Entity
         }
     }
 
+    public override void TakeHeal(float heal)
+    {
+        base.TakeHeal(heal);
+        if (hpBar != null) hpBar.UpdateBar(curHP, false, UpdateAnim.Heal);
+        if(curHP >= maxHP)
+        {
+            curHP = maxHP;
+        }
+        hpText.text = $"{curHP}/{maxHP}";
+    }
+
+
+
     IEnumerator InvincibleCoolTime()
     {
         controller.EnableInvinsible();

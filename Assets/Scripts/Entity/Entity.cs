@@ -37,6 +37,12 @@ public abstract class Entity : MonoBehaviour
         curHP -= damage;
     }
 
+    virtual public void TakeHeal(float heal)
+    {
+        Debug.Log("takeHeal" + heal);
+        curHP += heal;
+    }
+
     public void Initialize(int id, string characterName, float maxHP, bool attackType, float attackRange, float atk, float atkSpeed, float moveSpeed, float maxJumpHeight, float minJumpHeight, float timeToJumpApex)
     {
         //this.id = id;
