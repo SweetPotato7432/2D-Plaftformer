@@ -29,7 +29,7 @@ public class DropItem : Item
     {
         base.Start();
         //stat = GameManager.Instance.DropItemInfoInitialize(id);
-        InitalizeDropItem();
+        InitalizeDropItem(stat.id);
     }
 
     // Update is called once per frame
@@ -38,7 +38,7 @@ public class DropItem : Item
         
     }
 
-    public void InitalizeDropItem()
+    public void InitalizeDropItem(int id)
     {
         stat = GameManager.Instance.DropItemInfoInitialize(id);
 
@@ -93,6 +93,7 @@ public class DropItem : Item
             {
                 case DropItemInfo.EffectType.Heal:
                     player.TakeHeal(stat.effectStatus);
+                    DropItemPoolManager.Instance.ReturnDropItem(gameObject);
                     break;
                 case DropItemInfo.EffectType.Gold:
                     break;
@@ -104,6 +105,7 @@ public class DropItem : Item
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            
             popup.SetActive(false);
         }
     }

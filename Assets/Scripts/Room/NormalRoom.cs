@@ -52,6 +52,14 @@ public class NormalRoom : Room
             if (enemyCnt <= 0)
             {
                 Debug.Log("클리어");
+
+                //방 클리어시 드랍 아이템 확률 드랍.
+                GameObject reward = DropItemPoolManager.Instance.GetDropItem();
+                DropItem dropItem = reward.GetComponent<DropItem>();
+
+                reward.transform.position = centerPos;
+                dropItem.InitalizeDropItem(1);
+                
                 isRoomClear = true;
                 isOnBattle = false;
                 OpenDoor();
