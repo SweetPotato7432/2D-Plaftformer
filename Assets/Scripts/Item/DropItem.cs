@@ -1,5 +1,10 @@
+using NUnit.Framework.Interfaces;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using static UnityEditor.Progress;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using System.Collections.Generic;
 
 public class DropItem : Item
 {
@@ -10,9 +15,13 @@ public class DropItem : Item
     public TMP_Text itemNameText;
     public TMP_Text itemEffectText;
 
+    Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
+
+
     private void Awake()
     {
         
+
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -34,6 +43,34 @@ public class DropItem : Item
         stat = GameManager.Instance.DropItemInfoInitialize(id);
 
         Initialize(stat.id, stat.itemName, stat.rarity, stat.effectType, stat.effectStatus, stat.effect);
+
+        SpriteRenderer renderer = GetComponent<SpriteRenderer>();
+        gameObject.SetActive(false);
+
+        string spriteKey = $"Assets/Addressable/DropItem/DropItem_{stat.id}.asset";
+
+        if (spriteCache.TryGetValue(spriteKey, out var cachedSprite))
+        {
+            renderer.sprite = cachedSprite;
+            gameObject.SetActive(true);
+        }
+        else
+        {
+            Addressables.LoadAssetAsync<Sprite>(spriteKey).Completed += handle =>
+            {
+                if (handle.Status == AsyncOperationStatus.Succeeded)
+                {
+                    spriteCache[spriteKey] = handle.Result;
+                    renderer.sprite = handle.Result;
+                }
+                else
+                {
+                    Debug.LogWarning($"Sprite 로딩 실패: {spriteKey}");
+                    // renderer.sprite = defaultSprite;
+                }
+                gameObject.SetActive(true);
+            };
+        }
 
         popup.SetActive(false);
 
