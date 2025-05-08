@@ -5,9 +5,17 @@ using UnityEngine;
 public class NormalRoom : Room
 {
     [System.Serializable]
-    public struct SpawnInfo
+    public struct EnemySpawnInfo
     {
         public string tag;
+        public Vector3 localSpawnpoint;
+        [HideInInspector]
+        public Vector3 globalSpawnPoint;
+    }
+
+    [System.Serializable]
+    public struct RewardSpawnInfo
+    {
         public Vector3 localSpawnpoint;
         [HideInInspector]
         public Vector3 globalSpawnPoint;
@@ -19,10 +27,14 @@ public class NormalRoom : Room
     bool isOnBattle = false;
     
     [Header("SpawnEnemy")]
-    public SpawnInfo[] spawnInfos;
+    public EnemySpawnInfo[] spawnInfos;
     //public Vector3[] enemyLocalSpawnpoints;
     //[SerializeField]
     //Vector3[] enemyGlobalSpawnpoints;
+
+    [Header("SpawnReward")]
+    [SerializeField]
+    RewardSpawnInfo rewardSpawn;
 
     public override void Awake()
     {
@@ -33,6 +45,7 @@ public class NormalRoom : Room
             spawnInfos[i].globalSpawnPoint = spawnInfos[i].localSpawnpoint + transform.position;
         }
 
+        rewardSpawn.globalSpawnPoint = rewardSpawn.localSpawnpoint + transform.position;
         //enemyGlobalSpawnpoints = new Vector3[enemyLocalSpawnpoints.Length];
         //for (int i = 0; i < enemyLocalSpawnpoints.Length; i++)
         //{
@@ -54,16 +67,25 @@ public class NormalRoom : Room
                 Debug.Log("클리어");
 
                 //방 클리어시 드랍 아이템 확률 드랍.
-                GameObject reward = DropItemPoolManager.Instance.GetDropItem();
-                DropItem dropItem = reward.GetComponent<DropItem>();
+                if (Random.value <= 0.2f)
+                {
+                    DropItem dropItem = DropItemPoolManager.Instance.GetDropItem();
 
-                reward.transform.position = centerPos;
-                dropItem.InitalizeDropItem(1);
+                    dropItem.transform.position = rewardSpawn.globalSpawnPoint;
+
+                    // 아이템 개수에 맞게 수정
+                    int len = GameManager.Instance.DropItemLength();
+
+                    int rand = Random.Range(1, len+1);
+
+                    dropItem.InitalizeDropItem(rand);
+                }
+
+                
                 
                 isRoomClear = true;
                 isOnBattle = false;
                 OpenDoor();
-
             }
         }
         else
@@ -117,17 +139,14 @@ public class NormalRoom : Room
             }
         }
 
-        //if (enemyLocalSpawnpoints != null)
-        //{
-        //    Gizmos.color = Color.green;
-        //    float size = .3f;
+        
+        {
+            Gizmos.color = Color.yellow;
+            float size = .3f;
 
-        //    for (int i = 0; i < enemyLocalSpawnpoints.Length; i++)
-        //    {
-        //        Vector3 globalSpawnpointPos = (Application.isPlaying) ? enemyGlobalSpawnpoints[i] : enemyLocalSpawnpoints[i] + transform.position;
-        //        Gizmos.DrawLine(globalSpawnpointPos - Vector3.up * size, globalSpawnpointPos + Vector3.up * size);
-        //        Gizmos.DrawLine(globalSpawnpointPos - Vector3.left * size, globalSpawnpointPos + Vector3.left * size);
-        //    }
-        //}
+            Vector3 globalSpawnpointPos = (Application.isPlaying) ? rewardSpawn.globalSpawnPoint : rewardSpawn.localSpawnpoint + transform.position;
+            Gizmos.DrawLine(globalSpawnpointPos - Vector3.up * size, globalSpawnpointPos + Vector3.up * size);
+            Gizmos.DrawLine(globalSpawnpointPos - Vector3.left * size, globalSpawnpointPos + Vector3.left * size);
+        }
     }
 }

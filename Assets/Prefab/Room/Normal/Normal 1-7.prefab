@@ -97,6 +97,9 @@ MonoBehaviour:
   - tag: Slime
     localSpawnpoint: {x: 12, y: -5, z: 0}
     globalSpawnPoint: {x: 0, y: 0, z: 0}
+  rewardSpawn:
+    localSpawnpoint: {x: 12, y: -4, z: 0}
+    globalSpawnPoint: {x: 0, y: 0, z: 0}
 --- !u!1 &1839268098201416617
 GameObject:
   m_ObjectHideFlags: 0

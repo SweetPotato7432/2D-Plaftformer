@@ -80,6 +80,8 @@ public class CSVLoadManager : MonoBehaviour
         return dropItemInfo;
     }
 
+    
+
 
     void LoadPlayerCSV() 
     {

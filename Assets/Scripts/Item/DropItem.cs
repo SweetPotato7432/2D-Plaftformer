@@ -93,7 +93,7 @@ public class DropItem : Item
             {
                 case DropItemInfo.EffectType.Heal:
                     player.TakeHeal(stat.effectStatus);
-                    DropItemPoolManager.Instance.ReturnDropItem(gameObject);
+                    DropItemPoolManager.Instance.ReturnDropItem(this);
                     break;
                 case DropItemInfo.EffectType.Gold:
                     break;

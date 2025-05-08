@@ -68,6 +68,11 @@ public class GameManager : MonoBehaviour
         return dropItemInfo[id-1];
     }
 
+    public int DropItemLength()
+    {
+        return dropItemInfo.Count;
+    }
+
     public void GameOver()
     {
 

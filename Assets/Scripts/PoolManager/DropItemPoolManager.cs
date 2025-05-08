@@ -13,7 +13,7 @@ public class DropItemPoolManager : MonoBehaviour
     [SerializeField]
     private int initialPoolSize = 5;
 
-    private Queue<GameObject> dropItemPool = new Queue<GameObject>();
+    private Queue<DropItem> dropItemPool = new Queue<DropItem>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -33,7 +33,7 @@ public class DropItemPoolManager : MonoBehaviour
 
     public void InitializePool()
     {
-        dropItemPool = new Queue<GameObject>();
+        dropItemPool = new Queue<DropItem>();
         for (int i = 0; i < initialPoolSize; i++)
         {
             CreateNewDropItem();
@@ -44,24 +44,24 @@ public class DropItemPoolManager : MonoBehaviour
     {
         GameObject dropItemObject = Instantiate(dropItemPrefab);
         dropItemObject.SetActive(false);
-        dropItemPool.Enqueue(dropItemObject);
+        dropItemPool.Enqueue(dropItemObject.GetComponent<DropItem>());
     }
 
-    public GameObject GetDropItem()
+    public DropItem GetDropItem()
     {
         if (dropItemPool.Count == 0)
         {
             CreateNewDropItem();
         }
-        GameObject dropItem = dropItemPool.Dequeue();
+        DropItem dropItem = dropItemPool.Dequeue();
 
         return dropItem;
     }
 
-    public void ReturnDropItem(GameObject gameObject)
+    public void ReturnDropItem(DropItem gameObject)
     {
         dropItemPool.Enqueue(gameObject);
-        gameObject.SetActive(false );
+        gameObject.gameObject.SetActive(false );
     }
 
     // Update is called once per frame
