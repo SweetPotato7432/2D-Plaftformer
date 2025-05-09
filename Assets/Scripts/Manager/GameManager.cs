@@ -29,13 +29,18 @@ public class GameManager : MonoBehaviour
     public List<PlayerInfo> playerInfo;
     public List<MonsterInfo> monsterInfo;
     public List<DropItemInfo> dropItemInfo;
+
+    // µÂ∂¯æ∆¿Ã≈€¿« »Ò±Õµµ π≠¿Ω
+    public Dictionary<int, List<int>> dropItemRarityGroups = new Dictionary<int, List<int>>();
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
-        
+
+        InitializeDropItemRarityGroups();     
+
     }
 
     // Update is called once per frame
@@ -73,10 +78,27 @@ public class GameManager : MonoBehaviour
         return dropItemInfo.Count;
     }
 
+    public void InitializeDropItemRarityGroups()
+    {
+        dropItemRarityGroups.Clear();
+        foreach(var meta in dropItemInfo)
+        {
+            if (!dropItemRarityGroups.ContainsKey(meta.rarity))
+            {
+                dropItemRarityGroups[meta.rarity] = new List<int>();
+            }
+            dropItemRarityGroups[meta.rarity].Add(meta.id);
+        }
+    }
+
+
+
     public void GameOver()
     {
 
     }
+
+    
 
 
 }

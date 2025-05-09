@@ -76,9 +76,14 @@ public class NormalRoom : Room
                     // 아이템 개수에 맞게 수정
                     int len = GameManager.Instance.DropItemLength();
 
-                    int rand = Random.Range(1, len+1);
+                    int rarity = dropItem.CalculateRarityFromDropItem();
+                    
+                    List<int> candidateIds = GameManager.Instance.dropItemRarityGroups[rarity];
+                    int selectedItemId = candidateIds[Random.Range(0, candidateIds.Count)];
 
-                    dropItem.InitalizeDropItem(rand);
+                    Debug.Log($"r : {rarity}, id : {selectedItemId}");
+
+                    dropItem.InitalizeDropItem(selectedItemId);
                 }
 
                 

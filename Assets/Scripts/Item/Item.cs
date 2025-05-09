@@ -1,9 +1,16 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Controller2D))]
 public class Item : MonoBehaviour
 {
+    // æ∆¿Ã≈€ µÓ¿Â »Æ∑¸
+    Dictionary<int, int> baseWeights = new Dictionary<int, int>
+    {
+        { 0, 45 }, { 1, 25 }, { 2, 15 }, { 3, 10 }, { 4, 5 }
+    };
 
     public Controller2D controller;
 
@@ -41,7 +48,6 @@ public class Item : MonoBehaviour
         Debug.Log($"Item Gravity :{gravity}, JumpVelocity : {maxJumpVelocity}");
 
         
-
     }
 
     // Update is called once per frame
@@ -85,6 +91,33 @@ public class Item : MonoBehaviour
 
         velocity.y += gravity * Time.fixedDeltaTime;
     }
+
+    public int CalculateRarityFromDropItem()
+    {
+
+        var rarityGroups = GameManager.Instance.dropItemRarityGroups;
+
+        var filteredWeights = baseWeights
+            .Where(kvp => rarityGroups.ContainsKey(kvp.Key))
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+        int totalWeight = filteredWeights.Values.Sum();
+        int rand = UnityEngine.Random.Range(0, totalWeight);
+
+        int cumulative = 0;
+
+        foreach (var kvp in filteredWeights)
+        {
+            cumulative += kvp.Value;
+            if (rand < cumulative)
+            {
+                return kvp.Key;
+            }
+        }
+        throw new Exception("Rarity selection failed.");
+
+    }
+
 
     //»πµÊ ∆Àæ˜ √¢
 }
