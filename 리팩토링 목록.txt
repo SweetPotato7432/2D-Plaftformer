@@ -1,0 +1,2 @@
+GameManager 싱글톤 -> 인터페이스로 매니저 하나로 묶기(srp 지켜서)
+==null 을 is null로 변경

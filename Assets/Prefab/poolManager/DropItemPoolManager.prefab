@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5597378508932461843}
   - component: {fileID: 9065201894007847959}
   m_Layer: 0
-  m_Name: DropItmePoolManager
+  m_Name: DropItemPoolManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
