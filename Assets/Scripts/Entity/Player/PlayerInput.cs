@@ -1,12 +1,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System;
 
+public delegate void ActivePickupItemEffect(Player player);
 
 [RequireComponent (typeof (PlayerController))]
 public class PlayerInput : MonoBehaviour
 {
-    PlayerController player;
+    public static event ActivePickupItemEffect OnActivePickupItemEffect;
+
+    PlayerController playerController;
+    Player player;
 
     Vector2 moveInput;
 
@@ -24,14 +29,17 @@ public class PlayerInput : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        player = GetComponent<PlayerController> ();
+        playerController = GetComponent<PlayerController> ();
+        player = GetComponent<Player> ();
+
+
     }
 
     // Update is called once per frame
     void Update()
     {
         directionalInput = new Vector2(moveInput.x, moveInput.y);
-        player.SetDirectionalInput (directionalInput);
+        playerController.SetDirectionalInput (directionalInput);
 
     }
 
@@ -58,7 +66,7 @@ public class PlayerInput : MonoBehaviour
                     isDownJump = true;
                     canDownJump = false;
                     isJump = false;
-                    player.OnJumpInputDown(isJump, isDownJump);
+                    playerController.OnJumpInputDown(isJump, isDownJump);
 
                     StartCoroutine(DownJumpCoolTime());
 
@@ -68,7 +76,7 @@ public class PlayerInput : MonoBehaviour
                 {
                     isJump = true;
                     isDownJump = false;
-                    player.OnJumpInputDown(isJump, isDownJump);
+                    playerController.OnJumpInputDown(isJump, isDownJump);
 
                 }
 
@@ -77,7 +85,7 @@ public class PlayerInput : MonoBehaviour
             {
                 isJump = false;
                 isDownJump = false;
-                player.OnJumpInputUp(isJump, isDownJump);
+                playerController.OnJumpInputUp(isJump, isDownJump);
 
             }
         }
@@ -89,7 +97,7 @@ public class PlayerInput : MonoBehaviour
         {
             if (value.isPressed && canDash && directionalInput.x != 0)
             {
-                player.OnDashInputDown();
+                playerController.OnDashInputDown();
                 StartCoroutine("DashCoolTime");
             }
             else
@@ -104,7 +112,7 @@ public class PlayerInput : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
         isDownJump = false ;
-        player.OnJumpInputUp(isJump, isDownJump);
+        playerController.OnJumpInputUp(isJump, isDownJump);
 
         yield return new WaitForSeconds(0.1f);
         canDownJump = true;
@@ -128,13 +136,13 @@ public class PlayerInput : MonoBehaviour
             if (value.isPressed)
             {
                 isAttack = true;
-                player.MeleeAttack(isAttack);
+                playerController.MeleeAttack(isAttack);
 
             }
             else
             {
                 isAttack = false;
-                player.MeleeAttack(isAttack);
+                playerController.MeleeAttack(isAttack);
 
             }
         }
@@ -142,7 +150,13 @@ public class PlayerInput : MonoBehaviour
 
     }
 
-    
+    private void OnInteractive(InputValue value)
+    {
+        if (value.isPressed)
+        {
+            OnActivePickupItemEffect?.Invoke(player);
+        }
+    }
 
 
 }

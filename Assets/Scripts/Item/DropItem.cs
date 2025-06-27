@@ -1,8 +1,6 @@
-using NUnit.Framework.Interfaces;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using static UnityEditor.Progress;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System.Collections.Generic;
 
@@ -78,6 +76,19 @@ public class DropItem : Item
         itemEffectText.text = stat.effect;
     }
 
+    public void ActiveEffect(Player player)
+    {
+        switch (effectType)
+            {
+                case DropItemInfo.EffectType.Heal:
+                    player.TakeHeal(stat.effectStatus);
+                    DropItemPoolManager.Instance.ReturnDropItem(this);
+                    break;
+                case DropItemInfo.EffectType.Gold:
+                    break;
+            }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // 플레이어와 부딪혔을때, 아이템의 상세 설명이 나오고, 활성화 키를 누르면 상호작용.
@@ -88,16 +99,19 @@ public class DropItem : Item
 
             popup.SetActive(true);
 
+            PlayerInput.OnActivePickupItemEffect -= ActiveEffect;
+            PlayerInput.OnActivePickupItemEffect += ActiveEffect;
 
-            switch (effectType)
-            {
-                case DropItemInfo.EffectType.Heal:
-                    player.TakeHeal(stat.effectStatus);
-                    DropItemPoolManager.Instance.ReturnDropItem(this);
-                    break;
-                case DropItemInfo.EffectType.Gold:
-                    break;
-            }
+
+            //switch (effectType)
+            //{
+            //    case DropItemInfo.EffectType.Heal:
+            //        player.TakeHeal(stat.effectStatus);
+            //        DropItemPoolManager.Instance.ReturnDropItem(this);
+            //        break;
+            //    case DropItemInfo.EffectType.Gold:
+            //        break;
+            //}
         }
     }
 
@@ -106,6 +120,7 @@ public class DropItem : Item
         if (collision.gameObject.CompareTag("Player"))
         {
             
+            PlayerInput.OnActivePickupItemEffect -= ActiveEffect;
             popup.SetActive(false);
         }
     }

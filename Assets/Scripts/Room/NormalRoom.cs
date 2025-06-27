@@ -67,7 +67,7 @@ public class NormalRoom : Room
                 Debug.Log("클리어");
 
                 //방 클리어시 드랍 아이템 확률 드랍.
-                if (Random.value <= 0.2f)
+                if (Random.value <= 0.3f)
                 {
                     DropItem dropItem = DropItemPoolManager.Instance.GetDropItem();
 
