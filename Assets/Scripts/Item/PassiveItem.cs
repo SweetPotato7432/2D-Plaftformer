@@ -1,46 +1,35 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using System.Collections.Generic;
 
-public class DropItem : Item
+
+public class PassiveItem : Item
 {
-    public DropItemInfo stat;
+    public PassiveItemInfo stat;
 
     public GameObject popup;
 
     public TMP_Text itemNameText;
     public TMP_Text itemEffectText;
 
-    public DropItemInfo.EffectType effectType;
+    public PassiveItemInfo.EffectType effectType;
 
     Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
 
-
-    private void Awake()
-    {
-        
-
-    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     override public void Start()
     {
         base.Start();
         //stat = GameManager.Instance.DropItemInfoInitialize(id);
-        InitalizeDropItem(stat.id);
+        InitalizePassiveItem(stat.id);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void InitalizePassiveItem(int id)
     {
-        
-    }
-
-    public void InitalizeDropItem(int id)
-    {
-        stat = GameManager.Instance.DropItemInfoInitialize(id);
+        stat = GameManager.Instance.PassiveItemInfoInitialize(id);
 
         //Initialize(stat.id, stat.itemName, stat.rarity, stat.effectType, stat.effectStatus, stat.effect);
         Initialize(stat.id, stat.itemName, stat.rarity, stat.effectStatus, stat.effect);
@@ -50,7 +39,7 @@ public class DropItem : Item
         SpriteRenderer renderer = GetComponent<SpriteRenderer>();
         gameObject.SetActive(false);
 
-        string spriteKey = $"Assets/Addressable/DropItem/DropItem_{stat.id}.asset";
+        string spriteKey = $"Assets/Addressable/PassiveItem/PassiveItem_{stat.id}.asset";
 
         if (spriteCache.TryGetValue(spriteKey, out var cachedSprite))
         {
@@ -84,16 +73,20 @@ public class DropItem : Item
     public void ActiveEffect(Player player)
     {
         switch (effectType)
-            {
-                case DropItemInfo.EffectType.Heal:
-                    player.TakeHeal(stat.effectStatus);
-                    DropItemPoolManager.Instance.ReturnDropItem(this);
-                    break;
-                case DropItemInfo.EffectType.Gold:
-                    DropItemPoolManager.Instance.ReturnDropItem(this);
+        {
+            case PassiveItemInfo.EffectType.Health:
+                
+                PassiveItemPoolManager.Instance.ReturnPassiveItem(this);
+                break;
+            case PassiveItemInfo.EffectType.Attack:
+                PassiveItemPoolManager.Instance.ReturnPassiveItem(this);
 
-                    break;
-            }
+                break;
+            case PassiveItemInfo.EffectType.Speed:
+                PassiveItemPoolManager.Instance.ReturnPassiveItem(this);
+
+                break;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -106,19 +99,9 @@ public class DropItem : Item
 
             popup.SetActive(true);
 
+            // 아이템 효과 적용인데 Passive는 조금 다르게 들어가야하나?
             PlayerInput.OnActivePickupItemEffect -= ActiveEffect;
             PlayerInput.OnActivePickupItemEffect += ActiveEffect;
-
-
-            //switch (effectType)
-            //{
-            //    case DropItemInfo.EffectType.Heal:
-            //        player.TakeHeal(stat.effectStatus);
-            //        DropItemPoolManager.Instance.ReturnDropItem(this);
-            //        break;
-            //    case DropItemInfo.EffectType.Gold:
-            //        break;
-            //}
         }
     }
 
@@ -126,10 +109,9 @@ public class DropItem : Item
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            
+
             PlayerInput.OnActivePickupItemEffect -= ActiveEffect;
             popup.SetActive(false);
         }
     }
-
 }

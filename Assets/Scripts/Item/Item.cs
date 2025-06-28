@@ -32,7 +32,6 @@ public class Item : MonoBehaviour
     public int id;
     public string itemName;
     public int rarity;
-    public DropItemInfo.EffectType effectType;
     public int effectStatus;
     public string effect;
 
@@ -74,12 +73,12 @@ public class Item : MonoBehaviour
         }
     }
 
-    public void Initialize(int id, string itemName, int rarity, DropItemInfo.EffectType effectType, int effectStatus, string effect)
+    public void Initialize(int id, string itemName, int rarity, int effectStatus, string effect)
     {
         this.id = id;
         this.itemName = itemName;
         this.rarity = rarity;
-        this.effectType = effectType;
+        
         this.effectStatus = effectStatus;
         this.effect = effect;
     }

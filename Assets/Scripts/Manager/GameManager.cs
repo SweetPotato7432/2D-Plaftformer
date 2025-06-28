@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
         monsterInfo = csvLoadManager.GetMonsterList();
         playerInfo = csvLoadManager.GetPlayerList();
         dropItemInfo = csvLoadManager.GetDropItemInfoList();
+        passiveItemInfo = csvLoadManager.GetPassiveItemInfoList();
     }
 
     public CSVLoadManager csvLoadManager;
@@ -29,10 +30,12 @@ public class GameManager : MonoBehaviour
     public List<PlayerInfo> playerInfo;
     public List<MonsterInfo> monsterInfo;
     public List<DropItemInfo> dropItemInfo;
+    public List<PassiveItemInfo> passiveItemInfo;
 
     // µÂ∂¯æ∆¿Ã≈€¿« »Ò±Õµµ π≠¿Ω
     public Dictionary<int, List<int>> dropItemRarityGroups = new Dictionary<int, List<int>>();
-    
+    public Dictionary<int, List<int>> passiveItemRarityGroups = new Dictionary<int, List<int>>();
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -73,9 +76,19 @@ public class GameManager : MonoBehaviour
         return dropItemInfo[id-1];
     }
 
+    public PassiveItemInfo PassiveItemInfoInitialize(int id)
+    {
+        return passiveItemInfo[id-1];
+    }
+
     public int DropItemLength()
     {
         return dropItemInfo.Count;
+    }
+
+    public int PassiveItemLength()
+    {
+        return passiveItemInfo.Count;
     }
 
     public void InitializeDropItemRarityGroups()
@@ -88,6 +101,19 @@ public class GameManager : MonoBehaviour
                 dropItemRarityGroups[meta.rarity] = new List<int>();
             }
             dropItemRarityGroups[meta.rarity].Add(meta.id);
+        }
+    }
+
+    public void InitializePassiveItemRarityGroups()
+    {
+        passiveItemRarityGroups.Clear();
+        foreach (var meta in passiveItemInfo)
+        {
+            if (!passiveItemRarityGroups.ContainsKey(meta.rarity))
+            {
+                passiveItemRarityGroups[meta.rarity] = new List<int>();
+            }
+            passiveItemRarityGroups[meta.rarity].Add(meta.id);
         }
     }
 

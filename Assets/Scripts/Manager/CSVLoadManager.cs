@@ -48,6 +48,24 @@ public class DropItemInfo
     public string effect;
 }
 
+public class PassiveItemInfo
+{
+    public enum EffectType
+    {
+        Attack,
+        Health,
+        Speed
+        
+    }
+
+    public int id;
+    public string itemName;
+    public int rarity;
+    public EffectType effectType;
+    public int effectStatus;
+    public string effect;
+}
+
 public class CSVLoadManager : MonoBehaviour
 {
     private List<List<string>> csvData = new List<List<string>>();
@@ -55,6 +73,7 @@ public class CSVLoadManager : MonoBehaviour
     private List<PlayerInfo> playerInfo = new List<PlayerInfo>();
     private List<MonsterInfo> monsterInfo = new List<MonsterInfo>();// 몬스터 정보
     private List<DropItemInfo> dropItemInfo = new List<DropItemInfo>();
+    private List<PassiveItemInfo> passiveItemInfo = new List<PassiveItemInfo>();
 
     private void Awake()
     {
@@ -63,6 +82,8 @@ public class CSVLoadManager : MonoBehaviour
         LoadMonsterCSV();
 
         LoadDropItemCSV();
+
+        LoadPassiveItemCSV();
     }
 
     public List<PlayerInfo> GetPlayerList()
@@ -80,12 +101,18 @@ public class CSVLoadManager : MonoBehaviour
         return dropItemInfo;
     }
 
+    public List<PassiveItemInfo> GetPassiveItemInfoList()
+    {
+
+        return passiveItemInfo;
+    }
+
     
 
 
     void LoadPlayerCSV() 
     {
-        LoadCsv("Player", playerInfo, (row, info) =>
+        LoadCSV("Player", playerInfo, (row, info) =>
         {
             PlayerInfo player = info as PlayerInfo;
             if (player == null) return;
@@ -115,7 +142,7 @@ public class CSVLoadManager : MonoBehaviour
     }
     void LoadMonsterCSV()
     {
-        LoadCsv("Monster", monsterInfo, (row, info) =>
+        LoadCSV("Monster", monsterInfo, (row, info) =>
         {
             MonsterInfo monster = info as MonsterInfo;
             if (monster == null) return;
@@ -146,7 +173,7 @@ public class CSVLoadManager : MonoBehaviour
 
     void LoadDropItemCSV()
     {
-        LoadCsv("DropItem", dropItemInfo, (row, info) =>
+        LoadCSV("DropItem", dropItemInfo, (row, info) =>
         {
             DropItemInfo dropItemInfo = info as DropItemInfo;
             if (dropItemInfo == null) return;
@@ -170,6 +197,32 @@ public class CSVLoadManager : MonoBehaviour
         });
     }
 
+    void LoadPassiveItemCSV()
+    {
+        LoadCSV("PassiveItem", passiveItemInfo, (row, info) =>
+        {
+            PassiveItemInfo passiveItemInfo = info as PassiveItemInfo;
+            if (passiveItemInfo == null) return;
+
+            int field_num = 0;
+            foreach (string field in row)
+            {
+                //Debug.Log("field : " + field);
+                switch (field_num)
+                {
+                    // 필요한 데이터 파싱 추가
+                    case 0: passiveItemInfo.id = int.Parse(field); break;
+                    case 1: passiveItemInfo.itemName = field; break;
+                    case 2: passiveItemInfo.rarity = int.Parse(field); break;
+                    case 3: passiveItemInfo.effectType = (PassiveItemInfo.EffectType)Enum.Parse(typeof(PassiveItemInfo.EffectType), field); break;
+                    case 4: passiveItemInfo.effectStatus = int.Parse(field); break;
+                    case 5: passiveItemInfo.effect = field; break;
+                }
+                field_num++;
+            }
+        });
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -182,7 +235,7 @@ public class CSVLoadManager : MonoBehaviour
         
     }
 
-    void LoadCsv<T>(string resourceName, List<T> dataList, Action<List<string>, T> processRow) where T : new()
+    void LoadCSV<T>(string resourceName, List<T> dataList, Action<List<string>, T> processRow) where T : new()
     {
         csvData.Clear();
 
