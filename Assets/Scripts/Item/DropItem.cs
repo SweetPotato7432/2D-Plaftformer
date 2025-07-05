@@ -29,7 +29,7 @@ public class DropItem : Item
     {
         base.Start();
         //stat = GameManager.Instance.DropItemInfoInitialize(id);
-        InitalizeDropItem(stat.id);
+        InitalizeDropItem(id);
     }
 
     // Update is called once per frame

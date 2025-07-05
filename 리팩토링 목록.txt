@@ -4,3 +4,7 @@ GameManager 싱글톤 -> 인터페이스로 매니저 하나로 묶기(srp 지�
 UserInput
  - 현재 입력값은 캐릭터와, UI가 따로 받는 형태이다.
   - 이부분을 UserInputManager로 분리해서 -> 모든 입력을 받고 -> delegate로 보내주는 형태로 변경한다.
+
+- 패시브 아이템과 드랍아이템 코드 합쳐서 리팩토링이 필요함
+
+- PoolManager 하나로 묶어야 할 필요 존재

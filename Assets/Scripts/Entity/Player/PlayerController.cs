@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     // 미끌리는 시간
     float accelarationTimeAirborne = .2f;
     float accelarationTimeGrounded = .1f;
-    float moveSpeed;
+    public float moveSpeed;
 
     float dashDistance = 4f;
     float timeToDashApex = .1f;
@@ -146,7 +146,7 @@ public class PlayerController : MonoBehaviour
                     {
                         attackedEnemy.Add(enemy);
                         // 추후 공격 스탯 기반으로 수정
-                        enemy.TakeDamage(atk);
+                        enemy.TakeDamage(player.atk);
                     }
 
                 }

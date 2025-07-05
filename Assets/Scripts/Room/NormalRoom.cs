@@ -64,38 +64,43 @@ public class NormalRoom : Room
         {
             if (enemyCnt <= 0)
             {
-                Debug.Log("클리어");
-
-                //방 클리어시 드랍 아이템 확률 드랍.
-                if (Random.value <= 0.3f)
-                {
-                    DropItem dropItem = DropItemPoolManager.Instance.GetDropItem();
-
-                    dropItem.transform.position = rewardSpawn.globalSpawnPoint;
-
-                    // 아이템 개수에 맞게 수정
-                    int len = GameManager.Instance.DropItemLength();
-
-                    int rarity = dropItem.CalculateRarityFromDropItem();
-                    
-                    List<int> candidateIds = GameManager.Instance.dropItemRarityGroups[rarity];
-                    int selectedItemId = candidateIds[Random.Range(0, candidateIds.Count)];
-
-                    Debug.Log($"r : {rarity}, id : {selectedItemId}");
-
-                    dropItem.InitalizeDropItem(selectedItemId);
-                }
-
-                
-                
-                isRoomClear = true;
-                isOnBattle = false;
-                OpenDoor();
+                RoomClear();
             }
         }
         else
         {
         }
+    }
+
+    private void RoomClear()
+    {
+        Debug.Log("클리어");
+
+        //방 클리어시 드랍 아이템 확률 드랍.
+        if (Random.value <= 0.3f)
+        {
+            DropItem dropItem = DropItemPoolManager.Instance.GetDropItem();
+
+            dropItem.transform.position = rewardSpawn.globalSpawnPoint;
+
+            // 아이템 개수에 맞게 수정
+            int len = GameManager.Instance.DropItemLength();
+
+            int rarity = dropItem.CalculateRarityFromDropItem();
+
+            List<int> candidateIds = GameManager.Instance.dropItemRarityGroups[rarity];
+            int selectedItemId = candidateIds[Random.Range(0, candidateIds.Count)];
+
+            Debug.Log($"r : {rarity}, id : {selectedItemId}");
+
+            dropItem.InitalizeDropItem(selectedItemId);
+        }
+
+
+
+        isRoomClear = true;
+        isOnBattle = false;
+        OpenDoor();
     }
 
     public void SpawnEnemy()

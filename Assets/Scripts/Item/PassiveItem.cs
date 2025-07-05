@@ -24,7 +24,7 @@ public class PassiveItem : Item
     {
         base.Start();
         //stat = GameManager.Instance.DropItemInfoInitialize(id);
-        InitalizePassiveItem(stat.id);
+        InitalizePassiveItem(id);
     }
 
     public void InitalizePassiveItem(int id)
@@ -75,16 +75,17 @@ public class PassiveItem : Item
         switch (effectType)
         {
             case PassiveItemInfo.EffectType.Health:
-                
+                player.ChangeStatus(Entity.Status.HP, stat.effectStatus);
                 PassiveItemPoolManager.Instance.ReturnPassiveItem(this);
                 break;
             case PassiveItemInfo.EffectType.Attack:
+                player.ChangeStatus(Entity.Status.ATK, stat.effectStatus);
                 PassiveItemPoolManager.Instance.ReturnPassiveItem(this);
 
                 break;
             case PassiveItemInfo.EffectType.Speed:
+                player.ChangeStatus(Entity.Status.SPEED, stat.effectStatus);
                 PassiveItemPoolManager.Instance.ReturnPassiveItem(this);
-
                 break;
         }
     }

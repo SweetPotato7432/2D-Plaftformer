@@ -42,7 +42,8 @@ public class GameManager : MonoBehaviour
     {
         playerController = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
 
-        InitializeDropItemRarityGroups();     
+        InitializeDropItemRarityGroups();    
+        InitializePassiveItemRarityGroups();
 
     }
 

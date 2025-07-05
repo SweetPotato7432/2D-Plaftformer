@@ -1,0 +1,4 @@
+ItemID, Name, Rarity, EffectType, EffectStatus, Effect
+1, 양손검, 1, Attack, 1, 플레이어의 공격력을 1 증가 시킨다.
+2, 두꺼운 갑옷, 1, Health, 2, 플레이어의 체력을 2 증가 시킨다.
+3, 신속의 목걸이, 2, Speed, 2, 플레이어의 이동속도를 2 증가 시킨다.

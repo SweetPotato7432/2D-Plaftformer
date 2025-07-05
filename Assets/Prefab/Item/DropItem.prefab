@@ -17,7 +17,7 @@ GameObject:
   m_Layer: 0
   m_Name: DropItem
   m_TagString: Untagged
-  m_Icon: {fileID: -5938655980376293919, guid: 0000000000000000d000000000000000, type: 0}
+  m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -176,12 +176,12 @@ MonoBehaviour:
   id: 1
   itemName: 
   rarity: 0
-  effectType: 0
   effectStatus: 0
   effect: 
   popup: {fileID: 7610125988614813339}
   itemNameText: {fileID: 42719855162456769}
   itemEffectText: {fileID: 2057280593696247910}
+  effectType: 0
 --- !u!50 &9001722185529338514
 Rigidbody2D:
   serializedVersion: 5

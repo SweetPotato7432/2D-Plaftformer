@@ -11,6 +11,14 @@ public abstract class Entity : MonoBehaviour
         DEAD
     }
 
+    public enum Status
+    {
+        NONE,
+        HP,
+        ATK,
+        SPEED
+    }
+
     public States state;
 
     public int id;
@@ -19,9 +27,9 @@ public abstract class Entity : MonoBehaviour
     public float curHP;
     protected bool attackType;// 0 : 근접, 1 : 원거리
     protected float attackRange;
-    protected float atk;
+    public float atk;
     protected float attackSpeed;
-    protected float moveSpeed;
+    public float moveSpeed;
     protected float maxJumpHeight;
     protected float minJumpHeight;
     protected float timeToJumpApex;
@@ -62,6 +70,25 @@ public abstract class Entity : MonoBehaviour
     public void Initialize(float maxHP)
     {
         curHP = maxHP;
+    }
+
+    public virtual void ChangeStatus(Status wantType, float value)
+    {
+        switch (wantType)
+        {
+            case Status.HP:
+                maxHP += value;
+                TakeHeal(value);
+                if (curHP > maxHP)
+                    curHP = maxHP;
+                break;
+            case Status.ATK:
+                atk += value;
+                break;
+            case Status.SPEED:
+                moveSpeed += value;
+                break;
+        }
     }
 
     public abstract void EntityDeadCheck();
