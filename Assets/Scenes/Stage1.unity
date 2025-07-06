@@ -544,7 +544,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5494710613729132218, guid: 64f422101e49aeb45b1de7ebdb43eed4, type: 3}
       propertyPath: id
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7938111440020623263, guid: 64f422101e49aeb45b1de7ebdb43eed4, type: 3}
       propertyPath: m_AnchorMax.y
@@ -4162,6 +4162,7 @@ MonoBehaviour:
   maxJumpHeight: 0
   minJumpHeight: 0
   timeToJumpApex: 0
+  moveSpeed: 0
   currentJumpCount: 0
   isDownJump: 0
   isAttack: 0
@@ -4372,6 +4373,8 @@ MonoBehaviour:
   state: 0
   id: 101
   curHP: 0
+  atk: 0
+  moveSpeed: 0
   hpBar: {fileID: 1879599179}
   hpText: {fileID: 1506616915}
 --- !u!1 &1823642522

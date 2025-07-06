@@ -114,7 +114,31 @@ public class Item : MonoBehaviour
             }
         }
         throw new Exception("Rarity selection failed.");
+    }
 
+    public int CalculateRarityFromPassiveItem()
+    {
+
+        var rarityGroups = GameManager.Instance.passiveItemRarityGroups;
+
+        var filteredWeights = baseWeights
+            .Where(kvp => rarityGroups.ContainsKey(kvp.Key))
+            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+        int totalWeight = filteredWeights.Values.Sum();
+        int rand = UnityEngine.Random.Range(0, totalWeight);
+
+        int cumulative = 0;
+
+        foreach (var kvp in filteredWeights)
+        {
+            cumulative += kvp.Value;
+            if (rand < cumulative)
+            {
+                return kvp.Key;
+            }
+        }
+        throw new Exception("Rarity selection failed.");
     }
 
 
