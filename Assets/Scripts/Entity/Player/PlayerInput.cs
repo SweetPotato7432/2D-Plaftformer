@@ -4,11 +4,13 @@ using System.Collections;
 using System;
 
 public delegate void ActivePickupItemEffect(Player player);
+public delegate void InteractionSceneChange();
 
 [RequireComponent (typeof (PlayerController))]
 public class PlayerInput : MonoBehaviour
 {
     public static event ActivePickupItemEffect OnActivePickupItemEffect;
+    public static event InteractionSceneChange OnInteractionSceneChange;
 
     PlayerController playerController;
     Player player;
@@ -155,6 +157,7 @@ public class PlayerInput : MonoBehaviour
         if (value.isPressed)
         {
             OnActivePickupItemEffect?.Invoke(player);
+            OnInteractionSceneChange?.Invoke();
         }
     }
 
