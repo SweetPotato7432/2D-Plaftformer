@@ -3043,14 +3043,6 @@ PrefabInstance:
       propertyPath: m_audioClip
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 7052872605062525004, guid: b411401ed58fd8e42929c7d049f5e04c, type: 3}
-      propertyPath: audioClips.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7052872605062525004, guid: b411401ed58fd8e42929c7d049f5e04c, type: 3}
-      propertyPath: 'audioClips.Array.data[0]'
-      value: 
-      objectReference: {fileID: 8300000, guid: 79ab73ea5e091304f9329baa8f9556d0, type: 3}
     - target: {fileID: 8535685064499381209, guid: b411401ed58fd8e42929c7d049f5e04c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 463.3046

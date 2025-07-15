@@ -56,6 +56,7 @@ public class EnemyPoolManager : MonoBehaviour
     private void CreateNewEnemy(EnemyPool pool, Queue<GameObject> objectPool)
     {
         GameObject enemyObject = Instantiate(pool.prefab);
+        //enemyObject.GetComponent<Enemy>().InitializeEnemy(); // Assuming Enemy has an InitializeEnemy method
         enemyObject.SetActive(false);
         objectPool.Enqueue(enemyObject);
     }

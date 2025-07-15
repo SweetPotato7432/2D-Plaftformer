@@ -56,20 +56,19 @@ public class AudioManager : MonoBehaviour
             .SetUpdate(true)
             .OnComplete(() =>
             {
-                //switch (sceneName)
-                //{
-                //    //case "MainScene":
-                //    //    audioSource.clip = audioClips[0];
-                //    //    break;
-                //    //case "BattleScene":
-                //    //case "TutorialScene":
-                //    //    audioSource.clip = audioClips[1];
-                //    //    break;
-                //    //case "LeaderBoardScene":
-                //    //    audioSource.clip = audioClips[2];
-                //    //    break;
-                //}
-                //StartCoroutine(StartMusic(sceneName));
+                switch (sceneName)
+                {
+                    case "MainMenu":
+                        audioSource.clip = audioClips[0];
+                        break;
+                    case "Stage1":
+                        audioSource.clip = audioClips[1];
+                        break;
+                        //case "LeaderBoardScene":
+                        //    audioSource.clip = audioClips[2];
+                        //    break;
+                }
+                StartCoroutine(StartMusic(sceneName));
             });
     }
 

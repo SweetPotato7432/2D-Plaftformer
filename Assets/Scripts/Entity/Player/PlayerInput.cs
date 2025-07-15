@@ -12,6 +12,10 @@ public class PlayerInput : MonoBehaviour
     public static event ActivePickupItemEffect OnActivePickupItemEffect;
     public static event InteractionSceneChange OnInteractionSceneChange;
 
+    AudioSource audioSource;
+
+    [SerializeField] AudioClip[] audioClips;
+    
     PlayerController playerController;
     Player player;
 
@@ -31,6 +35,8 @@ public class PlayerInput : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
         playerController = GetComponent<PlayerController> ();
         player = GetComponent<Player> ();
 
@@ -100,6 +106,7 @@ public class PlayerInput : MonoBehaviour
             if (value.isPressed && canDash && directionalInput.x != 0)
             {
                 playerController.OnDashInputDown();
+                audioSource.GetComponent<AudioSource>().PlayOneShot(audioClips[0]);
                 StartCoroutine("DashCoolTime");
             }
             else
@@ -161,5 +168,8 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-
+    public void AttackSoundPlay()
+    {
+        audioSource.GetComponent<AudioSource>().PlayOneShot(audioClips[1]);
+    }
 }

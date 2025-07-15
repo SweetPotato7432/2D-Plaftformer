@@ -51,9 +51,9 @@ public abstract class Enemy : Entity
 
     private void OnEnable()
     {
-        stat = GameManager.Instance.EnemyStatInitialize(id);
+        //stat = GameManager.Instance.EnemyStatInitialize(id);
 
-        InitializeEnemy();
+        //InitializeEnemy();
     }
 
     // Update is called once per frame

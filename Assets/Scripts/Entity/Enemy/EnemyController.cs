@@ -155,6 +155,7 @@ public class EnemyController : MonoBehaviour
     public void SetDirectionalInput(Vector2 input)
     {
         directionalInput = input;
+        if (!spriteRenderer) return;
         if (directionalInput.x > 0)
         {
             spriteRenderer.flipX = false;
