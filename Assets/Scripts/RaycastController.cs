@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(Collider2D))]
 
@@ -17,7 +18,7 @@ public class RaycastController : MonoBehaviour
     [HideInInspector]
     public float verticalRaySpacing;
 
-    [HideInInspector]
+    //[HideInInspector]
     public Collider2D collider;
     public RaycastOrigins raycastOrigins;
 
@@ -53,6 +54,7 @@ public class RaycastController : MonoBehaviour
     public void CalculateRaySpacing()
     {
         Bounds bounds = collider.bounds;
+        
         bounds.Expand(skinWidth * -2);
 
         float boundsWidth = bounds.size.x;

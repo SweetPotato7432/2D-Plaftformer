@@ -21,6 +21,12 @@ public class Player : Entity
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
+
+
+    }
+
+    private void Start()
+    {
         stat = GameManager.Instance.PlayerStatInitialize(id);
 
         Initialize(stat.id,
@@ -36,10 +42,6 @@ public class Player : Entity
             stat.timeToJumpApex
             );
 
-    }
-
-    private void Start()
-    {
         controller = GetComponent<PlayerController>();
 
         if (hpBar != null) hpBar.Initialize(maxHP);

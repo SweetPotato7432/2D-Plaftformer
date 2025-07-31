@@ -69,11 +69,11 @@ public class RoomManager : MonoBehaviour
         ValidateDoors();
 
         endRooms = FindEndRooms();
-        Debug.Log("endRooms Cnt" + endRooms.Count);
-        foreach (var room in endRooms)
-        {
-            Debug.Log(room);
-        }
+        //Debug.Log("endRooms Cnt" + endRooms.Count);
+        //foreach (var room in endRooms)
+        //{
+        //    Debug.Log(room);
+        //}
         if(endRooms.Count < 3)
         {
             List<Vector2Int> tempCreatedRooms = createdRooms.ToList();
@@ -85,11 +85,11 @@ public class RoomManager : MonoBehaviour
                     if (AddEndRoom(room))
                     {
                         endRooms = FindEndRooms();
-                        Debug.Log("endRooms Cnt" + endRooms.Count);
-                        foreach (var room1 in endRooms)
-                        {
-                            Debug.Log(room1);
-                        }
+                        //Debug.Log("endRooms Cnt" + endRooms.Count);
+                        //foreach (var room1 in endRooms)
+                        //{
+                        //    Debug.Log(room1);
+                        //}
                         if (endRooms.Count >= 3)
                         {
                             break;
@@ -101,10 +101,10 @@ public class RoomManager : MonoBehaviour
 
         PlaceSpeacialRoom();
 
-        foreach (var room in roomDistances)
-        {
-            Debug.Log($"키 : {room.Key}, 밸류 : {room.Value}");
-        }
+        //foreach (var room in roomDistances)
+        //{
+        //    Debug.Log($"키 : {room.Key}, 밸류 : {room.Value}");
+        //}
         // 방 실제 생성
         GeneratePlayableRoom();
 
@@ -219,7 +219,7 @@ public class RoomManager : MonoBehaviour
             return candidates[Random.Range(0, candidates.Count)];
         }
 
-        Debug.LogWarning($"No valid position found for new room connected to {selectedRoom}");
+        //Debug.LogWarning($"No valid position found for new room connected to {selectedRoom}");
         return Vector2Int.zero;
     }
 
@@ -254,7 +254,7 @@ public class RoomManager : MonoBehaviour
             // 잘못된 문 제거
             foreach (var door in doorsToRemove)
             {
-                Debug.Log($"Destroy{room}/{door}");
+                //Debug.Log($"Destroy{room}/{door}");
                 roomDoors[room].Remove(door);
             }
         }
@@ -539,7 +539,7 @@ public class RoomManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log("미니맵 타일들이 갱신되었습니다.");
+        //Debug.Log("미니맵 타일들이 갱신되었습니다.");
     }
 
     void ClearMiniMapBounds(BoundsInt bounds, Tilemap referenceTilemap)

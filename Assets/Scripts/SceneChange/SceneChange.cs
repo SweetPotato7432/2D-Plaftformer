@@ -5,7 +5,7 @@ public class SceneChange : MonoBehaviour
 
     public void LoadScene(string sceneName)
     {
-        Debug.Log(MySceneManager.Instance == null ? "MySceneManager is NULL" : "MySceneManager is OK");
+        //Debug.Log(MySceneManager.Instance == null ? "MySceneManager is NULL" : "MySceneManager is OK");
 
 
         MySceneManager.Instance.ChangeScene(sceneName);

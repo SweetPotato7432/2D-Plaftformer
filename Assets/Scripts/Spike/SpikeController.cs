@@ -23,7 +23,7 @@ public class SpikeController : RaycastController
     float percentBetweenWaypoints; // 0~1
     float nextMoveTime;
 
-    TilemapCollider2D tilemapCollider2D;
+    //TilemapCollider2D tilemapCollider2D;
     Bounds bounds;
 
     public Vector2 boxSize;
@@ -42,7 +42,7 @@ public class SpikeController : RaycastController
             globalWaypoints[i] = localWaypoints[i] + transform.position;
         }
 
-        tilemapCollider2D = GetComponent<TilemapCollider2D>();
+        //tilemapCollider2D = GetComponent<TilemapCollider2D>();
     }
 
     // Update is called once per frame
@@ -111,9 +111,9 @@ public class SpikeController : RaycastController
 
     void CheckForPlayer()
     {
-        if (tilemapCollider2D == null) return;
+        if (collider == null) return;
 
-        bounds = tilemapCollider2D.bounds;
+        bounds = collider.bounds;
         boxSize = bounds.size;
         center = bounds.center;
 
@@ -134,7 +134,7 @@ public class SpikeController : RaycastController
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawCube(center, boxSize);
+        //Gizmos.color = Color.yellow;
+        //Gizmos.DrawCube(center, boxSize);
     }
 }

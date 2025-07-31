@@ -41,7 +41,7 @@ public class Room : MonoBehaviour
     {
         
 
-        Debug.Log(transform.position);
+        //Debug.Log(transform.position);
 
         globalSpawnpoints = new Vector3[localSpawnpoints.Length];
         for (int i = 0; i < localSpawnpoints.Length; i++)
@@ -103,9 +103,9 @@ public class Room : MonoBehaviour
         totalWidth = Mathf.Abs(BottomLeft.localPosition.x)+Mathf.Abs(TopRight.localPosition.x);
         totalHeight = Mathf.Abs(BottomLeft.localPosition.y)+Mathf.Abs(TopRight.localPosition.y);
 
-        Debug.Log($"현재 맵 : {roomPos}");
-        Debug.Log($"전체 타일맵 크기: 가로 {totalWidth}, 세로 {totalHeight}");
-        Debug.Log($"좌표 범위: 좌측 하단 ({BottomLeft.position}), 우측 상단 ({TopRight.position})");
+        //Debug.Log($"현재 맵 : {roomPos}");
+        //Debug.Log($"전체 타일맵 크기: 가로 {totalWidth}, 세로 {totalHeight}");
+        //Debug.Log($"좌표 범위: 좌측 하단 ({BottomLeft.position}), 우측 상단 ({TopRight.position})");
 
         centerPos = new Vector2((BottomLeft.position.x + TopRight.position.x) /2f, (BottomLeft.position.y + TopRight.position.y)/2f);
     }

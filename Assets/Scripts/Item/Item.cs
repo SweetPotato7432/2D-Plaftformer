@@ -44,7 +44,7 @@ public class Item : MonoBehaviour
         gravity = defaultGravity;
         maxJumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
         minJumpVelocity = Mathf.Sqrt(2 * Mathf.Abs(gravity) * minJumpHeight);
-        Debug.Log($"Item Gravity :{gravity}, JumpVelocity : {maxJumpVelocity}");
+        //Debug.Log($"Item Gravity :{gravity}, JumpVelocity : {maxJumpVelocity}");
 
         
     }

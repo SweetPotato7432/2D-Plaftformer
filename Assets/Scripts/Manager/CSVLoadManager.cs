@@ -120,7 +120,7 @@ public class CSVLoadManager : MonoBehaviour
             int field_num = 0;
             foreach (string field in row)
             {
-                Debug.Log("field : " + field);
+                //Debug.Log("field : " + field);
                 switch (field_num)
                 {
                     // 필요한 데이터 파싱 추가
@@ -242,7 +242,7 @@ public class CSVLoadManager : MonoBehaviour
         TextAsset csvFile = Resources.Load<TextAsset>(resourceName);
         if (csvFile != null)
         {
-            Debug.Log($"{resourceName} 파일이 존재합니다.");
+            //Debug.Log($"{resourceName} 파일이 존재합니다.");
             string[] rows = csvFile.text.Split('\n');
 
             foreach (string row in rows)
@@ -272,7 +272,7 @@ public class CSVLoadManager : MonoBehaviour
         }
         else
         {
-            Debug.Log($"{resourceName} 파일이 존재하지 않습니다.");
+            Debug.LogWarning($"{resourceName} 파일이 존재하지 않습니다.");
         }
     }
 }

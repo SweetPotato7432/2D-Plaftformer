@@ -254,11 +254,11 @@ public class PlatformController : RaycastController
         }
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         if(localWaypoints != null)
         {
-            Gizmos.color = Color.red;
+            Gizmos.color = Color.white ;
             float size = .3f;
 
             for(int i = 0; i < localWaypoints.Length; i++)
