@@ -25,7 +25,7 @@ public class DropItemPoolManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
         InitializePool();
     }
 

@@ -25,7 +25,7 @@ public class PassiveItemPoolManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
         InitializePool();
     }
 

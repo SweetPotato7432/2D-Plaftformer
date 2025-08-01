@@ -30,7 +30,7 @@ public class EnemyPoolManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
 
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
         enemyPoolLookup = new Dictionary<string, EnemyPool>();

@@ -29,7 +29,7 @@ public class EffectPoolManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
 
         poolDictionary = new Dictionary<string, Queue<GameObject>>();
         effectPoolLookup = new Dictionary<string, EffectPool>();
