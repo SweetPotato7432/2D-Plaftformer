@@ -19,14 +19,14 @@ public class RaycastController : MonoBehaviour
     public float verticalRaySpacing;
 
     //[HideInInspector]
-    public Collider2D collider;
+    public Collider2D raycastController_Collider;
     public RaycastOrigins raycastOrigins;
 
     public virtual void Awake()
     {
 
 
-        collider = GetComponent<Collider2D>();
+        raycastController_Collider = GetComponent<Collider2D>();
 
 
     }
@@ -39,7 +39,7 @@ public class RaycastController : MonoBehaviour
     //Raycast추가를 위한 기준점 설정(상하좌우 꼭짓점)
     public void UpdateRaycastOrigins()
     {
-        Bounds bounds = collider.bounds;
+        Bounds bounds = raycastController_Collider.bounds;
         bounds.Expand(skinWidth * -2);
 
 
@@ -53,7 +53,7 @@ public class RaycastController : MonoBehaviour
     // RayCast 지정 개수 만큼 추가
     public void CalculateRaySpacing()
     {
-        Bounds bounds = collider.bounds;
+        Bounds bounds = raycastController_Collider.bounds;
         
         bounds.Expand(skinWidth * -2);
 

@@ -123,7 +123,7 @@ public class EnemyController : MonoBehaviour
 
 
         // 사각형의 중심 위치
-        meleeBoxPosition = new Vector2(transform.position.x + (meleeBoxSize.x / 2) * attackDir, controller.collider.transform.position.y + controller.collider.offset.y);
+        meleeBoxPosition = new Vector2(transform.position.x + (meleeBoxSize.x / 2) * attackDir, controller.raycastController_Collider.transform.position.y + controller.raycastController_Collider.offset.y);
 
         //공격 범위 활성화
         if (enableAttackBox)

@@ -15,7 +15,7 @@ public class Player : Entity
     PlayerController controller;
 
     bool isInvinsible = false;
-    bool isDead = false;
+    //bool isDead = false;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -127,7 +127,7 @@ public class Player : Entity
 
             Invoke("GameOver", 0.5f);
 
-            isDead = true;
+            //isDead = true;
         }
     }
 

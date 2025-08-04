@@ -8,12 +8,12 @@ public class MiniMapCamera : MonoBehaviour
     float roomHeight;
     Vector2 centerPos;
 
-    Camera camera;
+    Camera miniMap_Camera;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        camera = GetComponent<Camera>();
+        miniMap_Camera = GetComponent<Camera>();
     }
 
     // Update is called once per frame
@@ -33,7 +33,7 @@ public class MiniMapCamera : MonoBehaviour
     {
         float padding = 1f; // 여유 공간
         float size = Mathf.Max(roomWidth, roomHeight) / 2f + padding;
-        camera.orthographicSize = size;
+        miniMap_Camera.orthographicSize = size;
 
         transform.position = new Vector3(centerPos.x,centerPos.y,transform.position.z);
     }

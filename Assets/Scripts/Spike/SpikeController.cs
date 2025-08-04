@@ -111,9 +111,9 @@ public class SpikeController : RaycastController
 
     void CheckForPlayer()
     {
-        if (collider == null) return;
+        if (raycastController_Collider == null) return;
 
-        bounds = collider.bounds;
+        bounds = raycastController_Collider.bounds;
         boxSize = bounds.size;
         center = bounds.center;
 

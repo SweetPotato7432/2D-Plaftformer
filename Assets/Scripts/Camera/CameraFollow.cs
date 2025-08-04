@@ -52,13 +52,13 @@ public class CameraFollow : MonoBehaviour
     {
 
 
-        focusArea = new FocusArea(target.collider.bounds,focusAreaSize);
+        focusArea = new FocusArea(target.raycastController_Collider.bounds,focusAreaSize);
         transform.position = focusArea.center + Vector2.up * verticalOffset;
     }
 
     private void FixedUpdate()
     {
-        focusArea.Update(target.collider.bounds);
+        focusArea.Update(target.raycastController_Collider.bounds);
 
         focusPosition = focusArea.center + Vector2.up * verticalOffset;
 
@@ -113,7 +113,7 @@ public class CameraFollow : MonoBehaviour
         this.centerPos = centerPos;
         miniMapCamera.SetCameraArea(roomWidth, roomHeight, centerPos);
 
-        focusArea.Update(target.collider.bounds);
+        focusArea.Update(target.raycastController_Collider.bounds);
 
         focusPosition = focusArea.center + Vector2.up * verticalOffset;
 
