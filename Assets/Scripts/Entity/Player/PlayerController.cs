@@ -145,6 +145,8 @@ public class PlayerController : MonoBehaviour
                     if (!attackedEnemy.Contains(enemy))
                     {
                         attackedEnemy.Add(enemy);
+
+                        if(enemy.isDead) return;
                         // 추후 공격 스탯 기반으로 수정
                         enemy.TakeDamage(player.atk);
                     }

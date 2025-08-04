@@ -30,7 +30,7 @@ public abstract class Enemy : Entity
     Vector3 DefaultForce = new Vector3(0f, 200f, 0f);
     float DefaultForceScatter = 100f;
 
-    bool isDead = false;
+    public bool isDead = false;
 
     virtual public void Awake()
     {
@@ -71,21 +71,28 @@ public abstract class Enemy : Entity
     // 상태 변경 메서드
     protected void ChangeToMoveState()
     {
+        if(isDead) return;
         stateMachine.ChangeState(new MoveState(this));
     }
 
     protected void ChangeToIdleState()
     {
+        if (isDead) return;
+
         stateMachine.ChangeState(new IdleState(this));
     }
 
     protected void ChangeToAttackState()
     {
+        if (isDead) return;
+
         stateMachine.ChangeState(new AttackState(this));
 
     }
     protected void ChangeToDeadState()
     {
+        if (isDead) return;
+
         stateMachine.ChangeState(new DeadState(this));
 
     }
@@ -143,6 +150,8 @@ public abstract class Enemy : Entity
 
        
         EnemyPoolManager.Instance.ReturnEnemy(gameObject, stat.characterName);
+
+        isDead = false;
 
         gameObject.SetActive(false);
     }
