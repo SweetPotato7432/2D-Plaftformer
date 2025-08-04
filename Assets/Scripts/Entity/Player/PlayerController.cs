@@ -48,7 +48,6 @@ public class PlayerController : MonoBehaviour
     public bool isAttack;
     public Vector2 meleeBoxSize;
     Vector2 meleeBoxPosition;
-    float attackDir = 1;
 
     float attackVelocity;
 
@@ -97,6 +96,7 @@ public class PlayerController : MonoBehaviour
     {
         if (player.state == Entity.States.ATTACK && !enableAttackBox)
         {
+            //체공 후에 기본 중력으로 변경하여 낙하.
             gravity = defaultGravity;
             // 가속 및 감속 부분
             CalculateVelocity(moveSpeed);
@@ -124,17 +124,10 @@ public class PlayerController : MonoBehaviour
         {
             velocity.x = 0;
 
-            if (!controller.collisions.below) 
-            {
-                gravity = 0;
-                velocity.y = 0;
-            }
-
-
             // 공격 중이면 이동 입력 무시하고 공격 전진 속도 적용
             CalculateVelocity(moveSpeed);
             velocity.x = directionalInput.x * attackVelocity; // 공격 방향으로 전진
-            controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
+            //controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
 
             Collider2D[] colliders = Physics2D.OverlapBoxAll(meleeBoxPosition, meleeBoxSize, 0f);
             foreach (Collider2D collider in colliders)
@@ -150,13 +143,9 @@ public class PlayerController : MonoBehaviour
                     }
 
                 }
-                //Debug.Log(collider.name);
             }
         }
 
-        //CalculateVelocity(dashSpeed);
-        //controller.Dash(velocity * Time.fixedDeltaTime, directionalInput);
-        ////onDash = false;
 
         if (controller.collisions.below)
         {
@@ -191,11 +180,6 @@ public class PlayerController : MonoBehaviour
                 velocity.y = 0;
             }
         }
-
-
-       
-        
-
     }
 
     public void SetDirectionalInput(Vector2 input)
@@ -209,11 +193,6 @@ public class PlayerController : MonoBehaviour
         else if(directionalInput.x < 0)
         {
             spriteRenderer.flipX= true;
-        }
-
-        if(attackDir != directionalInput.x && directionalInput.x != 0)
-        {
-            attackDir = Mathf.Sign(directionalInput.x);
         }
     }
 
@@ -306,30 +285,6 @@ public class PlayerController : MonoBehaviour
 
         ghost.makeGhost = false;
         isDashing = false;
-    }
-
-    IEnumerator AttackMove()
-    {
-        if (isAttack) { yield break; }
-        isAttack = true;
-
-        if (!controller.collisions.below)
-        {
-            gravity = 0;
-            velocity.y = 0;
-        }
-
-        // 플레이어가 바라보는 방향으로 이동
-        velocity.x = attackDir * attackVelocity;
-
-        yield return new WaitForSeconds(0.1f);
-
-        gravity = defaultGravity;
-
-        // 이동 정지
-        velocity.x = 0;
-
-        isAttack = false;
     }
 
     void CalculateVelocity(float moveSpeed)
