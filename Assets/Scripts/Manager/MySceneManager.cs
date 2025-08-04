@@ -1,5 +1,7 @@
 using DG.Tweening;
 using System.Collections;
+using System.Linq;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +20,8 @@ public class MySceneManager : MonoBehaviour
     private GameObject loading;
     [SerializeField]
     private TMP_Text loading_Text;
+
+    Scene currentScene;
 
 
     private void Awake()
@@ -38,6 +42,7 @@ public class MySceneManager : MonoBehaviour
 
     public void ChangeScene(string sceneName)
     {
+
         AudioManager.Instance.ChangeMusic(sceneName);
         fade_IMG.DOFade(1, fadeDuration)
         .SetUpdate(true)
@@ -45,7 +50,8 @@ public class MySceneManager : MonoBehaviour
             fade_IMG.blocksRaycasts = true;
         })
         .OnComplete(() => {
-            StartCoroutine(LoadScene(sceneName));            
+            StartCoroutine(LoadScene(sceneName));        
+            
         });
     }
 
@@ -89,15 +95,31 @@ public class MySceneManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(Scene scene,LoadSceneMode mode)
+    private void OnSceneLoaded(Scene loadedScene,LoadSceneMode loadedMode)
     {
+        if (loadedScene.buildIndex != 0) currentScene = loadedScene;
+        StartCoroutine(HandleSceneInitialization());
+    }
+
+    private IEnumerator HandleSceneInitialization()
+    {
+        var initalizers = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None).OfType<ISceneInitializer>().ToList();
+
+        foreach(var initalizer in initalizers)
+        {
+            yield return initalizer.InitializeScene();
+        }
+
         fade_IMG.DOFade(0, fadeDuration)
         .SetUpdate(true)
-        .OnStart(() => {
+        .OnStart(() =>
+        {
+
+        })
+        .OnComplete(() =>
+        {
             loading.SetActive(false);
             loading_Text.gameObject.SetActive(false);
-        })
-        .OnComplete(() => {
             fade_IMG.blocksRaycasts = false;
         });
     }

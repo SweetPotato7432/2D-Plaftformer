@@ -58,6 +58,7 @@ public class UIManager : MonoBehaviour
 
         RectTransform prefabTransform = worldMapPrefap.GetComponent<RectTransform>();
 
+
         roomWidth = prefabTransform.sizeDelta.x + worldMapPadding;
         roomHeight = prefabTransform.sizeDelta.y + worldMapPadding;
     }
@@ -82,14 +83,13 @@ public class UIManager : MonoBehaviour
         }
         else
         {
-            if(activeUI.Count != 0)
+            if (activeUI.Count != 0)
             {
                 activeUI.Pop().SetActive(false);
-                activeUI.Peek().SetActive(true);
-                //foreach(GameObject go in activeUI)
-                //{
-                //    go.SetActive(false);
-                //}
+                if (activeUI.Count != 0)
+                {
+                    activeUI?.Peek().SetActive(true);
+                }
             }
             else
             {
@@ -102,6 +102,8 @@ public class UIManager : MonoBehaviour
 
     public void ActiveWorldMapUI()
     {
+        if (optionUI.activeSelf) return;
+
         if (worldmapUI.activeSelf)
         {
             activeUI.Pop();
@@ -136,7 +138,6 @@ public class UIManager : MonoBehaviour
 
         ResizeWorldmapContent(createdRooms);
 
-        
 
         //실제 플레이 가능 한 방을 생성
         foreach (var room in createdRooms)

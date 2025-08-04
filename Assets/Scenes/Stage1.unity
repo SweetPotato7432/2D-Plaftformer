@@ -210,7 +210,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1146962118}
         m_TargetAssemblyTypeName: SoundSettingUI, Assembly-CSharp
         m_MethodName: SetBGMVolume
         m_Mode: 1
@@ -2422,6 +2422,7 @@ GameObject:
   - component: {fileID: 1146962114}
   - component: {fileID: 1146962115}
   - component: {fileID: 1146962117}
+  - component: {fileID: 1146962118}
   m_Layer: 5
   m_Name: MainUI
   m_TagString: Untagged
@@ -2589,6 +2590,21 @@ MonoBehaviour:
   worldMapScrollRect: {fileID: 1328613855}
   worldMapPrefap: {fileID: 4559876460131234292, guid: 992cbc1e1dc41d244b190f7fc7013fd5, type: 3}
   gameOverUI: {fileID: 1490823071}
+--- !u!114 &1146962118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146962109}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b87dfa1460c7ed41ac8d2493bbdba49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bgmSlider: {fileID: 122671164}
+  sfxSlider: {fileID: 1523260425}
+  masterSlider: {fileID: 2062983614}
 --- !u!1 &1203803207
 GameObject:
   m_ObjectHideFlags: 0
@@ -3464,7 +3480,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1146962118}
         m_TargetAssemblyTypeName: SoundSettingUI, Assembly-CSharp
         m_MethodName: SetSFXVolume
         m_Mode: 1
@@ -4640,7 +4656,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1146962118}
         m_TargetAssemblyTypeName: SoundSettingUI, Assembly-CSharp
         m_MethodName: SetMasterVolume
         m_Mode: 1

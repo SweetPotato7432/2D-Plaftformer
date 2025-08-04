@@ -1,9 +1,10 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class RoomManager : MonoBehaviour
+public class RoomManager : MonoBehaviour, ISceneInitializer
 {
     public enum RoomType
     {
@@ -47,9 +48,23 @@ public class RoomManager : MonoBehaviour
     [SerializeField]
     private UIManager uiManager;
 
-
+    // 씬 초기화
+    public IEnumerator InitializeScene()
+    {
+        InitializeRoomManager();
+        yield break;
+    }
 
     void Start()
+    {
+        //InitializeRoomManager();
+
+        uiManager.GenerateWorldmap(roomTypes);
+
+    }
+
+    // RoomManager 초기화
+    public void InitializeRoomManager()
     {
         //roomArray = new GameObject[mapWidth, mapHeight];
 
@@ -65,17 +80,14 @@ public class RoomManager : MonoBehaviour
         }
 
         // 생성된 문 파악 후 연결된 방이 없는 문 파기
-        
         ValidateDoors();
 
+        // 끝방 탐색
         endRooms = FindEndRooms();
-        //Debug.Log("endRooms Cnt" + endRooms.Count);
-        //foreach (var room in endRooms)
-        //{
-        //    Debug.Log(room);
-        //}
-        if(endRooms.Count < 3)
+        // 끝방의 개수가 지정 숫자보다 적다면
+        if (endRooms.Count < 3)
         {
+            // 추가적으로 방을 생성한다.
             List<Vector2Int> tempCreatedRooms = createdRooms.ToList();
 
             foreach (var room in tempCreatedRooms)
@@ -84,12 +96,9 @@ public class RoomManager : MonoBehaviour
                 {
                     if (AddEndRoom(room))
                     {
+                        // 추가한 방에 끝방 추가.
                         endRooms = FindEndRooms();
-                        //Debug.Log("endRooms Cnt" + endRooms.Count);
-                        //foreach (var room1 in endRooms)
-                        //{
-                        //    Debug.Log(room1);
-                        //}
+                        // 끝방의 카운트가 지정 숫자에 도달하면 종료
                         if (endRooms.Count >= 3)
                         {
                             break;
@@ -99,12 +108,9 @@ public class RoomManager : MonoBehaviour
             }
         }
 
+        // 생성된 끝방에 특수방 종료 추가
         PlaceSpeacialRoom();
 
-        //foreach (var room in roomDistances)
-        //{
-        //    Debug.Log($"키 : {room.Key}, 밸류 : {room.Value}");
-        //}
         // 방 실제 생성
         GeneratePlayableRoom();
 
@@ -112,7 +118,6 @@ public class RoomManager : MonoBehaviour
         Tilemap[] sourceTilemaps = FindSourceTilemapsWithLayer("Ground");
         GenerateMiniMap(sourceTilemaps);
 
-        uiManager.GenerateWorldmap(roomTypes);
     }
 
     void GenerateMap()
@@ -556,4 +561,6 @@ public class RoomManager : MonoBehaviour
             }
         }
     }
+
+
 }

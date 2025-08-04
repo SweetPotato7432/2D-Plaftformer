@@ -19,6 +19,11 @@ public class TreasureRoom : Room
     {
         base.Awake();
 
+        
+    }
+
+    public void Start()
+    {
         ItemSpawn.globalSpawnPoint = ItemSpawn.localSpawnpoint + transform.position;
 
         PassiveItem passiveItem = PassiveItemPoolManager.Instance.GetPassiveItem();
