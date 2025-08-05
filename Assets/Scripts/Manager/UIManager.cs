@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
@@ -17,7 +18,7 @@ public class UIManager : MonoBehaviour
     GameObject worldmapUI;
 
     // 활성화 된 UI 저장
-    Stack<GameObject> activeUI;
+    Stack<GameObject> stackActiveUI;
 
     [Header("Fade")]
     [SerializeField]
@@ -54,13 +55,21 @@ public class UIManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        activeUI = new Stack<GameObject>();
+        stackActiveUI = new Stack<GameObject>();
 
         RectTransform prefabTransform = worldMapPrefap.GetComponent<RectTransform>();
 
 
         roomWidth = prefabTransform.sizeDelta.x + worldMapPadding;
         roomHeight = prefabTransform.sizeDelta.y + worldMapPadding;
+
+
+        UserInputManager.OnOptionInput -= OnOption;
+        UserInputManager.OnOptionInput += OnOption;
+
+        UserInputManager.OnWorldmapInput -= OnWorldmap;
+        UserInputManager.OnWorldmapInput += OnWorldmap;
+        
     }
 
     // Update is called once per frame
@@ -68,62 +77,87 @@ public class UIManager : MonoBehaviour
     {
     }
 
-    // UI 
-    public void ActiveOptionUI()
+    // 옵션창 활성화
+    private void OnOption(bool isPressed)
     {
-        if (optionUI.activeSelf)
+        if (isPressed)
         {
-            activeUI.Pop();
-            optionUI.SetActive(false);
-            if (activeUI.Count != 0)
+            // 활성화 된 UI가 있다면
+            if (stackActiveUI.Count > 0)
             {
-                activeUI.Peek().SetActive(true);
-            }
-            
-        }
-        else
-        {
-            if (activeUI.Count != 0)
-            {
-                activeUI.Pop().SetActive(false);
-                if (activeUI.Count != 0)
+                // 가장 위에 활성화된 UI 비활성화
+                stackActiveUI.Pop().SetActive(false);
+                if(stackActiveUI.Count > 0)
                 {
-                    activeUI?.Peek().SetActive(true);
+                    // 다음 UI 활성화
+                    stackActiveUI.Peek().SetActive(true);
                 }
             }
+            // 활성화 된 UI가 없다면
             else
             {
+                // 옵션 UI창 활성화
                 optionUI.SetActive(true);
-                activeUI.Push(optionUI);
+                stackActiveUI.Push(optionUI);
+
             }
 
+        }
+
+    }
+    // 월드 맵 창 활성화
+    private void OnWorldmap(bool isPressed)
+    {
+        if (isPressed)
+        {
+            // 활성화된 UI가 있다면
+            if (stackActiveUI.Count > 0)
+            {
+                // 가장 위에 활성화 된 UI가 WorldmapUI가 아니라면 실행안함.
+                if(stackActiveUI.Peek() != worldmapUI) return;
+
+                // 가장 위에 활성화 된 UI가 WorldmapUI라면 비활성화
+                stackActiveUI.Pop().SetActive(false);
+                if (stackActiveUI.Count > 0)
+                {
+                    // 다음 UI 활성화
+                    stackActiveUI.Peek().SetActive(true);
+                }
+            }
+            // 활성화 된 UI가 없다면
+            else
+            {
+                worldmapUI.SetActive(true);
+                stackActiveUI.Push(worldmapUI);
+            }
         }
     }
 
+    // UI 
     public void ActiveWorldMapUI()
     {
         if (optionUI.activeSelf) return;
 
         if (worldmapUI.activeSelf)
         {
-            activeUI.Pop();
+            stackActiveUI.Pop();
             worldmapUI.SetActive(false);
-            if (activeUI.Count != 0)
+            if (stackActiveUI.Count != 0)
             {
-                activeUI.Peek().SetActive(true);
+                stackActiveUI.Peek().SetActive(true);
             }
         }
         else
         {
-            if (activeUI.Count != 0)
+            if (stackActiveUI.Count != 0)
             {
-                foreach (GameObject go in activeUI)
+                foreach (GameObject go in stackActiveUI)
                 {
                     go.SetActive(false);
                 }
             }
             worldmapUI.SetActive(true);
-            activeUI.Push(worldmapUI);
+            stackActiveUI.Push(worldmapUI);
         }
     }
 

@@ -49,6 +49,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Option",
+                    "type": "Value",
+                    "id": "b4a52b85-ce3d-4330-8212-dba719261b5e",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Worldmap",
+                    "type": "Value",
+                    "id": "acead70f-3e10-4455-88b7-a5802d02e78a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -150,36 +168,10 @@
                     "action": "Interactive",
                     "isComposite": false,
                     "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "UI",
-            "id": "2a744bad-92bc-414f-a490-cde4319d5ac8",
-            "actions": [
-                {
-                    "name": "Option",
-                    "type": "Value",
-                    "id": "98ec52ed-81ef-4597-875d-3ae9c282b6e8",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
                 },
                 {
-                    "name": "WorldMap",
-                    "type": "Value",
-                    "id": "938ee7f0-bbaa-448a-bea7-56534b21f43d",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                }
-            ],
-            "bindings": [
-                {
                     "name": "",
-                    "id": "b492c639-c03d-4108-90a8-b1317b8748ca",
+                    "id": "1779e4fa-151b-4e65-8626-61546a2421f0",
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
@@ -190,12 +182,12 @@
                 },
                 {
                     "name": "",
-                    "id": "49d7fcfb-46bd-4a05-bb10-eeb2a724f965",
+                    "id": "aa661378-1bdf-49e3-bb59-0878d6528dc4",
                     "path": "<Keyboard>/tab",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "WorldMap",
+                    "action": "Worldmap",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

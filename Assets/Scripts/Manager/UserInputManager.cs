@@ -14,6 +14,8 @@ public class UserInputManager : MonoBehaviour
     public static event DelegateInputPress OnDashInput;
     public static event DelegateInputPress OnAttackInput;
     public static event DelegateInputPress OnInteractiveInput;
+    public static event DelegateInputPress OnOptionInput;
+    public static event DelegateInputPress OnWorldmapInput;
 
     public static UserInputManager Instance { get; private set; }
 
@@ -63,12 +65,14 @@ public class UserInputManager : MonoBehaviour
 
     private void OnOption(InputValue value)
     {
-
-
+        bool isPressed = value.isPressed;
+        OnOptionInput?.Invoke(isPressed);
     }
 
-    private void OnWorldMap(InputValue value)
+    private void OnWorldmap(InputValue value)
     {
+        bool isPressed = value.isPressed;
+        OnWorldmapInput?.Invoke(isPressed);
     }
 
 }
