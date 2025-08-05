@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
 
-    Ghost ghost;
+    GhostGenerator ghost;
 
     Player player;
 
@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour
         controller = GetComponent<Controller2D>();
         playerAnim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        ghost = GetComponent<Ghost>();
+        ghost = GetComponent<GhostGenerator>();
         player = GetComponent<Player>();
 
         stat = GameManager.Instance.PlayerStatInitialize(player.id);

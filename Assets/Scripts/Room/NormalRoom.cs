@@ -7,7 +7,7 @@ public class NormalRoom : Room
     [System.Serializable]
     public struct EnemySpawnInfo
     {
-        public string tag;
+        public EnemyType wantType;
         public Vector3 localSpawnpoint;
         [HideInInspector]
         public Vector3 globalSpawnPoint;
@@ -107,7 +107,8 @@ public class NormalRoom : Room
     {
         for (int i = 0; i < spawnInfos.Length; i++)
         {
-            GameObject enemyObj = EnemyPoolManager.Instance.GetEnemy(spawnInfos[i].tag);
+            //GameObject enemyObj = EnemyPoolManager.Instance.GetEnemy(spawnInfos[i].tag);
+            GameObject enemyObj = PoolManager.ClaimInstantiate(spawnInfos[i].wantType.ToString());
             Enemy enemy = enemyObj.GetComponent<Enemy>();
             if (enemyObj != null)
             {

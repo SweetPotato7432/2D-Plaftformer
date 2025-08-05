@@ -1,10 +1,8 @@
 using DG.Tweening;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Ghost : MonoBehaviour
+public class GhostGenerator : MonoBehaviour
 {
     public float ghostDistance = 0.5f; // 잔상을 생성할 최소 이동 거리
 
@@ -35,8 +33,7 @@ public class Ghost : MonoBehaviour
 
     void CreateGhost()
     {
-        //GameObject currentGhost = GhostPoolManager.Instance.GetGhost();
-        GameObject currentGhost = EffectPoolManager.Instance.GetEffect("Ghost");
+        GameObject currentGhost = PoolManager.ClaimInstantiate(EffectType.Ghost.ToString());
         SpriteRenderer spriteRenderer = currentGhost.GetComponent<SpriteRenderer>();
         currentGhost.transform.position = transform.position;
         currentGhost.transform.localScale = transform.localScale;
@@ -44,17 +41,17 @@ public class Ghost : MonoBehaviour
         spriteRenderer.sprite = GetComponent<SpriteRenderer>().sprite;
         spriteRenderer.flipX = GetComponent<SpriteRenderer>().flipX;
         currentGhost.SetActive(true);
-        StartCoroutine(SetDisableGhost(currentGhost));
+        //StartCoroutine(SetDisableGhost(currentGhost));
     }
 
-    IEnumerator SetDisableGhost(GameObject ghost)
-    {
-        SpriteRenderer spriteRenderer = ghost.GetComponent<SpriteRenderer>();
-        Tween tween = spriteRenderer.DOFade(0f, .3f);
-        yield return tween.WaitForCompletion();
-        //yield return new WaitForSeconds(.3f);
-        //GhostPoolManager.Instance.ReturnGhost(ghost);
-        EffectPoolManager.Instance.ReturnEffect(ghost, "Ghost");
-        ghost.SetActive(false);
-    }
+    //IEnumerator SetDisableGhost(GameObject ghost)
+    //{
+    //    SpriteRenderer spriteRenderer = ghost.GetComponent<SpriteRenderer>();
+    //    Tween tween = spriteRenderer.DOFade(0f, .3f);
+    //    yield return tween.WaitForCompletion();
+    //    //yield return new WaitForSeconds(.3f);
+    //    //GhostPoolManager.Instance.ReturnGhost(ghost);
+    //    EffectPoolManager.Instance.ReturnEffect(ghost, "Ghost");
+    //    ghost.SetActive(false);
+    //}
 }

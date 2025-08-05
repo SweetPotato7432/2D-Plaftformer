@@ -14,10 +14,10 @@ GameObject:
   - component: {fileID: 5068584092092466592}
   - component: {fileID: 7265050602810564407}
   - component: {fileID: 8233538191307092227}
-  - component: {fileID: 2902880500150257356}
   - component: {fileID: 123101476716700057}
   - component: {fileID: -4820859676938378526}
   - component: {fileID: 3875037216796880111}
+  - component: {fileID: 1093998965066666070}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -201,20 +201,6 @@ MonoBehaviour:
   isDownJump: 0
   isAttack: 0
   meleeBoxSize: {x: 4.5, y: 4}
---- !u!114 &2902880500150257356
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2550292420332074309}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c859259534114544e9d3aa6a79f39ed9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ghostDistance: 0.5
-  makeGhost: 0
 --- !u!95 &123101476716700057
 Animator:
   serializedVersion: 7
@@ -349,6 +335,20 @@ MonoBehaviour:
   audioClips:
   - {fileID: 8300000, guid: f11db4559b3ffff45b62e9327fc5535d, type: 3}
   - {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
+--- !u!114 &1093998965066666070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2550292420332074309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fabcaad8b067d3a459cae21d02681906, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ghostDistance: 0.5
+  makeGhost: 0
 --- !u!1 &8069492259708557409
 GameObject:
   m_ObjectHideFlags: 0

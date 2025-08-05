@@ -1,17 +1,20 @@
 ﻿// Fades out the Text of the HPParticle and Destroys it 
 
 using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
-public class HPParticleScript : MonoBehaviour {
+public class HPParticleScript : MonoBehaviour, IPoolable
+{
 
 	public float Alpha =1f;
 	public float FadeSpeed = 4f;
 
 	private GameObject HPLabel;
 
-	// Set a Variable
-	void Start () 
+    public Queue<GameObject> RootQueue { get; set; }
+
+    // Set a Variable
+    void Start () 
 	{
 		HPLabel = gameObject.transform.Find("HPLabel").gameObject;
 	}
@@ -25,8 +28,7 @@ public class HPParticleScript : MonoBehaviour {
 
 		if (Alpha < 0.005f)
 		{
-			//Destroy(gameObject);
-			EffectPoolManager.Instance.ReturnEffect(this.gameObject, "Damage");
+			PoolManager.ClaimReturnPool(gameObject);
 			
             HPLabel.GetComponent<TextMesh>().color = new Color(CurrentColor.r, CurrentColor.g, CurrentColor.b, 1f);
 
@@ -51,5 +53,9 @@ public class HPParticleScript : MonoBehaviour {
         Alpha = 1f;
         HPLabel.GetComponent<TextMesh>().color = new Color(CurrentColor.r, CurrentColor.g, CurrentColor.b, Alpha);
 
+    }
+
+    public void ReturnPool()
+    {
     }
 }
