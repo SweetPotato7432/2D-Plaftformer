@@ -12,13 +12,12 @@ GameObject:
   - component: {fileID: 7821796702582727649}
   - component: {fileID: 4582866479942643922}
   - component: {fileID: 5068584092092466592}
-  - component: {fileID: 6940808848213608487}
   - component: {fileID: 7265050602810564407}
   - component: {fileID: 8233538191307092227}
-  - component: {fileID: 5797182484543827103}
   - component: {fileID: 2902880500150257356}
   - component: {fileID: 123101476716700057}
   - component: {fileID: -4820859676938378526}
+  - component: {fileID: 3875037216796880111}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -162,36 +161,6 @@ MonoBehaviour:
   moveSpeed: 0
   hpBar: {fileID: 0}
   hpText: {fileID: 0}
---- !u!114 &6940808848213608487
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2550292420332074309}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: c248dbf4211aea0438d39bcd162c4597, type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
-  m_DefaultActionMap: Player
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!114 &7265050602810564407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,11 +176,9 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 64
-  horizontalRayCount: 4
-  verticalRayCount: 4
   horizontalRaySpacing: 0
   verticalRaySpacing: 0
-  collider: {fileID: 0}
+  raycastController_Collider: {fileID: 0}
   maxSlopeAngle: 80
   playerInput: {x: 0, y: 0}
 --- !u!114 &8233538191307092227
@@ -234,21 +201,6 @@ MonoBehaviour:
   isDownJump: 0
   isAttack: 0
   meleeBoxSize: {x: 4.5, y: 4}
---- !u!114 &5797182484543827103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2550292420332074309}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8150c9b5e28ba44a8f482e6b6c6dce6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  audioClips:
-  - {fileID: 8300000, guid: f11db4559b3ffff45b62e9327fc5535d, type: 3}
-  - {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
 --- !u!114 &2902880500150257356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382,6 +334,21 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3875037216796880111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2550292420332074309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b3ef239039c76f4e90f605fdfd79cad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioClips:
+  - {fileID: 8300000, guid: f11db4559b3ffff45b62e9327fc5535d, type: 3}
+  - {fileID: 8300000, guid: 88b1cbe3caa3fee4b8b103b5edd7aba9, type: 3}
 --- !u!1 &8069492259708557409
 GameObject:
   m_ObjectHideFlags: 0

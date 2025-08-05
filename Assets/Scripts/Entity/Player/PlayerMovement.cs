@@ -7,7 +7,7 @@ public delegate void ActivePickupItemEffect(Player player);
 public delegate void InteractionSceneChange();
 
 [RequireComponent (typeof (PlayerController))]
-public class PlayerInput : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     public static event ActivePickupItemEffect OnActivePickupItemEffect;
     public static event InteractionSceneChange OnInteractionSceneChange;
@@ -40,7 +40,20 @@ public class PlayerInput : MonoBehaviour
         playerController = GetComponent<PlayerController> ();
         player = GetComponent<Player> ();
 
+        UserInputManager.OnMoveInput -= OnMove;
+        UserInputManager.OnMoveInput += OnMove;
 
+        UserInputManager.OnJumpInput -= OnJump;
+        UserInputManager.OnJumpInput += OnJump;
+
+        UserInputManager.OnDashInput -= OnDash;
+        UserInputManager.OnDashInput += OnDash;
+
+        UserInputManager.OnAttackInput -= OnAttack;
+        UserInputManager.OnAttackInput += OnAttack;
+
+        UserInputManager.OnInteractiveInput -= OnInteractive;
+        UserInputManager.OnInteractiveInput += OnInteractive;
     }
 
     // Update is called once per frame
@@ -51,11 +64,11 @@ public class PlayerInput : MonoBehaviour
 
     }
 
-    private void OnMove(InputValue value)
+    private void OnMove(Vector2 input)
     {
         if (Time.timeScale >= 1.0f)
         {
-            moveInput = value.Get<Vector2>();
+            moveInput = input;
         }
         else
         {
@@ -63,11 +76,11 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-    private void OnJump(InputValue value)
+    private void OnJump(bool isPressed)
     {
         if (Time.timeScale >= 1.0f)
         {
-            if (value.isPressed)
+            if (isPressed)
             {
                 if (canDownJump && moveInput.y == -1)
                 {
@@ -99,19 +112,15 @@ public class PlayerInput : MonoBehaviour
         }
     }
 
-    private void OnDash(InputValue value)
+    private void OnDash(bool isPressed)
     {
         if (Time.timeScale >= 1.0f)
         {
-            if (value.isPressed && canDash && directionalInput.x != 0)
+            if (isPressed && canDash && directionalInput.x != 0)
             {
                 playerController.OnDashInputDown();
                 audioSource.GetComponent<AudioSource>().PlayOneShot(audioClips[0]);
                 StartCoroutine("DashCoolTime");
-            }
-            else
-            {
-
             }
         }
     }
@@ -138,11 +147,11 @@ public class PlayerInput : MonoBehaviour
     }
 
 
-    private void OnAttack(InputValue value)
+    private void OnAttack(bool isPressed)
     {
         if (Time.timeScale >= 1.0f ) 
         {
-            if (value.isPressed)
+            if (isPressed)
             {
                 isAttack = true;
                 playerController.MeleeAttack(isAttack);
@@ -159,9 +168,9 @@ public class PlayerInput : MonoBehaviour
 
     }
 
-    private void OnInteractive(InputValue value)
+    private void OnInteractive(bool isPressed)
     {
-        if (value.isPressed)
+        if (isPressed)
         {
             OnActivePickupItemEffect?.Invoke(player);
             OnInteractionSceneChange?.Invoke();

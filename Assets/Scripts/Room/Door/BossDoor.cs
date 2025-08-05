@@ -28,8 +28,8 @@ public class BossDoor : MonoBehaviour
 
             popup.SetActive(true);
 
-            PlayerInput.OnInteractionSceneChange -= ChangeScene;
-            PlayerInput.OnInteractionSceneChange += ChangeScene;
+            PlayerMovement.OnInteractionSceneChange -= ChangeScene;
+            PlayerMovement.OnInteractionSceneChange += ChangeScene;
 
 
             //switch (effectType)
@@ -49,7 +49,7 @@ public class BossDoor : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
 
-            PlayerInput.OnInteractionSceneChange -= ChangeScene;
+            PlayerMovement.OnInteractionSceneChange -= ChangeScene;
             popup.SetActive(false);
         }
     }

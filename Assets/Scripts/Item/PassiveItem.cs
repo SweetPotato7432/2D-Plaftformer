@@ -101,8 +101,8 @@ public class PassiveItem : Item
             popup.SetActive(true);
 
             // 아이템 효과 적용인데 Passive는 조금 다르게 들어가야하나?
-            PlayerInput.OnActivePickupItemEffect -= ActiveEffect;
-            PlayerInput.OnActivePickupItemEffect += ActiveEffect;
+            PlayerMovement.OnActivePickupItemEffect -= ActiveEffect;
+            PlayerMovement.OnActivePickupItemEffect += ActiveEffect;
         }
     }
 
@@ -111,7 +111,7 @@ public class PassiveItem : Item
         if (collision.gameObject.CompareTag("Player"))
         {
 
-            PlayerInput.OnActivePickupItemEffect -= ActiveEffect;
+            PlayerMovement.OnActivePickupItemEffect -= ActiveEffect;
             popup.SetActive(false);
         }
     }

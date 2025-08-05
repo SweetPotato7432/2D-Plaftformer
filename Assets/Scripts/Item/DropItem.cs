@@ -106,8 +106,8 @@ public class DropItem : Item
 
             popup.SetActive(true);
 
-            PlayerInput.OnActivePickupItemEffect -= ActiveEffect;
-            PlayerInput.OnActivePickupItemEffect += ActiveEffect;
+            PlayerMovement.OnActivePickupItemEffect -= ActiveEffect;
+            PlayerMovement.OnActivePickupItemEffect += ActiveEffect;
 
 
             //switch (effectType)
@@ -127,7 +127,7 @@ public class DropItem : Item
         if (collision.gameObject.CompareTag("Player"))
         {
             
-            PlayerInput.OnActivePickupItemEffect -= ActiveEffect;
+            PlayerMovement.OnActivePickupItemEffect -= ActiveEffect;
             popup.SetActive(false);
         }
     }
