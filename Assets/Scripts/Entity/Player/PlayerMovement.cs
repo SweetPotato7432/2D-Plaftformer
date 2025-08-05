@@ -1,7 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Collections;
-using System;
 
 public delegate void ActivePickupItemEffect(Player player);
 public delegate void InteractionSceneChange();
@@ -180,5 +178,19 @@ public class PlayerMovement : MonoBehaviour
     public void AttackSoundPlay()
     {
         audioSource.GetComponent<AudioSource>().PlayOneShot(audioClips[1]);
+    }
+
+    private void OnDestroy()
+    {
+
+        UserInputManager.OnMoveInput -= OnMove;
+
+        UserInputManager.OnJumpInput -= OnJump;
+
+        UserInputManager.OnDashInput -= OnDash;
+
+        UserInputManager.OnAttackInput -= OnAttack;
+
+        UserInputManager.OnInteractiveInput -= OnInteractive;
     }
 }
