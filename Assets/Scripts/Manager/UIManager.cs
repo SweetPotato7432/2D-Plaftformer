@@ -354,4 +354,12 @@ public class UIManager : MonoBehaviour
     {
         gameOverUI.SetActive(true);
     }
+
+    private void OnDestroy()
+    {
+
+        UserInputManager.OnOptionInput -= OnOption;
+
+        UserInputManager.OnWorldmapInput -= OnWorldmap;
+    }
 }
