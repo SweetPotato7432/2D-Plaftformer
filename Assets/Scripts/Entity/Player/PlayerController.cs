@@ -225,7 +225,7 @@ public class PlayerController : MonoBehaviour
 
     public void OnJumpInputDown(bool isJump, bool isDownJump)
     {
-        if (isDead) return;
+        if (isDead || player.state == Entity.States.ATTACK) return;
         this.isDownJump = isDownJump;
 
         if (!isDownJump&&currentJumpCount < maxJumpCount)
