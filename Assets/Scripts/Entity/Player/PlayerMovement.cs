@@ -114,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Time.timeScale >= 1.0f)
         {
-            if (isPressed && canDash && directionalInput.x != 0)
+            if (isPressed && canDash /*&& directionalInput.x != 0*/)
             {
                 playerController.OnDashInputDown();
                 audioSource.GetComponent<AudioSource>().PlayOneShot(audioClips[0]);
