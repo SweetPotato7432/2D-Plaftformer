@@ -95,7 +95,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Debug.Log(controller.collisions.below);
         if (player.state == Entity.States.ATTACK)
         {
             if (!enableAttackBox)
@@ -263,6 +262,9 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
+                    // 공중에서 처음 점프 시작시에 점프 카운트 2차감
+                    if (currentJumpCount == 0) currentJumpCount++;
+
                     currentJumpCount++;
                     velocity.x = directionalInput.x * moveSpeed;
                     velocity.y = maxJumpVelocity;
