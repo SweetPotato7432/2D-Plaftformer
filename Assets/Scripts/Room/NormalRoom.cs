@@ -79,7 +79,9 @@ public class NormalRoom : Room
         //방 클리어시 드랍 아이템 확률 드랍.
         if (Random.value <= 0.3f)
         {
-            DropItem dropItem = DropItemPoolManager.Instance.GetDropItem();
+            //DropItem dropItem = DropItemPoolManager.Instance.GetDropItem();
+            GameObject inst = PoolManager.ClaimInstantiate(ItemType.DropItem.ToString());
+            DropItem dropItem = inst.GetComponent<DropItem>();
 
             dropItem.transform.position = rewardSpawn.globalSpawnPoint;
 

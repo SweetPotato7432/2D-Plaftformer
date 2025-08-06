@@ -17,7 +17,7 @@ public class DropItem : Item
 
     Dictionary<string, Sprite> spriteCache = new Dictionary<string, Sprite>();
 
-
+    
     private void Awake()
     {
         
@@ -87,13 +87,12 @@ public class DropItem : Item
             {
                 case DropItemInfo.EffectType.Heal:
                     player.TakeHeal(stat.effectStatus);
-                    DropItemPoolManager.Instance.ReturnDropItem(this);
                     break;
                 case DropItemInfo.EffectType.Gold:
-                    DropItemPoolManager.Instance.ReturnDropItem(this);
-
                     break;
             }
+        PoolManager.ClaimReturnPool(gameObject);
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

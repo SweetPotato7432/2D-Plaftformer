@@ -53,5 +53,12 @@ MonoBehaviour:
     prefap: {fileID: 2444082209999948782, guid: 4bbabfb3d917dcf439cd5f8bb3c266eb, type: 3}
     amount: 5
   - wantType: 1
-    prefap: {fileID: 100000, guid: 57ff52a6b9d134c9689be872547ab590, type: 3}
+    prefap: {fileID: 100000, guid: 9070bb54d4654c747b9c85a7a8279df0, type: 3}
     amount: 10
+  requestItems:
+  - wantType: 0
+    prefap: {fileID: 1055308441128495500, guid: d24d3dae8f8c57041957c7f038a30760, type: 3}
+    amount: 1
+  - wantType: 1
+    prefap: {fileID: 1055308441128495500, guid: 64f422101e49aeb45b1de7ebdb43eed4, type: 3}
+    amount: 2

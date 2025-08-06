@@ -10,3 +10,9 @@ public enum EffectType
     Ghost,
     Damage
 }
+
+public enum ItemType
+{
+    DropItem,
+    PassiveItem
+}

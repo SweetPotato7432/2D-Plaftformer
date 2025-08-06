@@ -76,18 +76,18 @@ public class PassiveItem : Item
         {
             case PassiveItemInfo.EffectType.Health:
                 player.ChangeStatus(Entity.Status.HP, stat.effectStatus);
-                PassiveItemPoolManager.Instance.ReturnPassiveItem(this);
                 break;
             case PassiveItemInfo.EffectType.Attack:
                 player.ChangeStatus(Entity.Status.ATK, stat.effectStatus);
-                PassiveItemPoolManager.Instance.ReturnPassiveItem(this);
 
                 break;
             case PassiveItemInfo.EffectType.Speed:
                 player.ChangeStatus(Entity.Status.SPEED, stat.effectStatus);
-                PassiveItemPoolManager.Instance.ReturnPassiveItem(this);
                 break;
         }
+        //PassiveItemPoolManager.Instance.ReturnPassiveItem(this);
+        PoolManager.ClaimReturnPool(gameObject);
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

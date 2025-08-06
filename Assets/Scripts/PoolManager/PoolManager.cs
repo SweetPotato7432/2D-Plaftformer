@@ -19,6 +19,14 @@ public struct PoolRequestEffect
     public int amount;
 }
 
+[System.Serializable]
+public struct PoolRequestItem
+{
+    public ItemType wantType;
+    public GameObject prefap;
+    public int amount;
+}
+
 public delegate GameObject DelegateInstantiate(string targetName/*, Vector3 position, Quaternion rotation, Vector3 scale, Transform parent, Space coord*/);
 public delegate void DelegateReturnPool(GameObject target);
 
@@ -28,6 +36,8 @@ public class PoolManager : MonoBehaviour
     private PoolRequestEnemy[] requestEnemies = new PoolRequestEnemy[0];
     [SerializeField]
     private PoolRequestEffect[] requestEffects = new PoolRequestEffect[0];
+    [SerializeField]
+    private PoolRequestItem[] requestItems = new PoolRequestItem[0];
 
     public static event DelegateInstantiate OnInstantiate;
     public static event DelegateReturnPool OnReturnPool;
@@ -55,6 +65,10 @@ public class PoolManager : MonoBehaviour
         foreach(var currentEffect in requestEffects)
         {
             RegistrationFromObject(currentEffect.prefap, currentEffect.amount);
+        }
+        foreach(var currentItem in requestItems)
+        {
+            RegistrationFromObject(currentItem.prefap, currentItem.amount);
         }
     }
 
@@ -129,34 +143,6 @@ public class PoolManager : MonoBehaviour
 
         // 인스턴스가 없음
         if (instance is null) return null;
-
-        //Transform transform = instance.transform;
-        //instance.transform.SetParent(parent);
-
-        //if (coord == Space.World)
-        //{
-        //    transform.position = position;
-        //    transform.rotation = rotation;
-        //    // transform.lossyScale = 절대적인 크기, 바로 바꾸기 힘듬
-        //    // lossyScale 구하는법
-        //    // 부모를 기준으로 LocalScale을 계산
-
-        //}
-        //else
-        //{
-        //    transform.localPosition = position;
-        //    transform.localRotation = rotation;
-        //}
-        //transform.localScale = scale;
-
-        // 컴포넌트를 받아오기 싫고, 바로 초기화 하고 싶다면
-        // Dictionary에 IPoolable과 Monobehaviour을 상속받는 클래스를 만들고
-        // 저장된 대상 초기화(대신 확장성이 별로임)
-        //if (instance.TryGetComponent(out IPoolable asPool))
-        //{
-        //}
-
-        //instance.SetActive(true);
 
         return instance;
 

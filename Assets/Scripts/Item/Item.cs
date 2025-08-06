@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Controller2D))]
-public class Item : MonoBehaviour
+public class Item : MonoBehaviour, IPoolable
 {
     // 아이템 등장 확률
     Dictionary<int, int> baseWeights = new Dictionary<int, int>
@@ -34,6 +34,8 @@ public class Item : MonoBehaviour
     public int rarity;
     public int effectStatus;
     public string effect;
+
+    public Queue<GameObject> RootQueue { get; set; }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     virtual public void Start()
@@ -139,6 +141,11 @@ public class Item : MonoBehaviour
             }
         }
         throw new Exception("Rarity selection failed.");
+    }
+
+    public void ReturnPool()
+    {
+        
     }
 
 

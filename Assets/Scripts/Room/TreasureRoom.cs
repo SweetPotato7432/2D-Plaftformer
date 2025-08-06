@@ -26,7 +26,9 @@ public class TreasureRoom : Room
     {
         ItemSpawn.globalSpawnPoint = ItemSpawn.localSpawnpoint + transform.position;
 
-        PassiveItem passiveItem = PassiveItemPoolManager.Instance.GetPassiveItem();
+        //PassiveItem passiveItem = PassiveItemPoolManager.Instance.GetPassiveItem();
+        GameObject inst = PoolManager.ClaimInstantiate(ItemType.PassiveItem.ToString());
+        PassiveItem passiveItem = inst.GetComponent<PassiveItem>();
 
         passiveItem.transform.position = ItemSpawn.globalSpawnPoint;
 
