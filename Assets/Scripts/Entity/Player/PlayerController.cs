@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
     bool isDashing = false;
 
     Vector2 directionalInput;
+    float playerLookDirectionX = 1;
 
     [Header("MeleeAttack")]
     public bool isAttack;
@@ -191,10 +192,12 @@ public class PlayerController : MonoBehaviour
         if (directionalInput.x > 0)
         {
             spriteRenderer.flipX = false;
+            playerLookDirectionX = 1;
         }
         else if(directionalInput.x < 0)
         {
             spriteRenderer.flipX= true;
+            playerLookDirectionX = -1;
         }
     }
 
@@ -278,7 +281,8 @@ public class PlayerController : MonoBehaviour
             gravity = 0;
             velocity.y = 0;
         }
-        velocity.x = directionalInput.x * dashVelocity;
+        //velocity.x = directionalInput.x * dashVelocity;
+        velocity.x = playerLookDirectionX * dashVelocity;
 
         yield return new WaitForSeconds(timeToDashApex);
 
