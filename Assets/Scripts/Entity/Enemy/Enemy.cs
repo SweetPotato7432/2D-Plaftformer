@@ -194,6 +194,8 @@ public abstract class Enemy : Entity
             stat.timeToJumpApex
             );
 
+        hpBar.Initialize(maxHP);
+
         isDead = false;
         curNormalRoom = room;
         ChangeToIdleState();
