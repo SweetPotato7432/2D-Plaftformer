@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Entity : MonoBehaviour
+public abstract class Entity : MonoBehaviour , IPoolable
 {
     public enum States
     {
@@ -33,6 +34,8 @@ public abstract class Entity : MonoBehaviour
     protected float maxJumpHeight;
     protected float minJumpHeight;
     protected float timeToJumpApex;
+
+    public Queue<GameObject> RootQueue { get; set; }
 
     virtual public void Update()
     {
@@ -92,4 +95,9 @@ public abstract class Entity : MonoBehaviour
     }
 
     public abstract void EntityDeadCheck();
+
+    public void ReturnPool()
+    {
+        
+    }
 }

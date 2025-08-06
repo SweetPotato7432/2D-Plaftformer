@@ -1,8 +1,7 @@
 using Microlight.MicroBar;
 using UnityEngine;
-using UnityEngine.UIElements;
 
-public abstract class Enemy : Entity 
+public abstract class Enemy : Entity
 {
     [SerializeField]
     MicroBar hpBar;
@@ -31,6 +30,8 @@ public abstract class Enemy : Entity
     float DefaultForceScatter = 100f;
 
     public bool isDead = false;
+
+
 
     virtual public void Awake()
     {
@@ -107,10 +108,8 @@ public abstract class Enemy : Entity
         if (hpBar != null) hpBar.UpdateBar(curHP, false, UpdateAnim.Damage);
 
         // 체력 시각화
-        //GameObject NewHPP = Instantiate(HPParticle, this.transform.position, gameObject.transform.rotation) as GameObject;
-        GameObject NewHPP = EffectPoolManager.Instance.GetEffect("Damage");
+        GameObject NewHPP = PoolManager.ClaimInstantiate(EffectType.Damage.ToString());
         NewHPP.GetComponent<HPParticleScript>().Initalize(this.transform.position, new Quaternion(0,180,0,0));
-        //NewHPP.GetComponent<AlwaysFace>().Target = GameObject.Find("Main Camera").gameObject;
         NewHPP.SetActive(true);
 
         TextMesh TM = NewHPP.transform.Find("HPLabel").GetComponent<TextMesh>();
@@ -148,8 +147,9 @@ public abstract class Enemy : Entity
             hpBar.gameObject.SetActive(false);
         }
 
-       
-        EnemyPoolManager.Instance.ReturnEnemy(gameObject, stat.characterName);
+
+        //EnemyPoolManager.Instance.ReturnEnemy(gameObject, stat.characterName);
+        PoolManager.ClaimReturnPool(gameObject);
 
         isDead = false;
 

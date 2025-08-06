@@ -88,10 +88,10 @@ MonoBehaviour:
   enemyCnt: 0
   isRoomClear: 0
   spawnInfos:
-  - tag: Slime
+  - wantType: 201
     localSpawnpoint: {x: 4, y: -1, z: 0}
     globalSpawnPoint: {x: 0, y: 0, z: 0}
-  - tag: Slime
+  - wantType: 201
     localSpawnpoint: {x: -10, y: -1, z: 0}
     globalSpawnPoint: {x: 0, y: 0, z: 0}
   rewardSpawn:

@@ -7,7 +7,7 @@ public class NormalRoom : Room
     [System.Serializable]
     public struct EnemySpawnInfo
     {
-        public string tag;
+        public EnemyType wantType;
         public Vector3 localSpawnpoint;
         [HideInInspector]
         public Vector3 globalSpawnPoint;
@@ -79,7 +79,9 @@ public class NormalRoom : Room
         //방 클리어시 드랍 아이템 확률 드랍.
         if (Random.value <= 0.3f)
         {
-            DropItem dropItem = DropItemPoolManager.Instance.GetDropItem();
+            //DropItem dropItem = DropItemPoolManager.Instance.GetDropItem();
+            GameObject inst = PoolManager.ClaimInstantiate(ItemType.DropItem.ToString());
+            DropItem dropItem = inst.GetComponent<DropItem>();
 
             dropItem.transform.position = rewardSpawn.globalSpawnPoint;
 
@@ -107,7 +109,8 @@ public class NormalRoom : Room
     {
         for (int i = 0; i < spawnInfos.Length; i++)
         {
-            GameObject enemyObj = EnemyPoolManager.Instance.GetEnemy(spawnInfos[i].tag);
+            //GameObject enemyObj = EnemyPoolManager.Instance.GetEnemy(spawnInfos[i].tag);
+            GameObject enemyObj = PoolManager.ClaimInstantiate(spawnInfos[i].wantType.ToString());
             Enemy enemy = enemyObj.GetComponent<Enemy>();
             if (enemyObj != null)
             {

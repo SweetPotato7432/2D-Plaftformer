@@ -90,7 +90,7 @@ MonoBehaviour:
   enemyCnt: 0
   isRoomClear: 0
   spawnInfos:
-  - tag: Slime
+  - wantType: 201
     localSpawnpoint: {x: 0, y: 1, z: 0}
     globalSpawnPoint: {x: 0, y: 0, z: 0}
   rewardSpawn:
@@ -1250,11 +1250,9 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 0
-  horizontalRayCount: 0
-  verticalRayCount: 0
   horizontalRaySpacing: 0
   verticalRaySpacing: 0
-  collider: {fileID: 0}
+  raycastController_Collider: {fileID: 0}
   passengerMask:
     serializedVersion: 2
     m_Bits: 256
@@ -9076,11 +9074,9 @@ MonoBehaviour:
   collisionMask:
     serializedVersion: 2
     m_Bits: 0
-  horizontalRayCount: 0
-  verticalRayCount: 0
   horizontalRaySpacing: 0
   verticalRaySpacing: 0
-  collider: {fileID: 0}
+  raycastController_Collider: {fileID: 0}
   passengerMask:
     serializedVersion: 2
     m_Bits: 256

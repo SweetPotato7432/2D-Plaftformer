@@ -143,7 +143,7 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
 
         if (attempts >= maxAttempts)
         {
-            Debug.LogError($"Failed to generate the required number of rooms ({roomAmount}). Generated {createdRooms.Count} rooms.");
+            Debug.LogWarning($"Failed to generate the required number of rooms ({roomAmount}). Generated {createdRooms.Count} rooms.");
         }
     }
 

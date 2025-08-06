@@ -11,7 +11,7 @@ public class EnemyController : MonoBehaviour
 
     SpriteRenderer spriteRenderer;
 
-    Ghost ghost;
+    GhostGenerator ghostGenerator;
 
     public float maxJumpHeight;
     public float minJumpHeight;
@@ -62,7 +62,7 @@ public class EnemyController : MonoBehaviour
         controller = GetComponent<Controller2D>();
         //playerAnim = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        ghost = GetComponent<Ghost>();
+        ghostGenerator = GetComponent<GhostGenerator>();
         thisEnemy = GetComponent<Enemy>();
 
         stat = GameManager.Instance.EnemyStatInitialize(thisEnemy.id);
@@ -232,7 +232,7 @@ public class EnemyController : MonoBehaviour
 
     public void OnDashInputDown()
     {
-        ghost.makeGhost = true;
+        ghostGenerator.makeGhost = true;
         StartCoroutine("Dash");
     }
 
@@ -254,7 +254,7 @@ public class EnemyController : MonoBehaviour
         gravity = defaultGravity;
         //velocity.y = 0;
 
-        ghost.makeGhost = false;
+        ghostGenerator.makeGhost = false;
         isDashing = false;
     }
 
