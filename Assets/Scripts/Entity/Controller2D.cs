@@ -353,6 +353,7 @@ public class Controller2D : RaycastController
         collisions.fallingThroughPlatform = false;
     }
 
+    // 경사로 감지
     public bool CliffCheck(Vector2 moveAmount)
     {
         float directionX = Mathf.Sign(moveAmount.x);

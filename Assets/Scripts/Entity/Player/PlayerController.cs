@@ -88,22 +88,42 @@ public class PlayerController : MonoBehaviour
 
         dashVelocity = dashDistance / timeToDashApex;
 
-        attackVelocity = 3f;
+        attackVelocity = 6f;
 
         Debug.Log($"Gravity :{gravity}, JumpVelocity : {maxJumpVelocity}");
     }
 
     private void FixedUpdate()
     {
-        if (player.state == Entity.States.ATTACK && !enableAttackBox)
+        Debug.Log(controller.collisions.below);
+        if (player.state == Entity.States.ATTACK)
         {
-            //체공 후에 기본 중력으로 변경하여 낙하.
-            gravity = defaultGravity;
-            // 가속 및 감속 부분
-            CalculateVelocity(moveSpeed);
-            velocity.x = 0;
-            // Controller2D로 이동 및 변수 전달
-            controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
+            if (!enableAttackBox)
+            {
+                //체공 후에 기본 중력으로 변경하여 낙하.
+                gravity = defaultGravity;
+                // 가속 및 감속 부분
+                CalculateVelocity(moveSpeed);
+                velocity.x = 0;
+            }
+            else
+            {
+                bool frontCliff = controller.CliffCheck(directionalInput);
+
+                if (frontCliff && controller.collisions.below)
+                {
+                    CalculateVelocity(moveSpeed);
+                    velocity.x = 0;
+                }
+                else
+                {
+                    // 가속 및 감속 부분
+                    CalculateVelocity(moveSpeed);
+                }
+
+            }
+
+
         }
         else if(player.state == Entity.States.DEAD)
         {
@@ -113,9 +133,9 @@ public class PlayerController : MonoBehaviour
         {
             // 가속 및 감속 부분
             CalculateVelocity(moveSpeed);
-            // Controller2D로 이동 및 변수 전달
-            controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
         }
+        // Controller2D로 이동 및 변수 전달
+        controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
 
         // 사각형의 중심 위치
         meleeBoxPosition = new Vector2(transform.position.x /*+ (meleeBoxSize.x/2) * attackDir*/, controller.raycastController_Collider.transform.position.y + controller.raycastController_Collider.offset.y + (meleeBoxSize.y / 4));
@@ -123,12 +143,13 @@ public class PlayerController : MonoBehaviour
         //공격 범위 활성화
         if (enableAttackBox)
         {
+
             velocity.x = 0;
 
             // 공격 중이면 이동 입력 무시하고 공격 전진 속도 적용
             CalculateVelocity(moveSpeed);
+
             velocity.x = directionalInput.x * attackVelocity; // 공격 방향으로 전진
-            //controller.Move(velocity * Time.fixedDeltaTime, directionalInput, isDownJump);
 
             Collider2D[] colliders = Physics2D.OverlapBoxAll(meleeBoxPosition, meleeBoxSize, 0f);
             foreach (Collider2D collider in colliders)
@@ -140,7 +161,7 @@ public class PlayerController : MonoBehaviour
                     {
                         attackedEnemy.Add(enemy);
 
-                        if(enemy.isDead) return;
+                        if (enemy.isDead) return;
                         // 추후 공격 스탯 기반으로 수정
                         enemy.TakeDamage(player.atk);
                     }
@@ -184,6 +205,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
 
     public void SetDirectionalInput(Vector2 input)
     {
