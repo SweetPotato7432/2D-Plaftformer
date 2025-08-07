@@ -161,7 +161,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    // WorldMap
+    // WorldMap 생성
     public void GenerateWorldmap(Dictionary<Vector2Int, RoomManager.RoomType> createdRooms)
     {
         // 방 좌표들의 최소/최대값 구하기
@@ -170,35 +170,11 @@ public class UIManager : MonoBehaviour
         minY = createdRooms.Min(r => r.Key.y);
         maxY = createdRooms.Max(r => r.Key.y);
 
-        ResizeWorldmapContent(createdRooms);
 
 
-        //실제 플레이 가능 한 방을 생성
+        //좌표에 맞는 월드맵 UI 생성
         foreach (var room in createdRooms)
         {
-            //switch (room.Value)
-            //{
-            //    case RoomType.START:
-            //        worldMapPrefap = specialRoomPrefaps[0];
-            //        break;
-            //    case RoomType.NORMAL:
-            //        int rand = Random.Range(0, tempNormalRooms.Count);
-
-            //        worldMapPrefap = tempNormalRooms[rand];
-            //        tempNormalRooms.RemoveAt(rand);
-            //        //prefab = normalRoomPrefaps[1];
-            //        break;
-            //    case RoomType.TREASURE:
-            //        worldMapPrefap = specialRoomPrefaps[1];
-            //        break;
-            //    case RoomType.SHOP:
-            //        worldMapPrefap = specialRoomPrefaps[2];
-            //        break;
-            //    case RoomType.BOSS:
-            //        worldMapPrefap = specialRoomPrefaps[3];
-            //        break;
-            //}
-
             Vector3 roomPos = new Vector3(
                 (room.Key.x - 10) * (roomWidth),
                 (room.Key.y - 10) * (roomHeight),
@@ -207,28 +183,39 @@ public class UIManager : MonoBehaviour
 
             tempRoom.SetActive(false);
 
+            // 방을 생성하고 공개, 탐색 완료 Dictionary에 등록
             worldmapRevealed.Add((room.Key), false);
             worldmapExpolered.Add((room.Key),false);
 
+            // 방을 Content안에 넣어줌
             tempRoom.transform.SetParent(worldMapScrollRect.content.gameObject.transform, false);
 
             tempRoom.name = $"Room ({room.Key.x}, {room.Key.y})";
 
             worldmapGameObject.Add(room.Key,tempRoom);
         }
-        RecenteringWorldMap(worldmapGameObject);
+
+        ResizeWorldmapContent(worldmapRevealed);
 
         RevealedWorldmap(new Vector2Int(10, 10));
-        
-
     }
-
-    void ResizeWorldmapContent(Dictionary<Vector2Int, RoomManager.RoomType> createdRooms)
+    
+    // 최대 월드맵 사이즈 계산
+    void ResizeWorldmapContent(Dictionary<Vector2Int, bool> revealedRoom)
     {
-        // Content 영역 크기 계산
-        float contentWidth = (maxX - minX + 1) * roomWidth;
-        float contentHeight = (maxY - minY + 1) * roomHeight;
+        var filtered = revealedRoom.Where(r => r.Value);
 
+        // 방 좌표들의 최소/최대값 구하기
+        int revealMinX = filtered.Any() ? filtered.Min(r => r.Key.x) : 0;
+        int revealMaxX = filtered.Any() ? filtered.Max(r => r.Key.x) : 0;
+        int revealMinY = filtered.Any() ? filtered.Min(r => r.Key.y) : 0;
+        int revealMaxY = filtered.Any() ? filtered.Max(r => r.Key.y) : 0;
+
+        // Content 영역 크기 계산
+        float contentWidth = (revealMaxX - revealMinX + 1) * roomWidth;
+        float contentHeight = (revealMaxY - revealMinY + 1) * roomHeight;
+
+        // 월드맵 콘텐츠의 사이즈를 설정
         worldMapScrollRect.content.sizeDelta = new Vector2(
             contentWidth
             , contentHeight);
@@ -238,13 +225,14 @@ public class UIManager : MonoBehaviour
     {
         if (worldmapGameObject.Count == 0) return;
 
-        float minX = float.MaxValue;
-        float maxX = float.MinValue;
-        float minY = float.MaxValue;
-        float maxY = float.MinValue;
+        float minX = 0;
+        float maxX = 0;
+        float minY = 0;
+        float maxY = 0;
 
         foreach (var room in worldmapGameObject.Values)
         {
+            if(!room.gameObject.activeSelf) continue;
             Vector3 pos = room.transform.localPosition;
 
             if (pos.x < minX) minX = pos.x;
@@ -255,15 +243,18 @@ public class UIManager : MonoBehaviour
 
         // 바운딩 박스 중심 계산
         Vector3 center = new Vector3(
-            (minX + maxX) / 2f,
-            (minY + maxY) / 2f,
+            (maxX - minX) / 2.0f,
+            (maxY - minY) / 2.0f,
             0
         );
 
         // 중심만큼 모든 오브젝트 반대로 이동
-        foreach (var room in worldmapGameObject.Values)
+        foreach (var room in worldmapGameObject)
         {
-            room.transform.localPosition -= center;
+            room.Value.transform.localPosition = new Vector3(
+                (room.Key.x - 10) * (roomWidth) - (center.x),
+                (room.Key.y - 10) * (roomHeight) - (center.y),
+                0);
         }
     }
 
@@ -288,6 +279,10 @@ public class UIManager : MonoBehaviour
         {
             worldmapRevealed[new Vector2Int(currentRoomPos.x, currentRoomPos.y-1)] = true;
         }
+        ResizeWorldmapContent(worldmapRevealed);
+
+        RecenteringWorldMap(worldmapGameObject);
+
         RedrawWorldmap();
     }
 
