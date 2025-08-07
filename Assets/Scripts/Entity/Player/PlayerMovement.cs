@@ -58,20 +58,18 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         directionalInput = new Vector2(moveInput.x, moveInput.y);
-        playerController.SetDirectionalInput (directionalInput);
+        if(Time.timeScale >= 1)
+        {
+            playerController.SetDirectionalInput (directionalInput);
+        }
 
     }
 
     private void OnMove(Vector2 input)
     {
-        if (Time.timeScale >= 1.0f)
-        {
+
             moveInput = input;
-        }
-        else
-        {
-            moveInput = Vector2.zero;
-        }
+
     }
 
     private void OnJump(bool isPressed)
