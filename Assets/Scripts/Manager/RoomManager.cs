@@ -6,15 +6,7 @@ using UnityEngine.Tilemaps;
 
 public class RoomManager : MonoBehaviour, ISceneInitializer
 {
-    public enum RoomType
-    {
-        NONE,
-        START,
-        NORMAL,
-        TREASURE,
-        SHOP,
-        BOSS
-    }
+
 
     [SerializeField] private int roomAmount;    // 생성할 방의 개수
     [SerializeField] private int mapWidth;      // 맵의 가로 크기
@@ -333,13 +325,16 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
         Debug.Log($"보스 : {furthestRoom}");
         tempEndRooms.Remove(furthestRoom);
 
+        // 추후 룸 매니저에서 각 방의 개수를 조정 가능하게 변경
+
         int random = Random.Range(0, tempEndRooms.Count);
         roomTypes[tempEndRooms[random]] = RoomType.TREASURE;
         Debug.Log($"보물방 : {tempEndRooms[random]}");
         tempEndRooms.Remove(tempEndRooms[random]);
 
+        // 상점으로 만들거 일단 보물방으로 대체해서 생성
         random = Random.Range(0, tempEndRooms.Count);
-        roomTypes[tempEndRooms[random]] = RoomType.SHOP;
+        roomTypes[tempEndRooms[random]] = RoomType.TREASURE;
         Debug.Log($"상점 : {tempEndRooms[random]}");
         tempEndRooms.Remove(tempEndRooms[random]);
     }

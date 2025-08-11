@@ -88,6 +88,8 @@ public class NormalRoom : Room
             // 아이템 개수에 맞게 수정
             int len = GameManager.Instance.DropItemLength();
 
+            dropItem.SetRoomPos(roomPos);
+
             int rarity = dropItem.CalculateRarityFromDropItem();
 
             List<int> candidateIds = GameManager.Instance.dropItemRarityGroups[rarity];
@@ -123,6 +125,7 @@ public class NormalRoom : Room
         }
     }
 
+    // 방 이동 도착 좌표 설정
     public override void SetMoveSpawn(Vector2Int currentPos, Vector2Int destination)
     {
         base.SetMoveSpawn(currentPos, destination);

@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: ae878a51a25041e4084c7133042227eb
   m_SerializeEntries:
+  - m_GUID: 1817b863317be354b953d285f4f7ff62
+    m_Address: Assets/Addressable/Icon/Icon_TREASURE.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 21ac2d5e54cbf6d4fa905c7f6d1f7ab2
     m_Address: Assets/Addressable/DropItem/DropItem_1.asset
     m_ReadOnly: 0
@@ -27,6 +32,16 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 55bd1d55591ed3e47b387ea6912845c8
     m_Address: Assets/Addressable/PassiveItem/PassiveItem_2.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5ee8aa08f6349a042a1b24ea1730e377
+    m_Address: Assets/Addressable/Icon/Icon_ITEM.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9fe068ca2e456934b8fb2dd9b3c01841
+    m_Address: Assets/Addressable/Icon/Icon_BOSS.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

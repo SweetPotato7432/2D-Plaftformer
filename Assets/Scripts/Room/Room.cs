@@ -7,6 +7,8 @@ public class Room : MonoBehaviour
     [SerializeField]
     public GameManager gameManager;
 
+
+
     [SerializeField]
     protected Vector2Int roomPos;
     [SerializeField]
@@ -176,6 +178,8 @@ public class Room : MonoBehaviour
         RoomManager roomManager = FindFirstObjectByType<RoomManager>();
         roomManager.GenerateMiniMapforTilemap(GetComponentsInChildren<Tilemap>());
     }
+
+
     
     public virtual void OnDrawGizmos()
     {

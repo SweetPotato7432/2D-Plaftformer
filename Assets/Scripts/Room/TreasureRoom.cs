@@ -32,6 +32,7 @@ public class TreasureRoom : Room
 
         passiveItem.transform.position = ItemSpawn.globalSpawnPoint;
 
+        passiveItem.SetRoomPos(roomPos);
         // 아이템 개수에 맞게 수정
         int len = GameManager.Instance.PassiveItemLength();
 

@@ -4,20 +4,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    
-
-
     [SerializeField]
     GameObject optionUI;
     [SerializeField]
     GameObject worldmapUI;
 
-    // È°¼ºÈ­ µÈ UI ÀúÀå
+    // í™œì„±í™” ëœ UI ì €ì¥
     Stack<GameObject> stackActiveUI;
 
     [Header("Fade")]
@@ -42,11 +40,14 @@ public class UIManager : MonoBehaviour
 
     Dictionary<Vector2Int, bool> worldmapRevealed = new Dictionary<Vector2Int, bool>();
     Dictionary<Vector2Int, bool> worldmapExpolered = new Dictionary<Vector2Int, bool>();
-    // ÃÖ±Ù¿¡ ¹æ¹®ÇÑ ¹æ
+    // ìµœê·¼ì— ë°©ë¬¸í•œ ë°©
     Vector2Int currentRoom;
 
     [SerializeField]
     GameObject gameOverUI;
+
+    //Icon Texture ì €ì¥
+    Dictionary<string, Texture> textureCache = new Dictionary<string, Texture>();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -73,26 +74,26 @@ public class UIManager : MonoBehaviour
     {
     }
 
-    // ¿É¼ÇÃ¢ È°¼ºÈ­
+    // ì˜µì…˜ì°½ í™œì„±í™”
     private void OnOption(bool isPressed)
     {
         if (isPressed)
         {
-            // È°¼ºÈ­ µÈ UI°¡ ÀÖ´Ù¸é
+            // í™œì„±í™” ëœ UIê°€ ìˆë‹¤ë©´
             if (stackActiveUI.Count > 0)
             {
-                // °¡Àå À§¿¡ È°¼ºÈ­µÈ UI ºñÈ°¼ºÈ­
+                // ê°€ì¥ ìœ„ì— í™œì„±í™”ëœ UI ë¹„í™œì„±í™”
                 stackActiveUI.Pop().SetActive(false);
                 if(stackActiveUI.Count > 0)
                 {
-                    // ´ÙÀ½ UI È°¼ºÈ­
+                    // ë‹¤ìŒ UI í™œì„±í™”
                     stackActiveUI.Peek().SetActive(true);
                 }
             }
-            // È°¼ºÈ­ µÈ UI°¡ ¾ø´Ù¸é
+            // í™œì„±í™” ëœ UIê°€ ì—†ë‹¤ë©´
             else
             {
-                // ¿É¼Ç UIÃ¢ È°¼ºÈ­
+                // ì˜µì…˜ UIì°½ í™œì„±í™”
                 optionUI.SetActive(true);
                 stackActiveUI.Push(optionUI);
 
@@ -101,26 +102,26 @@ public class UIManager : MonoBehaviour
         }
 
     }
-    // ¿ùµå ¸Ê Ã¢ È°¼ºÈ­
+    // ì›”ë“œ ë§µ ì°½ í™œì„±í™”
     private void OnWorldmap(bool isPressed)
     {
         if (isPressed)
         {
-            // È°¼ºÈ­µÈ UI°¡ ÀÖ´Ù¸é
+            // í™œì„±í™”ëœ UIê°€ ìˆë‹¤ë©´
             if (stackActiveUI.Count > 0)
             {
-                // °¡Àå À§¿¡ È°¼ºÈ­ µÈ UI°¡ WorldmapUI°¡ ¾Æ´Ï¶ó¸é ½ÇÇà¾ÈÇÔ.
+                // ê°€ì¥ ìœ„ì— í™œì„±í™” ëœ UIê°€ WorldmapUIê°€ ì•„ë‹ˆë¼ë©´ ì‹¤í–‰ì•ˆí•¨.
                 if(stackActiveUI.Peek() != worldmapUI) return;
 
-                // °¡Àå À§¿¡ È°¼ºÈ­ µÈ UI°¡ WorldmapUI¶ó¸é ºñÈ°¼ºÈ­
+                // ê°€ì¥ ìœ„ì— í™œì„±í™” ëœ UIê°€ WorldmapUIë¼ë©´ ë¹„í™œì„±í™”
                 stackActiveUI.Pop().SetActive(false);
                 if (stackActiveUI.Count > 0)
                 {
-                    // ´ÙÀ½ UI È°¼ºÈ­
+                    // ë‹¤ìŒ UI í™œì„±í™”
                     stackActiveUI.Peek().SetActive(true);
                 }
             }
-            // È°¼ºÈ­ µÈ UI°¡ ¾ø´Ù¸é
+            // í™œì„±í™” ëœ UIê°€ ì—†ë‹¤ë©´
             else
             {
                 worldmapUI.SetActive(true);
@@ -158,93 +159,96 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// WorldMap »ı¼º
+    /// WorldMap ìƒì„±
     /// </summary>
-    /// <param name="createdRooms">key : »ı¼ºµÈ ¹æ ÁÂÇ¥, value : »ı¼ºµÈ ¹æ Å¸ÀÔ</param>
-    public void GenerateWorldmap(Dictionary<Vector2Int, RoomManager.RoomType> createdRooms)
+    /// <param name="createdRooms">key : ìƒì„±ëœ ë°© ì¢Œí‘œ, value : ìƒì„±ëœ ë°© íƒ€ì…</param>
+    public void GenerateWorldmap(Dictionary<Vector2Int, RoomType> createdRooms)
     {
-        //ÁÂÇ¥¿¡ ¸Â´Â ¿ùµå¸Ê UI »ı¼º
+        //ì¢Œí‘œì— ë§ëŠ” ì›”ë“œë§µ UI ìƒì„±
         foreach (var room in createdRooms)
         {
-            // °¢ ¹æÀÇ À§Ä¡¸¦ Å°°ª°ú prefapÀÇ Å©±â¿¡ ¸ÂÃç ¼³Á¤ÇÑ´Ù.
+            // ê° ë°©ì˜ ìœ„ì¹˜ë¥¼ í‚¤ê°’ê³¼ prefapì˜ í¬ê¸°ì— ë§ì¶° ì„¤ì •í•œë‹¤.
             Vector3 roomPos = new Vector3(
                 (room.Key.x - 10) * (roomWidth),
                 (room.Key.y - 10) * (roomHeight),
                 0);
-            // À§Ä¡¿¡ ¹æ »ı¼º
+            // ìœ„ì¹˜ì— ë°© ìƒì„±
             GameObject tempRoom = Instantiate(worldMapPrefap, roomPos, Quaternion.identity);
 
-            // »ı¼ºµÈ ¹æ ¿ÀºêÁ§Æ® ºñÈ°¼ºÈ­
+            // ìƒì„±ëœ ë°© ì˜¤ë¸Œì íŠ¸ ë¹„í™œì„±í™”
             tempRoom.SetActive(false);
 
-            // ¹æÀ» »ı¼ºÇÏ°í °ø°³ ¿Ï·á Dictionary¿¡ false·Î µî·Ï
+            // ë°©ì„ ìƒì„±í•˜ê³  ê³µê°œ ì™„ë£Œ Dictionaryì— falseë¡œ ë“±ë¡
             worldmapRevealed.Add((room.Key), false);
-            // ¹æÀ» »ı¼ºÇÏ°í Å½»ö ¿Ï·á Dictionary¿¡ false·Î µî·Ï
+            // ë°©ì„ ìƒì„±í•˜ê³  íƒìƒ‰ ì™„ë£Œ Dictionaryì— falseë¡œ ë“±ë¡
             worldmapExpolered.Add((room.Key),false);
 
-            // ¹æÀ» Content¾È¿¡ ³Ö¾îÁÜ
+            // ë°©ì„ Contentì•ˆì— ë„£ì–´ì¤Œ
             tempRoom.transform.SetParent(worldMapScrollRect.content.gameObject.transform, false);
 
-            // ¹æ ÀÌ¸§Àº ÁÂÇ¥ °ªÀ¸·Î
+            // ë°© ì´ë¦„ì€ ì¢Œí‘œ ê°’ìœ¼ë¡œ
             tempRoom.name = $"Room ({room.Key.x}, {room.Key.y})";
 
-            // worldmapGameObject dictionary¿¡ ¿ÀºêÁ§Æ® µî·Ï
+            // worldmapGameObject dictionaryì— ì˜¤ë¸Œì íŠ¸ ë“±ë¡
             worldmapGameObject.Add(room.Key,tempRoom);
+
+            WorldmapIconAttach(room.Key, room.Value);
+
         }
 
-        // ½ÃÀÛ¹æ °ø°³ ¸Ş¼­µå ½ÇÇà
+        // ì‹œì‘ë°© ê³µê°œ ë©”ì„œë“œ ì‹¤í–‰
         RevealedWorldmap(new Vector2Int(10, 10));
     }
 
     /// <summary>
-    /// ÃÖ´ë ¿ùµå¸Ê ÄÜÅÙÃ÷ »çÀÌÁî °è»ê
+    /// ìµœëŒ€ ì›”ë“œë§µ ì½˜í…ì¸  ì‚¬ì´ì¦ˆ ê³„ì‚°
     /// </summary>
-    /// <param name="revealedRoom">Key : ¹æÀÇ ÁÂÇ¥, Value : °ø°³ ¿©ºÎ</param>
+    /// <param name="revealedRoom">Key : ë°©ì˜ ì¢Œí‘œ, Value : ê³µê°œ ì—¬ë¶€</param>
     void ResizeWorldmapContent(Dictionary<Vector2Int, bool> revealedRoom)
     {
-        // °ø°³ ¿©ºÎ°¡ ÂüÀÎ °ªµé¸¸ ÇÊÅÍ¸µ
+        // ê³µê°œ ì—¬ë¶€ê°€ ì°¸ì¸ ê°’ë“¤ë§Œ í•„í„°ë§
         var filtered = revealedRoom.Where(r => r.Value);
 
-        // ¹æ ÁÂÇ¥µéÀÇ ÃÖ¼Ò/ÃÖ´ë°ª ±¸ÇÏ±â
+        // ë°© ì¢Œí‘œë“¤ì˜ ìµœì†Œ/ìµœëŒ€ê°’ êµ¬í•˜ê¸°
         int revealMinX = filtered.Any() ? filtered.Min(r => r.Key.x) : 0;
         int revealMaxX = filtered.Any() ? filtered.Max(r => r.Key.x) : 0;
         int revealMinY = filtered.Any() ? filtered.Min(r => r.Key.y) : 0;
         int revealMaxY = filtered.Any() ? filtered.Max(r => r.Key.y) : 0;
 
-        // Content ¿µ¿ª Å©±â °è»ê
+        // Content ì˜ì—­ í¬ê¸° ê³„ì‚°
         float contentWidth = (revealMaxX - revealMinX + 1) * roomWidth;
         float contentHeight = (revealMaxY - revealMinY + 1) * roomHeight;
 
-        // ¿ùµå¸Ê ÄÜÅÙÃ÷ÀÇ »çÀÌÁî¸¦ ¼³Á¤
+        // ì›”ë“œë§µ ì½˜í…ì¸ ì˜ ì‚¬ì´ì¦ˆë¥¼ ì„¤ì •
         worldMapScrollRect.content.sizeDelta = new Vector2(
             contentWidth
             , contentHeight);
     }
 
     /// <summary>
-    /// ¿ùµå¸ÊÀÇ Áß½ÉÀ¸·Î Á¤·ÄÇÏ´Â ¸Ş¼­µå
+    /// ì›”ë“œë§µì˜ ì¤‘ì‹¬ìœ¼ë¡œ ì •ë ¬í•˜ëŠ” ë©”ì„œë“œ
     /// </summary>
-    /// <param name="worldmapGameObject">Key : ¿ùµå¸ÊÀÇ ÁÂÇ¥, Value : ¿ùµå¸Ê °ÔÀÓ ¿ÀºêÁ§Æ®</param>
+    /// <param name="worldmapGameObject">Key : ì›”ë“œë§µì˜ ì¢Œí‘œ, Value : ì›”ë“œë§µ ê²Œì„ ì˜¤ë¸Œì íŠ¸</param>
     void RecenteringWorldMap(Dictionary<Vector2Int, GameObject> worldmapGameObject)
     {
-        // »ı¼ºµÈ °ÔÀÓ ¿ÀºêÁ§Æ®°¡ ¾ø´Ù¸é Á¾·á
+        // ìƒì„±ëœ ê²Œì„ ì˜¤ë¸Œì íŠ¸ê°€ ì—†ë‹¤ë©´ ì¢…ë£Œ
         if (worldmapGameObject.Count == 0) return;
 
-        // °ø°³ µÈ ¿ùµå¸Ê ¿ÀºêÁ§Æ®ÀÇ ÃÖ´ë ÃÖ¼Ò °ª
+        // ê³µê°œ ëœ ì›”ë“œë§µ ì˜¤ë¸Œì íŠ¸ì˜ ìµœëŒ€ ìµœì†Œ ê°’
         float minX = 0;
         float maxX = 0;
         float minY = 0;
         float maxY = 0;
 
-        // »ı¼ºµÇ¾î ÀÖ´Â ¸ğµç ¿ùµå¸Ê ¿ÀºêÁ§Æ®
+        // ìƒì„±ë˜ì–´ ìˆëŠ” ëª¨ë“  ì›”ë“œë§µ ì˜¤ë¸Œì íŠ¸
         foreach (var room in worldmapGameObject)
         {
-            // °ø°³ ¿©ºÎ°¡ °ÅÁşÀÏ °æ¿ì ³Ñ¾î°£´Ù.
+            // ê³µê°œ ì—¬ë¶€ê°€ ê±°ì§“ì¼ ê²½ìš° ë„˜ì–´ê°„ë‹¤.
             if (!worldmapRevealed[room.Key]) continue;
-            // ÇöÀç ¹æÀÇ À§Ä¡¸¦ ¹Ş¾Æ¿Í¼­
+            // í˜„ì¬ ë°©ì˜ ìœ„ì¹˜ë¥¼ ë°›ì•„ì™€ì„œ
             Vector3 pos = room.Value.transform.localPosition;
 
-            // ÃÖ¼Ò ÃÖ´ë¿¡ ´ëÀÔ
+            // ìµœì†Œ ìµœëŒ€ì— ëŒ€ì…
             if (pos.x < minX) minX = pos.x;
             if (pos.x > maxX) maxX = pos.x;
             if (pos.y < minY) minY = pos.y;
@@ -253,19 +257,19 @@ public class UIManager : MonoBehaviour
 
         //Debug.Log($"minX : {minX}, maxX : {maxX}, minY : {minY}, maxY : {maxY}");
 
-        // È°¼ºÈ­ µÈ ¿ÀºêÁ§Æ® µéÀÇ Áß½É °è»ê
+        // í™œì„±í™” ëœ ì˜¤ë¸Œì íŠ¸ ë“¤ì˜ ì¤‘ì‹¬ ê³„ì‚°
         Vector3 newWorldmapCenter = new Vector3(
             (Mathf.Abs(maxX) - Mathf.Abs(minX)) / 2.0f,
             (Mathf.Abs(maxY) - Mathf.Abs(minY)) / 2.0f,
             0
         );
 
-        // ÀÌ¹Ì ¿ÀºêÁ§Æ®µéÀÌ Áß½É¿¡ Á¤·ÄµÇ¾îÀÖ´Ù¸é Á¾·á
+        // ì´ë¯¸ ì˜¤ë¸Œì íŠ¸ë“¤ì´ ì¤‘ì‹¬ì— ì •ë ¬ë˜ì–´ìˆë‹¤ë©´ ì¢…ë£Œ
         if (newWorldmapCenter == Vector3.zero) return;
 
         //Debug.Log($"{newWorldmapCenter}");
 
-        // Áß½É¸¸Å­ ¸ğµç ¿ÀºêÁ§Æ® ¹İ´ë·Î ÀÌµ¿
+        // ì¤‘ì‹¬ë§Œí¼ ëª¨ë“  ì˜¤ë¸Œì íŠ¸ ë°˜ëŒ€ë¡œ ì´ë™
         foreach (var room in worldmapGameObject)
         {
             //Debug.Log($"{room.Value.transform.localPosition} => {room.Value.transform.localPosition+ newWorldmapCenter}");
@@ -275,17 +279,17 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ¿ùµå¸Ê ¹æ °ø°³ ¸Ş¼­µå
+    /// ì›”ë“œë§µ ë°© ê³µê°œ ë©”ì„œë“œ
     /// </summary>
-    /// <param name="currentRoomPos"></param>
+    /// <param name="currentRoomPos">ê³µê°œí•  ë°© ìœ„ì¹˜</param>
     public void RevealedWorldmap(Vector2Int currentRoomPos)
     {
-        // ¹æ¹®ÇÑ ¹æ °ª µî·Ï
+        // ë°©ë¬¸í•œ ë°© ê°’ ë“±ë¡
         currentRoom = currentRoomPos;
         worldmapExpolered[currentRoomPos] = true;
         worldmapRevealed[currentRoomPos] = true;
 
-        // ¹æ¹®ÇÑ ¹æ ±ÙÃ³ÀÇ ¹æÀÌ Á¸ÀçÇÑ´Ù¸é °ø°³ °ªÀ» true·Î º¯°æ
+        // ë°©ë¬¸í•œ ë°© ê·¼ì²˜ì˜ ë°©ì´ ì¡´ì¬í•œë‹¤ë©´ ê³µê°œ ê°’ì„ trueë¡œ ë³€ê²½
         if (worldmapRevealed.ContainsKey(new Vector2Int(currentRoomPos.x + 1, currentRoomPos.y)))
         {
             worldmapRevealed[new Vector2Int(currentRoomPos.x + 1, currentRoomPos.y)] = true;
@@ -302,44 +306,131 @@ public class UIManager : MonoBehaviour
         {
             worldmapRevealed[new Vector2Int(currentRoomPos.x, currentRoomPos.y-1)] = true;
         }
-        // °ø°³°ªÀ» ±â¹İÀ¸·Î ÄÜÅÙÃ÷ Å©±â Á¶Àı ¸Ş¼­µå ½ÇÇà
+        // ê³µê°œê°’ì„ ê¸°ë°˜ìœ¼ë¡œ ì½˜í…ì¸  í¬ê¸° ì¡°ì ˆ ë©”ì„œë“œ ì‹¤í–‰
         ResizeWorldmapContent(worldmapRevealed);
 
-        // ÄÜÅÙÃ÷ Å©±â¸¦ Á¶Àı ÈÄ ÀÌ¹Ì »ı¼ºµÇ¾î ÀÖ´Â GameObject¸¦ Áß¾ÓÀ¸·Î ÀÌµ¿½ÃÅ²´Ù.
+        // ì½˜í…ì¸  í¬ê¸°ë¥¼ ì¡°ì ˆ í›„ ì´ë¯¸ ìƒì„±ë˜ì–´ ìˆëŠ” GameObjectë¥¼ ì¤‘ì•™ìœ¼ë¡œ ì´ë™ì‹œí‚¨ë‹¤.
         RecenteringWorldMap(worldmapGameObject);
 
-        // ¸ğµç Á¤·ÄÀÌ ³¡³µ´Ù¸é, ¿ùµå¸ÊÀÇ »öÀ» ´Ù½Ã ¼³Á¤ÇÑ´Ù.(°ø°³ ¿©ºÎ, ÇöÀç¹æ)
+        // ëª¨ë“  ì •ë ¬ì´ ëë‚¬ë‹¤ë©´, ì›”ë“œë§µì˜ ìƒ‰ì„ ë‹¤ì‹œ ì„¤ì •í•œë‹¤.(ê³µê°œ ì—¬ë¶€, í˜„ì¬ë°©)
         RedrawWorldmap();
     }
 
     /// <summary>
-    /// ¿ùµå¸Ê ¿ÀºêÁ§Æ®¸¦ °ø°³, ÇöÀç À§Ä¡¿¡ µû¶ó »ö°ú, Alpha °ªÀ» º¯°æÇÏ´Â ¸Ş¼­µå
+    /// ì›”ë“œë§µ ì˜¤ë¸Œì íŠ¸ë¥¼ ê³µê°œ, í˜„ì¬ ìœ„ì¹˜ì— ë”°ë¼ ìƒ‰ê³¼, Alpha ê°’ì„ ë³€ê²½í•˜ëŠ” ë©”ì„œë“œ
     /// </summary>
     void RedrawWorldmap()
     {
-        //¸ğµç worldGameObject¸¦ È®ÀÎÇÑ´Ù.
+        //ëª¨ë“  worldGameObjectë¥¼ í™•ì¸í•œë‹¤.
         foreach (var worldmap in worldmapGameObject)
         {
-            // ¹æÀÌ Å½»öµÇÁö ¾Ê¾ÒÁö¸¸, °ø°³´Â µÇ¾ú´Ù¸é
+            // ë°©ì´ íƒìƒ‰ë˜ì§€ ì•Šì•˜ì§€ë§Œ, ê³µê°œëŠ” ë˜ì—ˆë‹¤ë©´
             if (!worldmapExpolered[worldmap.Key] && worldmapRevealed[worldmap.Key])
             {
-                // Alpha°ªÀ» Åõ¸íÇÏ°Ô º¯°æ
+                // Alphaê°’ì„ íˆ¬ëª…í•˜ê²Œ ë³€ê²½
                 worldmap.Value.GetComponent<RawImage>().color = new Color(1, 1, 1, 0.2f);
                 worldmap.Value.SetActive(true);
             }
-            // ¹æÀÌ Å½»öµÇ¾ú°í, °ø°³µµ µÇ¾ú´Ù¸é
+            // ë°©ì´ íƒìƒ‰ë˜ì—ˆê³ , ê³µê°œë„ ë˜ì—ˆë‹¤ë©´
             if (worldmapExpolered[worldmap.Key] && worldmapRevealed[worldmap.Key])
             {
-                // ¿ø·¡»öÀ» ³ªÅ¸³»°Ô ÇÑ´Ù.
+                // ì›ë˜ìƒ‰ì„ ë‚˜íƒ€ë‚´ê²Œ í•œë‹¤.
                 worldmap.Value.GetComponent<RawImage>().color = new Color(1, 1, 1, 1f);
                 worldmap.Value.SetActive(true);
             }
-            // ¸¸¾à ÇöÀç À§Ä¡ÇÑ¹æÀÌ¶ó¸é
+            // ë§Œì•½ í˜„ì¬ ìœ„ì¹˜í•œë°©ì´ë¼ë©´
             if(worldmap.Key == currentRoom)
             {
-                // ÃÊ·Ï»öÀ¸·Î º¯°æÇÑ´Ù.
+                // ì´ˆë¡ìƒ‰ìœ¼ë¡œ ë³€ê²½í•œë‹¤.
                 worldmap.Value.GetComponent<RawImage>().color = Color.green;
             }
+
+        }
+    }
+    void WorldmapIconAttach(Vector2Int roomPos, RoomType roomType)
+    {
+        if(roomType == RoomType.NORMAL || roomType == RoomType.START) return;
+
+        GameObject parent = worldmapGameObject[roomPos];
+
+        parent.GetComponent<GridLayoutGroup>().cellSize = new Vector2(75, 75);
+
+        GameObject icon = new GameObject("Icon");
+        icon.transform.parent = parent.transform;
+        RawImage raw = icon.AddComponent<RawImage>();
+
+
+
+        if (roomType == RoomType.TREASURE || roomType == RoomType.BOSS)
+        {
+            string textureKey = $"Assets/Addressable/Icon/Icon_{roomType.ToString()}.png";
+
+            if (textureCache.TryGetValue(textureKey, out Texture cachedTexture))
+            {
+                raw.texture = cachedTexture;
+                gameObject.SetActive(true);
+            }
+            else
+            {
+                Addressables.LoadAssetAsync<Texture>(textureKey).Completed += handle =>
+                {
+                    if (handle.Status == AsyncOperationStatus.Succeeded)
+                    {
+                        textureCache[textureKey] = handle.Result;
+                        raw.texture = handle.Result;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Sprite ë¡œë”© ì‹¤íŒ¨: {textureKey}");
+                        // renderer.sprite = defaultSprite;
+                    }
+                    gameObject.SetActive(true);
+                };
+            }
+        }
+    }
+    public void WorldmapItemIconAttach(Vector2Int roomPos, bool ItemActive)
+    {
+        if(ItemActive) {
+            GameObject parent = worldmapGameObject[roomPos];
+
+            parent.GetComponent<GridLayoutGroup>().cellSize = new Vector2(50, 50);
+
+            GameObject icon = new GameObject("ItemIcon");
+            icon.transform.parent = parent.transform;
+            RawImage raw = icon.AddComponent<RawImage>();
+            string textureKey = $"Assets/Addressable/Icon/Icon_ITEM.png";
+
+            if (textureCache.TryGetValue(textureKey, out Texture cachedTexture))
+            {
+                raw.texture = cachedTexture;
+                gameObject.SetActive(true);
+            }
+            else
+            {
+                Addressables.LoadAssetAsync<Texture>(textureKey).Completed += handle =>
+                {
+                    if (handle.Status == AsyncOperationStatus.Succeeded)
+                    {
+                        textureCache[textureKey] = handle.Result;
+                        raw.texture = handle.Result;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Sprite ë¡œë”© ì‹¤íŒ¨: {textureKey}");
+                        // renderer.sprite = defaultSprite;
+                    }
+                    gameObject.SetActive(true);
+                };
+            }
+        }
+        else
+        {
+            GameObject parent = worldmapGameObject[roomPos];
+
+            parent.transform.Find("ItemIcon")?.gameObject.SetActive(false);
+
+            parent.GetComponent<GridLayoutGroup>().cellSize = new Vector2(75, 75);
 
         }
     }

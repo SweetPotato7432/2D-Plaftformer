@@ -12,6 +12,8 @@ public class Item : MonoBehaviour, IPoolable
         { 0, 45 }, { 1, 25 }, { 2, 15 }, { 3, 10 }, { 4, 5 }
     };
 
+    public UIManager uiManager;
+
     public Controller2D controller;
 
     float maxJumpHeight = 4;
@@ -35,12 +37,16 @@ public class Item : MonoBehaviour, IPoolable
     public int effectStatus;
     public string effect;
 
+    private Vector2Int roomPos;
+
     public Queue<GameObject> RootQueue { get; set; }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     virtual public void Start()
     {
         controller = GetComponent<Controller2D>();
+
+        uiManager = FindAnyObjectByType<UIManager>();
 
         defaultGravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
         gravity = defaultGravity;
@@ -143,10 +149,35 @@ public class Item : MonoBehaviour, IPoolable
         throw new Exception("Rarity selection failed.");
     }
 
+    public void SetRoomPos(Vector2Int roomPos)
+    {
+        this.roomPos = roomPos;
+    }
+
     public void ReturnPool()
     {
         
     }
+
+    public void OnEnable()
+    {
+        if(uiManager is not null && roomPos != null)
+        {
+        
+            uiManager.WorldmapItemIconAttach(roomPos, true);
+
+        }
+    }
+
+    public void OnDisable()
+    {
+        if (uiManager is not null && roomPos != null)
+        {
+
+            uiManager.WorldmapItemIconAttach(roomPos, false);
+        }
+    }
+
 
 
     //È¹µæ ÆË¾÷ Ã¢
