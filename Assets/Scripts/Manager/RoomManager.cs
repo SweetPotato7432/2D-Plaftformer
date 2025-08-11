@@ -24,6 +24,7 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
     // roomDoors의 키 : 방의 좌표값, 밸류 : 옆 방 방향 설정
     // 연결된 방 좌표 구하는 법 : 키(방의 좌표 값) + 밸류(옆 방 방향)
     private Dictionary<Vector2Int, List<Vector2Int>> roomDoors = new(); // 각 방의 문 정보
+    // 생성된 방의 좌표와 타입을 저장하는 Dictionary
     private Dictionary<Vector2Int, RoomType> roomTypes = new();
     private Dictionary<Vector2Int, int> roomDistances = new(); // 각 방들이 시작 방으로부터 얼마나 떨어져 있는지
     private List<Vector2Int> createdRooms = new();   // 생성된 방들의 리스트

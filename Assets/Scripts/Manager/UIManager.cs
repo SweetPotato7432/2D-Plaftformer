@@ -37,16 +37,12 @@ public class UIManager : MonoBehaviour
     float roomWidth;
     float roomHeight;
 
-    // 월드맵 좌표 최대,최소
-    int minX;
-    int maxX;
-    int minY;
-    int maxY;
 
     Dictionary<Vector2Int, GameObject> worldmapGameObject = new Dictionary<Vector2Int, GameObject>();
 
     Dictionary<Vector2Int, bool> worldmapRevealed = new Dictionary<Vector2Int, bool>();
     Dictionary<Vector2Int, bool> worldmapExpolered = new Dictionary<Vector2Int, bool>();
+    // 최근에 방문한 방
     Vector2Int currentRoom;
 
     [SerializeField]
@@ -161,117 +157,135 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    // WorldMap
+    /// <summary>
+    /// WorldMap 생성
+    /// </summary>
+    /// <param name="createdRooms">key : 생성된 방 좌표, value : 생성된 방 타입</param>
     public void GenerateWorldmap(Dictionary<Vector2Int, RoomManager.RoomType> createdRooms)
     {
-        // 방 좌표들의 최소/최대값 구하기
-        minX = createdRooms.Min(r => r.Key.x);
-        maxX = createdRooms.Max(r => r.Key.x);
-        minY = createdRooms.Min(r => r.Key.y);
-        maxY = createdRooms.Max(r => r.Key.y);
-
-        ResizeWorldmapContent(createdRooms);
-
-
-        //실제 플레이 가능 한 방을 생성
+        //좌표에 맞는 월드맵 UI 생성
         foreach (var room in createdRooms)
         {
-            //switch (room.Value)
-            //{
-            //    case RoomType.START:
-            //        worldMapPrefap = specialRoomPrefaps[0];
-            //        break;
-            //    case RoomType.NORMAL:
-            //        int rand = Random.Range(0, tempNormalRooms.Count);
-
-            //        worldMapPrefap = tempNormalRooms[rand];
-            //        tempNormalRooms.RemoveAt(rand);
-            //        //prefab = normalRoomPrefaps[1];
-            //        break;
-            //    case RoomType.TREASURE:
-            //        worldMapPrefap = specialRoomPrefaps[1];
-            //        break;
-            //    case RoomType.SHOP:
-            //        worldMapPrefap = specialRoomPrefaps[2];
-            //        break;
-            //    case RoomType.BOSS:
-            //        worldMapPrefap = specialRoomPrefaps[3];
-            //        break;
-            //}
-
+            // 각 방의 위치를 키값과 prefap의 크기에 맞춰 설정한다.
             Vector3 roomPos = new Vector3(
                 (room.Key.x - 10) * (roomWidth),
                 (room.Key.y - 10) * (roomHeight),
                 0);
+            // 위치에 방 생성
             GameObject tempRoom = Instantiate(worldMapPrefap, roomPos, Quaternion.identity);
 
+            // 생성된 방 오브젝트 비활성화
             tempRoom.SetActive(false);
 
+            // 방을 생성하고 공개 완료 Dictionary에 false로 등록
             worldmapRevealed.Add((room.Key), false);
+            // 방을 생성하고 탐색 완료 Dictionary에 false로 등록
             worldmapExpolered.Add((room.Key),false);
 
+            // 방을 Content안에 넣어줌
             tempRoom.transform.SetParent(worldMapScrollRect.content.gameObject.transform, false);
 
+            // 방 이름은 좌표 값으로
             tempRoom.name = $"Room ({room.Key.x}, {room.Key.y})";
 
+            // worldmapGameObject dictionary에 오브젝트 등록
             worldmapGameObject.Add(room.Key,tempRoom);
         }
-        RecenteringWorldMap(worldmapGameObject);
 
+        // 시작방 공개 메서드 실행
         RevealedWorldmap(new Vector2Int(10, 10));
-        
-
     }
 
-    void ResizeWorldmapContent(Dictionary<Vector2Int, RoomManager.RoomType> createdRooms)
+    /// <summary>
+    /// 최대 월드맵 콘텐츠 사이즈 계산
+    /// </summary>
+    /// <param name="revealedRoom">Key : 방의 좌표, Value : 공개 여부</param>
+    void ResizeWorldmapContent(Dictionary<Vector2Int, bool> revealedRoom)
     {
-        // Content 영역 크기 계산
-        float contentWidth = (maxX - minX + 1) * roomWidth;
-        float contentHeight = (maxY - minY + 1) * roomHeight;
+        // 공개 여부가 참인 값들만 필터링
+        var filtered = revealedRoom.Where(r => r.Value);
 
+        // 방 좌표들의 최소/최대값 구하기
+        int revealMinX = filtered.Any() ? filtered.Min(r => r.Key.x) : 0;
+        int revealMaxX = filtered.Any() ? filtered.Max(r => r.Key.x) : 0;
+        int revealMinY = filtered.Any() ? filtered.Min(r => r.Key.y) : 0;
+        int revealMaxY = filtered.Any() ? filtered.Max(r => r.Key.y) : 0;
+
+        // Content 영역 크기 계산
+        float contentWidth = (revealMaxX - revealMinX + 1) * roomWidth;
+        float contentHeight = (revealMaxY - revealMinY + 1) * roomHeight;
+
+        // 월드맵 콘텐츠의 사이즈를 설정
         worldMapScrollRect.content.sizeDelta = new Vector2(
             contentWidth
             , contentHeight);
     }
 
+    /// <summary>
+    /// 월드맵의 중심으로 정렬하는 메서드
+    /// </summary>
+    /// <param name="worldmapGameObject">Key : 월드맵의 좌표, Value : 월드맵 게임 오브젝트</param>
     void RecenteringWorldMap(Dictionary<Vector2Int, GameObject> worldmapGameObject)
     {
+        // 생성된 게임 오브젝트가 없다면 종료
         if (worldmapGameObject.Count == 0) return;
 
-        float minX = float.MaxValue;
-        float maxX = float.MinValue;
-        float minY = float.MaxValue;
-        float maxY = float.MinValue;
+        // 공개 된 월드맵 오브젝트의 최대 최소 값
+        float minX = 0;
+        float maxX = 0;
+        float minY = 0;
+        float maxY = 0;
 
-        foreach (var room in worldmapGameObject.Values)
+        // 생성되어 있는 모든 월드맵 오브젝트
+        foreach (var room in worldmapGameObject)
         {
-            Vector3 pos = room.transform.localPosition;
+            // 공개 여부가 거짓일 경우 넘어간다.
+            if (!worldmapRevealed[room.Key]) continue;
+            // 현재 방의 위치를 받아와서
+            Vector3 pos = room.Value.transform.localPosition;
 
+            // 최소 최대에 대입
             if (pos.x < minX) minX = pos.x;
             if (pos.x > maxX) maxX = pos.x;
             if (pos.y < minY) minY = pos.y;
             if (pos.y > maxY) maxY = pos.y;
         }
 
-        // 바운딩 박스 중심 계산
-        Vector3 center = new Vector3(
-            (minX + maxX) / 2f,
-            (minY + maxY) / 2f,
+        //Debug.Log($"minX : {minX}, maxX : {maxX}, minY : {minY}, maxY : {maxY}");
+
+        // 활성화 된 오브젝트 들의 중심 계산
+        Vector3 newWorldmapCenter = new Vector3(
+            (Mathf.Abs(maxX) - Mathf.Abs(minX)) / 2.0f,
+            (Mathf.Abs(maxY) - Mathf.Abs(minY)) / 2.0f,
             0
         );
 
+        // 이미 오브젝트들이 중심에 정렬되어있다면 종료
+        if (newWorldmapCenter == Vector3.zero) return;
+
+        //Debug.Log($"{newWorldmapCenter}");
+
         // 중심만큼 모든 오브젝트 반대로 이동
-        foreach (var room in worldmapGameObject.Values)
+        foreach (var room in worldmapGameObject)
         {
-            room.transform.localPosition -= center;
+            //Debug.Log($"{room.Value.transform.localPosition} => {room.Value.transform.localPosition+ newWorldmapCenter}");
+
+            room.Value.transform.localPosition -= newWorldmapCenter;
         }
     }
 
+    /// <summary>
+    /// 월드맵 방 공개 메서드
+    /// </summary>
+    /// <param name="currentRoomPos"></param>
     public void RevealedWorldmap(Vector2Int currentRoomPos)
     {
+        // 방문한 방 값 등록
         currentRoom = currentRoomPos;
         worldmapExpolered[currentRoomPos] = true;
         worldmapRevealed[currentRoomPos] = true;
+
+        // 방문한 방 근처의 방이 존재한다면 공개 값을 true로 변경
         if (worldmapRevealed.ContainsKey(new Vector2Int(currentRoomPos.x + 1, currentRoomPos.y)))
         {
             worldmapRevealed[new Vector2Int(currentRoomPos.x + 1, currentRoomPos.y)] = true;
@@ -288,25 +302,42 @@ public class UIManager : MonoBehaviour
         {
             worldmapRevealed[new Vector2Int(currentRoomPos.x, currentRoomPos.y-1)] = true;
         }
+        // 공개값을 기반으로 콘텐츠 크기 조절 메서드 실행
+        ResizeWorldmapContent(worldmapRevealed);
+
+        // 콘텐츠 크기를 조절 후 이미 생성되어 있는 GameObject를 중앙으로 이동시킨다.
+        RecenteringWorldMap(worldmapGameObject);
+
+        // 모든 정렬이 끝났다면, 월드맵의 색을 다시 설정한다.(공개 여부, 현재방)
         RedrawWorldmap();
     }
 
+    /// <summary>
+    /// 월드맵 오브젝트를 공개, 현재 위치에 따라 색과, Alpha 값을 변경하는 메서드
+    /// </summary>
     void RedrawWorldmap()
     {
+        //모든 worldGameObject를 확인한다.
         foreach (var worldmap in worldmapGameObject)
         {
+            // 방이 탐색되지 않았지만, 공개는 되었다면
             if (!worldmapExpolered[worldmap.Key] && worldmapRevealed[worldmap.Key])
             {
+                // Alpha값을 투명하게 변경
                 worldmap.Value.GetComponent<RawImage>().color = new Color(1, 1, 1, 0.2f);
                 worldmap.Value.SetActive(true);
             }
+            // 방이 탐색되었고, 공개도 되었다면
             if (worldmapExpolered[worldmap.Key] && worldmapRevealed[worldmap.Key])
             {
+                // 원래색을 나타내게 한다.
                 worldmap.Value.GetComponent<RawImage>().color = new Color(1, 1, 1, 1f);
                 worldmap.Value.SetActive(true);
             }
+            // 만약 현재 위치한방이라면
             if(worldmap.Key == currentRoom)
             {
+                // 초록색으로 변경한다.
                 worldmap.Value.GetComponent<RawImage>().color = Color.green;
             }
 
