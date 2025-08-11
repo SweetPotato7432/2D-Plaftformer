@@ -356,6 +356,8 @@ public class Controller2D : RaycastController
     // 경사로 감지
     public bool CliffCheck(Vector2 moveAmount)
     {
+        //if (collisions.descendingSlope || collisions.climbingSlope) return false;
+
         float directionX = Mathf.Sign(moveAmount.x);
         float rayLength = Mathf.Abs(moveAmount.x) + skinWidth;
 
@@ -382,7 +384,7 @@ public class Controller2D : RaycastController
 
         if (!collisions.climbingSlope && !collisions.descendingSlope && hit.collider == null )
         {
-            //Debug.Log("절벽 감지");
+            Debug.Log("절벽 감지");
             return true;
         }
         return false;
@@ -433,7 +435,6 @@ public class Controller2D : RaycastController
 
 
     }
-
 
 
     // 충돌 위치 정보
