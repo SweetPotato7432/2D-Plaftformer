@@ -58,7 +58,6 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         directionalInput = new Vector2(moveInput.x, moveInput.y);
-        Debug.Log(directionalInput);
         if(Time.timeScale >= 1)
         {
             playerController.SetDirectionalInput (directionalInput);
