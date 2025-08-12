@@ -356,31 +356,48 @@ public class Controller2D : RaycastController
     // 경사로 감지
     public bool CliffCheck(Vector2 moveAmount)
     {
-        //if (collisions.descendingSlope || collisions.climbingSlope) return false;
+        if (collisions.descendingSlope || collisions.climbingSlope || moveAmount == Vector2.zero) return false;
 
         float directionX = Mathf.Sign(moveAmount.x);
         float rayLength = Mathf.Abs(moveAmount.x) + skinWidth;
 
         //이동 방향의 앞쪽 바닥에서 경사로 감지
-        Vector2 slopeCheckOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
-        slopeCheckOrigin += Vector2.right * moveAmount.x * 0.5f; // 조금 앞쪽에서 감지
+        Vector2 slopeCheckOrigin1 = raycastOrigins.bottomLeft;
+        Vector2 slopeCheckOrigin2 = raycastOrigins.bottomRight;
+        slopeCheckOrigin1 += Vector2.right * moveAmount.x * 0.2f; // 조금 앞쪽에서 감지
+        slopeCheckOrigin2 += Vector2.right * moveAmount.x * 0.2f; // 조금 앞쪽에서 감지
 
-        RaycastHit2D slopeHit = Physics2D.Raycast(slopeCheckOrigin, Vector2.down, rayLength+3, collisionMask);
+        RaycastHit2D slopeHit1 = Physics2D.Raycast(slopeCheckOrigin1, Vector2.down, rayLength+3, collisionMask);
+        RaycastHit2D slopeHit2 = Physics2D.Raycast(slopeCheckOrigin2, Vector2.down, rayLength+3, collisionMask);
+
+        Debug.DrawRay(slopeCheckOrigin1, Vector2.down * (rayLength+3), Color.blue);
+        Debug.DrawRay(slopeCheckOrigin2, Vector2.down * (rayLength+3), Color.blue);
 
         // 경사로가 감지되었고, 각도가 유효하면 낭떠러지 감지 중단
-        if (slopeHit.collider != null)
+        if (slopeHit1.collider != null)
         {
-            float slopeAngle = Vector2.Angle(slopeHit.normal, Vector2.up);
+            float slopeAngle = Vector2.Angle(slopeHit1.normal, Vector2.up);
+            if (slopeAngle > 0 && slopeAngle <= maxSlopeAngle)
+            {
+                return false; // 경사로면 낭떠러지 감지 안 함
+            }
+        }
+        if (slopeHit2.collider != null)
+        {
+            float slopeAngle = Vector2.Angle(slopeHit2.normal, Vector2.up);
             if (slopeAngle > 0 && slopeAngle <= maxSlopeAngle)
             {
                 return false; // 경사로면 낭떠러지 감지 안 함
             }
         }
 
-        // 캐릭터가 점프 or 낙하 중일때 raycast가 시작될 부분 설정
+        // 
         Vector2 rayOrigin = (directionX == -1) ? raycastOrigins.bottomLeft : raycastOrigins.bottomRight;
         rayOrigin += Vector2.right * moveAmount.x * 0.2f;
         RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, rayLength, collisionMask);
+
+        Debug.DrawRay(rayOrigin, Vector2.down * (rayLength), Color.blue);
+
 
         if (!collisions.climbingSlope && !collisions.descendingSlope && hit.collider == null )
         {
