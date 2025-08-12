@@ -143,8 +143,6 @@ public class PlayerController : MonoBehaviour
         if (enableAttackBox)
         {
 
-            //velocity.x = 0;
-
             // 공격 중이면 이동 입력 무시하고 공격 전진 속도 적용
             CalculateVelocity(moveSpeed);
 

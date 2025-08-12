@@ -428,7 +428,7 @@ public class UIManager : MonoBehaviour
         {
             GameObject parent = worldmapGameObject[roomPos];
 
-            parent.transform.Find("ItemIcon")?.gameObject.SetActive(false);
+            parent.transform.Find("ItemIcon").gameObject.SetActive(false);
 
             parent.GetComponent<GridLayoutGroup>().cellSize = new Vector2(75, 75);
 

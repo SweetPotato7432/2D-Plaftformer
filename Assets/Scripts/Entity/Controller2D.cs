@@ -205,7 +205,7 @@ public class Controller2D : RaycastController
                         continue;
                     }
                     // 아래키 누르면 하향 점프
-                    if (isDownJump&&playerInput.y == -1)
+                    if (isDownJump&&playerInput.y < -0.7f)
                     {
                         collisions.fallingThroughPlatform = true;
 
