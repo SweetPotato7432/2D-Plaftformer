@@ -212,11 +212,13 @@ public class PlayerController : MonoBehaviour
         {
             spriteRenderer.flipX = false;
             playerLookDirectionX = 1;
+            directionalInput.x = 1;
         }
         else if(directionalInput.x < 0)
         {
             spriteRenderer.flipX= true;
             playerLookDirectionX = -1;
+            directionalInput.x = -1;
         }
     }
 
