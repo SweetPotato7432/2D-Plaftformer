@@ -161,7 +161,7 @@ public class Item : MonoBehaviour, IPoolable
 
     public void OnEnable()
     {
-        if(uiManager is not null && roomPos != null)
+        if(uiManager != null && roomPos != null)
         {
         
             uiManager.WorldmapItemIconAttach(roomPos, true);
@@ -171,7 +171,7 @@ public class Item : MonoBehaviour, IPoolable
 
     public void OnDisable()
     {
-        if (uiManager is not null && roomPos != null)
+        if (uiManager != null && roomPos != null)
         {
 
             uiManager.WorldmapItemIconAttach(roomPos, false);
