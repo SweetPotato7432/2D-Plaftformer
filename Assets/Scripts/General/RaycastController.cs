@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(Collider2D))]
 

@@ -106,6 +106,8 @@ public class CameraFollow : MonoBehaviour
         transform.position = new Vector3(clampX, clampY, -10f);
     }
 
+    // 카메라 영역 지정
+
     public void SetCameraArea(float roomWidth, float roomHeight, Vector2 centerPos)
     {
         this.roomWidth = roomWidth;

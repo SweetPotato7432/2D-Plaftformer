@@ -335,7 +335,7 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
         // 상점으로 만들거 일단 보물방으로 대체해서 생성
         random = Random.Range(0, tempEndRooms.Count);
         roomTypes[tempEndRooms[random]] = RoomType.TREASURE;
-        Debug.Log($"상점 : {tempEndRooms[random]}");
+        Debug.Log($"보물방 : {tempEndRooms[random]}");
         tempEndRooms.Remove(tempEndRooms[random]);
     }
 
@@ -373,6 +373,7 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
 
     }
 
+    // 실제 플레이할 방 생성
     private void GeneratePlayableRoom()
     {
         GameObject prefab = null;

@@ -255,7 +255,7 @@ public class Controller2D : RaycastController
             }
         }
     }
-    private void ClimbSlope(ref Vector2 moveAmount, float slopeAngle,Vector2 slopeNormal)
+    private void ClimbSlope(ref Vector2 moveAmount, float slopeAngle, Vector2 slopeNormal)
     {
         // 경사로의 각도에 따라 x,y의 이동 속도를 변환 시켜 주어야함
         // y이동거리 = 경사로 이동거리 * sin(경사각도)
@@ -336,9 +336,13 @@ public class Controller2D : RaycastController
     {
         if (hit)
         {
+            // 경사로 각도 측정
             float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
+            // 경사로 각도 가 설정한 최대 경사로 보다 크다면
             if (slopeAngle > maxSlopeAngle)
             {
+                // x의 이동량 = 수직이동거리 / Tan(경사로 각도) 
+                // x의 이동량 = 경사 방향 * (수직이동거리 - 바닥과의 거리)/ Tan(경사로 각도)
                 moveAmount.x = hit.normal.x*(Mathf.Abs(moveAmount.y)-hit.distance)/Mathf.Tan(slopeAngle*Mathf.Deg2Rad);
 
                 collisions.slopeAngle = slopeAngle;
