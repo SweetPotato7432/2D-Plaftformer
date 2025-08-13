@@ -10,7 +10,7 @@ public class CameraAspectRatio : MonoBehaviour
 
     void AdjustCameraAspectRatio()
     {
-        float tartgetAspect = 9f / 16f;
+        float tartgetAspect = 16f / 9f;
         float windowAspect = (float)Screen.width / Screen.height;
         float scaleHeight = windowAspect/tartgetAspect;
 

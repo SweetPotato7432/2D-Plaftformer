@@ -23886,7 +23886,7 @@ PrefabInstance:
     - target: {fileID: 835148982564059473, guid: ad77cf0bf264adc42ba11bba7dfcaac3, type: 3}
       propertyPath: m_ColliderPaths.Array.data[0].m_Collider
       value: 
-      objectReference: {fileID: 2277998643199874069}
+      objectReference: {fileID: 0}
     - target: {fileID: 835148982564059473, guid: ad77cf0bf264adc42ba11bba7dfcaac3, type: 3}
       propertyPath: m_ColliderPaths.Array.data[0].m_ColliderPaths.Array.size
       value: 1
@@ -25752,11 +25752,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad77cf0bf264adc42ba11bba7dfcaac3, type: 3}
---- !u!19719996 &2277998643199874069 stripped
-TilemapCollider2D:
-  m_CorrespondingSourceObject: {fileID: 3120524212575418515, guid: ad77cf0bf264adc42ba11bba7dfcaac3, type: 3}
-  m_PrefabInstance: {fileID: 3806464788042624134}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4193781756625256427 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1071867462027924333, guid: ad77cf0bf264adc42ba11bba7dfcaac3, type: 3}
