@@ -28,7 +28,6 @@ public class DropItem : Item
     override public void Start()
     {
         base.Start();
-        //stat = GameManager.Instance.DropItemInfoInitialize(id);
         InitalizeDropItem(id);
     }
 
@@ -42,7 +41,6 @@ public class DropItem : Item
     {
         stat = GameManager.Instance.DropItemInfoInitialize(id);
 
-        //Initialize(stat.id, stat.itemName, stat.rarity, stat.effectType, stat.effectStatus, stat.effect);
         Initialize(stat.id, stat.itemName, stat.rarity, stat.effectStatus, stat.effect);
 
         effectType = stat.effectType;
@@ -69,7 +67,6 @@ public class DropItem : Item
                 else
                 {
                     Debug.LogWarning($"Sprite 로딩 실패: {spriteKey}");
-                    // renderer.sprite = defaultSprite;
                 }
                 gameObject.SetActive(true);
             };
@@ -108,16 +105,6 @@ public class DropItem : Item
             PlayerMovement.OnActivePickupItemEffect -= ActiveEffect;
             PlayerMovement.OnActivePickupItemEffect += ActiveEffect;
 
-
-            //switch (effectType)
-            //{
-            //    case DropItemInfo.EffectType.Heal:
-            //        player.TakeHeal(stat.effectStatus);
-            //        DropItemPoolManager.Instance.ReturnDropItem(this);
-            //        break;
-            //    case DropItemInfo.EffectType.Gold:
-            //        break;
-            //}
         }
     }
 

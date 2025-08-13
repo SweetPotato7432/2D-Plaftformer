@@ -23,7 +23,6 @@ public class PassiveItem : Item
     override public void Start()
     {
         base.Start();
-        //stat = GameManager.Instance.DropItemInfoInitialize(id);
         InitalizePassiveItem(id);
     }
 
@@ -31,7 +30,6 @@ public class PassiveItem : Item
     {
         stat = GameManager.Instance.PassiveItemInfoInitialize(id);
 
-        //Initialize(stat.id, stat.itemName, stat.rarity, stat.effectType, stat.effectStatus, stat.effect);
         Initialize(stat.id, stat.itemName, stat.rarity, stat.effectStatus, stat.effect);
 
         effectType = stat.effectType;
@@ -58,7 +56,6 @@ public class PassiveItem : Item
                 else
                 {
                     Debug.LogWarning($"Sprite 로딩 실패: {spriteKey}");
-                    // renderer.sprite = defaultSprite;
                 }
                 gameObject.SetActive(true);
             };
@@ -85,7 +82,6 @@ public class PassiveItem : Item
                 player.ChangeStatus(Entity.Status.SPEED, stat.effectStatus);
                 break;
         }
-        //PassiveItemPoolManager.Instance.ReturnPassiveItem(this);
         PoolManager.ClaimReturnPool(gameObject);
 
     }
@@ -100,7 +96,6 @@ public class PassiveItem : Item
 
             popup.SetActive(true);
 
-            // 아이템 효과 적용인데 Passive는 조금 다르게 들어가야하나?
             PlayerMovement.OnActivePickupItemEffect -= ActiveEffect;
             PlayerMovement.OnActivePickupItemEffect += ActiveEffect;
         }

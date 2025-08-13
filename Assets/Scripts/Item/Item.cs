@@ -101,21 +101,27 @@ public class Item : MonoBehaviour, IPoolable
 
     public int CalculateRarityFromDropItem()
     {
-
+        // 필요한 레어도 그룹(레어도, 등장확률) 받아오기
         var rarityGroups = GameManager.Instance.dropItemRarityGroups;
 
+        // 레어도 그룹에서 필요한 것만 필터링(등장할 수 있는 레어도만)
         var filteredWeights = baseWeights
             .Where(kvp => rarityGroups.ContainsKey(kvp.Key))
             .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
+        // 등장 총량 계산
         int totalWeight = filteredWeights.Values.Sum();
+        // 등장 총량에서 랜덤으로 값 추출
         int rand = UnityEngine.Random.Range(0, totalWeight);
 
         int cumulative = 0;
 
+        // 낮은 키값부터 
         foreach (var kvp in filteredWeights)
         {
+            // 값을 더했을때
             cumulative += kvp.Value;
+            // 랜덤값 보다 크다면 이 레어도의 아이템 출현
             if (rand < cumulative)
             {
                 return kvp.Key;
@@ -178,7 +184,4 @@ public class Item : MonoBehaviour, IPoolable
         }
     }
 
-
-
-    //획득 팝업 창
 }
