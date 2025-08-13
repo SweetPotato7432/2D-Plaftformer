@@ -74,6 +74,21 @@ public class UIManager : MonoBehaviour
     {
     }
 
+    public void OnClosed()
+    {
+        // 활성화 된 UI가 있다면
+        if (stackActiveUI.Count > 0)
+        {
+            // 가장 위에 활성화된 UI 비활성화
+            stackActiveUI.Pop().SetActive(false);
+            if (stackActiveUI.Count > 0)
+            {
+                // 다음 UI 활성화
+                stackActiveUI.Peek().SetActive(true);
+            }
+        }
+    }
+
     // 옵션창 활성화
     private void OnOption(bool isPressed)
     {
