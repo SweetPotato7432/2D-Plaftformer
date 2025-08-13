@@ -38,6 +38,7 @@ public class Room : MonoBehaviour
     [HideInInspector]
     public Vector2 centerPos;
 
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public virtual void Awake()
     {
@@ -52,6 +53,8 @@ public class Room : MonoBehaviour
         }
 
         gameManager = Resources.FindObjectsOfTypeAll<GameManager>().FirstOrDefault();
+
+
     }
 
     // Update is called once per frame
@@ -143,7 +146,19 @@ public class Room : MonoBehaviour
         }
 
         RoomManager roomManager = FindFirstObjectByType<RoomManager>();
-        roomManager.GenerateMiniMapforTilemap(GetComponentsInChildren<Tilemap>());
+
+
+        List<Tilemap> miniMapTilemap = new();
+
+        foreach (Tilemap tilemap in GetComponentsInChildren<Tilemap>())
+        {
+            if (tilemap.gameObject.GetComponentInParent<PlatformController>() == null)
+            {
+                miniMapTilemap.Add(tilemap);
+            }
+        }
+
+        roomManager.GenerateMiniMapforTilemap(miniMapTilemap.ToArray());
     }
 
     public void ClosedDoor()
@@ -176,7 +191,19 @@ public class Room : MonoBehaviour
             }
         }
         RoomManager roomManager = FindFirstObjectByType<RoomManager>();
-        roomManager.GenerateMiniMapforTilemap(GetComponentsInChildren<Tilemap>());
+
+
+        List<Tilemap> miniMapTilemap = new();
+
+        foreach (Tilemap tilemap in GetComponentsInChildren<Tilemap>())
+        {
+            if (tilemap.gameObject.GetComponentInParent<PlatformController>() == null)
+            {
+                miniMapTilemap.Add(tilemap);
+            }
+        }
+
+        roomManager.GenerateMiniMapforTilemap(miniMapTilemap.ToArray());
     }
 
 

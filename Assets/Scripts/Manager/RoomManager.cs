@@ -109,7 +109,7 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
 
         // 방 미니맵 생성
         Tilemap[] sourceTilemaps = FindSourceTilemapsWithLayer("Ground");
-        GenerateMiniMap(sourceTilemaps);
+        //GenerateMiniMap(sourceTilemaps);
 
     }
 
