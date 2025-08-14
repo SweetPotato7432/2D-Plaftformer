@@ -63,7 +63,9 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
 
         while (createdRooms.Count < roomAmount)
         {
+            // 방 초기화
             ResetMap();
+            // 방 구조 생성
             GenerateMap();
             Debug.Log($"Successfully generated {createdRooms.Count} room!");
             //return;
@@ -82,14 +84,15 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
         {
             // 추가적으로 방을 생성한다.
             List<Vector2Int> tempCreatedRooms = createdRooms.ToList();
-
             foreach (var room in tempCreatedRooms)
             {
+                //생성된 방들 중에 끝방에 포함되지 않는 방을
                 if (!endRooms.Contains(room))
                 {
+                    // 방 추가
                     if (AddEndRoom(room))
                     {
-                        // 추가한 방에 끝방 추가.
+                        // 끝방 목록 갱신
                         endRooms = FindEndRooms();
                         // 끝방의 카운트가 지정 숫자에 도달하면 종료
                         if (endRooms.Count >= 3)
@@ -113,45 +116,49 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
 
     }
 
+    // 맵구조 좌표 생성 시작
     void GenerateMap()
     {
+        // 시작 지점을 총 맵 크기의 중심점에서 시작
         Vector2Int startPosition = new Vector2Int(mapWidth / 2, mapHeight / 2);
+        // 방 생성 및 문 생성
         CreateRoom(startPosition);
+        // 시작 방은 RoomType.Start로 설정
         roomTypes[startPosition] = RoomType.START;
 
         int maxAttempts = roomAmount * 10; // 안전 장치: 시도 횟수 제한
         int attempts = 0;
 
+        // 방 개수가 원하는 개수를 충족할때까지 반복
         while (createdRooms.Count < roomAmount && attempts < maxAttempts)
         {
+            // 이전에 생성한 문 위치를 기반으로 새로운 방 좌표를 구한다.
             Vector2Int newRoomPos = GetRandomConnectedRoomPosition();
+            // 시도 횟수 증가
             attempts++;
 
+            // 새 방 좌표가 0,0이 아니라면.
             if (newRoomPos != Vector2Int.zero)
             {
+                // 방 및 문을 생성한다.
                 CreateRoom(newRoomPos);
-                
             }
         }
 
+        //최대 회수를 넘어섰다면 오류 출력
         if (attempts >= maxAttempts)
         {
             Debug.LogWarning($"Failed to generate the required number of rooms ({roomAmount}). Generated {createdRooms.Count} rooms.");
         }
     }
 
+    // 방 생성 및 문 생성
     void CreateRoom(Vector2Int position)
     {
-        // Instantiate 부분은 추후에 삭제(디버깅용)
-        //GameObject room = Instantiate(roomPrefab, new Vector3(position.x - mapWidth / 2, position.y - mapHeight / 2, 0), Quaternion.identity);
-        //room.name = $"Room ({position.x}, {position.y})";
-        //roomArray[position.x, position.y] = room;
-
         int distance = 0;
 
         roomTypes.Add(position, RoomType.NORMAL);
         createdRooms.Add(position);
-
 
         List<Vector2Int> doors = new List<Vector2Int>();
         Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
@@ -162,13 +169,14 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
             Vector2Int adjacentPos = position + direction;
             if (createdRooms.Contains(adjacentPos)) // 방향에 방이 존재한다면
             {
-                
                 doors.Add(direction);
-                // 양방향 문 연결 보장
+                // 방향의 방이 최대 방 크기를 벗어나지 않으면
                 if (IsValidRoomPosition(adjacentPos))
                 {
+                    // 방향의 방에 문이 존재하지 않는다면 
                     if (!roomDoors[adjacentPos].Contains(-direction))
                     {
+                        // 추가
                         roomDoors[adjacentPos].Add(-direction);
                     }
                 }
@@ -178,11 +186,12 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
                     distance = roomDistances[adjacentPos]+1;
                 }
             }
-            else if (!blockedPositions.Contains(adjacentPos) && Random.Range(0f, 1f) < 0.5f) // 방이 막혔는지 확인, 50%의 확률로 생성
+            // 방이 막혔는지 확인, 50%의 확률로 생성
+            else if (!blockedPositions.Contains(adjacentPos) && Random.Range(0f, 1f) < 0.5f) 
             {
                 doors.Add(direction);
-
-                // 양방향 문 연결은 새롭게 생긴 방에서만 시도한다. 상대 방에도 연결을 해주니 문제 없음, 내 방에만 문 생성
+                // 양방향 문 연결은 새롭게 생긴 방에서만 시도한다.
+                // 상대 방에도 연결을 해주니 문제 없음, 내 방에만 문 생성
             }
             else
             {
@@ -198,26 +207,34 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
     // 퍼뜨릴수 있는 문 기준으로 방을 생성
     Vector2Int GetRandomConnectedRoomPosition()
     {
+        // 무작위로 선택된 방에
         Vector2Int selectedRoom = createdRooms[Random.Range(0, createdRooms.Count)];
+        // 생성되어있는 문의 정보를 받아와
         List<Vector2Int> doors = roomDoors[selectedRoom];
 
+        // 새 방 을 저장할 리스트
         List<Vector2Int> candidates = new List<Vector2Int>();
+        // 문을 기반으로
         foreach (var direction in doors)
         {
+            // 새방의 좌표를 구한다.
             Vector2Int newRoomPos = selectedRoom + direction;
 
-            if (IsValidRoomPosition(newRoomPos) && !createdRooms.Contains(newRoomPos)/*roomArray[newRoomPos.x, newRoomPos.y] == null*/ && !blockedPositions.Contains(newRoomPos))
+            // 방이 맵의 크기를 벗어났는지 파악 && 이미 생성되지 않았는지 파악 && 막혀있지 않은지 파악
+            if (IsValidRoomPosition(newRoomPos) && !createdRooms.Contains(newRoomPos) && !blockedPositions.Contains(newRoomPos))
             {
+                // 새 방 좌표를 추가한다.
                 candidates.Add(newRoomPos);
             }
         }
-
+        // 만약 새롭게 추가될 방이 있다면
         if (candidates.Count > 0)
         {
+            // 새방의 좌표들 중 하나를 반환한다.
             return candidates[Random.Range(0, candidates.Count)];
         }
 
-        //Debug.LogWarning($"No valid position found for new room connected to {selectedRoom}");
+        // 없다면 0,0 반환
         return Vector2Int.zero;
     }
 
@@ -233,18 +250,24 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
         return true;
     }
 
+    // 연결이 되지 않은 문 파기
     void ValidateDoors()
     {
+        // 생성된 방
         foreach (var room in createdRooms)
         {
+            // 제거될 문의 좌표를 저장할 리스트
             List<Vector2Int> doorsToRemove = new List<Vector2Int>();
+            // 방의 문 좌표
             foreach (var doorDirection in roomDoors[room])
             {
+                // 문이랑 연결되어야할 좌표를 구한다.
                 Vector2Int adjacentPosition = room + doorDirection;
 
-                // 연결된 방이 없거나 유효하지 않은 경우
-                if (!IsValidRoomPosition(adjacentPosition) || !createdRooms.Contains(adjacentPosition)/*roomArray[adjacentPosition.x, adjacentPosition.y] == null*/)
+                // 방의 크기를 벗어난 좌표 || 방이 생성되어있지 않다면
+                if (!IsValidRoomPosition(adjacentPosition) || !createdRooms.Contains(adjacentPosition))
                 {
+                    // 제거 목록에 추가
                     doorsToRemove.Add(doorDirection);
                 }
             }
@@ -252,7 +275,6 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
             // 잘못된 문 제거
             foreach (var door in doorsToRemove)
             {
-                //Debug.Log($"Destroy{room}/{door}");
                 roomDoors[room].Remove(door);
             }
         }
@@ -261,17 +283,20 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
     // 끝방 찾기
     List<Vector2Int> FindEndRooms()
     {
+        // 끝방의 정보를 저장할 리스트
         List<Vector2Int> endRooms = new();
         foreach(var room in createdRooms)
         {
+            // 방 문이 1개인 경우
             if(roomDoors[room].Count == 1)
             {
+                //끝방 정보 추가
                 endRooms.Add(room);
             }
         }
 
+        // 첫방의 좌표를 구해서 첫방이 끝방이라면 제외
         Vector2Int originRoom = new Vector2Int(mapWidth/2, mapHeight/2);
-
         if (endRooms.Contains(originRoom))
         {
             endRooms.Remove(originRoom);
@@ -280,23 +305,24 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
         return endRooms;
     }
 
+    // 강제 끝방 생성
     bool AddEndRoom(Vector2Int baseRoom)
     {
         Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-
+        // 각 방향을 탐색
         foreach (var direction in directions)
         {
+            // 생성할 위치
             Vector2Int adjacentPosition = baseRoom + direction;
             // 막힌 방에 강제로 방생성, 근처에 방이 하나여야함.
+            // 생성할 위치가 막혀있고 && 생성할 위치에 붙은 방이 1개라면
             if (blockedPositions.Contains(adjacentPosition)&& ClosedRoomCnt(adjacentPosition)==1)
             {
+                // 방 생성
                 CreateRoom(adjacentPosition);
                 Debug.Log($"강제 생성 끝방 : {adjacentPosition}");
+                // 연결 안된 방 파기
                 ValidateDoors();
-                foreach (var door in roomDoors[adjacentPosition])
-                {
-                    Debug.Log(door);
-                }
 
                 return true;
 
@@ -306,12 +332,15 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
         return false;
     }
 
+    // 특수방 배치
     void PlaceSpeacialRoom()
     {
         // 가장 먼 방 보스방, 나머지 방들 랜덤으로 보물방, 상점
 
+        // 임시 끝방 리스트
         List<Vector2Int> tempEndRooms = endRooms.ToList();
 
+        // 시작 방부터 끝방의 거리 책정
         Dictionary<Vector2Int, int> endRoomDistance = new Dictionary<Vector2Int, int>();
         foreach (var room in tempEndRooms)
         {
@@ -320,13 +349,15 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
             endRoomDistance.Add(room, distance);
         }
 
+        // 가장 먼 방을 구한다.
         var furthestRoom = endRoomDistance.Aggregate((maxRoom, nextRoom) => nextRoom.Value > maxRoom.Value ? nextRoom : maxRoom).Key;
+        // 가장 먼 방을 보스방으로 지정
         roomTypes[furthestRoom] = RoomType.BOSS;
         Debug.Log($"보스 : {furthestRoom}");
+        // 지정한 방은 임시 끝방 목록에서 제거
         tempEndRooms.Remove(furthestRoom);
 
-        // 추후 룸 매니저에서 각 방의 개수를 조정 가능하게 변경
-
+        // 남은 끝방들을 보물방으로 생성한다.
         int random = Random.Range(0, tempEndRooms.Count);
         roomTypes[tempEndRooms[random]] = RoomType.TREASURE;
         Debug.Log($"보물방 : {tempEndRooms[random]}");
@@ -339,16 +370,19 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
         tempEndRooms.Remove(tempEndRooms[random]);
     }
 
+    // baseRoom에 붙어있는 방의 개수 카운트
     int ClosedRoomCnt(Vector2Int baseRoom)
     {
         int cnt = 0;
         Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-
+        // 각 방향에
         foreach (var direction in directions)
         {
             Vector2Int adjacentPosition = baseRoom + direction;
+            // 방이 생성되어있다면
             if (createdRooms.Contains(adjacentPosition))
             {
+                // 카운트
                 cnt++;
             }
         }
@@ -383,19 +417,22 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
         //실제 플레이 가능 한 방을 생성
         foreach (var room in roomTypes)
         {
+            // 남은 임시 일반 방이 없다면
             if (tempNormalRooms.Count <= 0) 
             {
+                // 다시 모든 일반방 리스트를 받아온다.
                 tempNormalRooms = normalRoomPrefaps.ToList();
             }
 
+            // 방 타입을 기반으로 Prefap 배치
             switch (room.Value)
             {
                 case RoomType.START:
                     prefab = specialRoomPrefaps[0];
                     break;
                 case RoomType.NORMAL:
+                    // 일반 방의 경우에는 방이 겹치지 않게 랜덤하게 방을 뽑아 배치하고 리스트에서 제외한다.
                     int rand = Random.Range(0,tempNormalRooms.Count);
-
                     prefab = tempNormalRooms[rand];
                     tempNormalRooms.RemoveAt(rand);
                     //prefab = normalRoomPrefaps[1];
@@ -410,14 +447,18 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
                     prefab = specialRoomPrefaps[3];
                     break;
             }
+            // 각방의 위치는 (0,0)부터 시작 되어 180의 여백을 두고 생성
             Vector3 roomPos = new Vector3((room.Key.x - mapWidth / 2) * 180, (room.Key.y - mapHeight / 2) * 180, 0);
+            // 방 생성
             GameObject tempRoom = Instantiate(prefab,roomPos,Quaternion.identity);
             Vector2Int pos = room.Key;
+            // 방의 좌표는 방 스크립트로 전달한다.
             roomDic.Add(pos, tempRoom.GetComponent<Room>());
+            // 방 초기화
             roomDic[pos].IntializeRoomData(pos, roomDoors[pos]);
             
+            // 방이름은 좌표 값으로
             tempRoom.name = $"Room ({room.Key.x}, {room.Key.y})";
-            //tempRoom.transform.position = new Vector3((room.Key.x - mapWidth / 2) * 180, (room.Key.y - mapHeight/2) * 180, 0);
         }
     }
 
@@ -429,12 +470,7 @@ public class RoomManager : MonoBehaviour, ISceneInitializer
             // FadeInMoveRoom이 끝난 후에 다음 코드 실행
             roomDic[destination].SetMoveSpawn(currentPos, destination);
             uiManager.RevealedWorldmap(destination);
-            
-            
         });
-
-        //roomDic[destination].SetMoveSpawn(currentPos, destination);
-        //uiManager.RevealedWorldmap(destination);
     }
 
 
